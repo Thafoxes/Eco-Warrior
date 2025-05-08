@@ -1,0 +1,55 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "D:/Github/Eco-Warrior/external data and info/design and sprite/sprite ai/recycle level/atlas save files/conveyor_tile_sets.tsx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "D:/Github/Eco-Warrior/external data and info/design and sprite/sprite ai/recycle level/atlas save files/conveyor_tile_sets.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 3
+        },
+        "orange_wall.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        },
+        "recycle_center_map.tmx": {
+            "scale": 0.8520312499999999,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 479.44250871080146,
+                "y": 816.2846139739594
+            }
+        },
+        "recycle_floor.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "recycle_wall.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.imagePath": "D:/Github/Eco-Warrior/external data and info/design and sprite/sprite ai/recycle level",
+    "map.height": 10,
+    "openFiles": [
+        "orange_wall.tsx",
+        "recycle_center_map.tmx",
+        "recycle_floor.tsx",
+        "D:/Github/Eco-Warrior/external data and info/design and sprite/sprite ai/recycle level/atlas save files/conveyor_tile_sets.tsx"
+    ],
+    "project": "recycle map.tiled-project",
+    "recentFiles": [
+        "orange_wall.tsx",
+        "recycle_center_map.tmx",
+        "recycle_floor.tsx",
+        "D:/Github/Eco-Warrior/external data and info/design and sprite/sprite ai/recycle level/atlas save files/conveyor_tile_sets.tsx",
+        "recycle_wall.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx"
+}

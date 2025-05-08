@@ -1,7 +1,11 @@
 .gitkeep
-maps/recycle_map.tmx
-textures/recycle_map.png
-tilesets/recycle_map.tsx
+atlas/conveyor/conveyor.atlas
+atlas/conveyor/conveyor.png
+maps/recycle_center_map.tmx
+textures/floor.png
+textures/orange_wall.png
+tilesets/orange_wall.tsx
+tilesets/recycle_floor.tsx
 ui/font-list.fnt
 ui/font-subtitle.fnt
 ui/font-window.fnt

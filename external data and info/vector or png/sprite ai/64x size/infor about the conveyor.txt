@@ -1,9 +1,0 @@
-https://opengameart.org/content/conveyor-belt-spriteset
-
-32 x 32 pixel spritesheet for a fully functional conveyor belt.
-
- 
-
-Left / Right / Up / Down / Left-Up / Right-Up / Right-Down / Left-Down / Down-Left / Down-Right / Up-Right / Up-Left
-
- 
