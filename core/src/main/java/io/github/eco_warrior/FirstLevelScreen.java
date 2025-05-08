@@ -58,23 +58,10 @@ public class FirstLevelScreen implements Screen {
     private void loadingConveyorAnimation() {
         conveyorBelt = new ConveyorBelt("atlas/conveyor/conveyor.atlas",
             CONVEYOR_SCALE,
-            viewport.getWorldHeight()/10f + 50f,
+            viewport.getWorldHeight()/10f + 50f, //some calculation only
             viewport
             );
-//        //get the sprite width first
-//        TextureRegion firstFrame = conveyorAnimation.getKeyFrame(0);
-//        float scaledWidth = firstFrame.getRegionWidth() * CONVEYOR_SCALE;
-//        float y = viewport.getWorldHeight()/CONVEYOR_SCALE + 50;
-//
-//
-//        //fill in all the conveyor length
-//        for(float x = 0f; x < viewport.getWorldWidth() + scaledWidth; x += scaledWidth) {
-//            Sprite conveyor = new Sprite(firstFrame);
-//            conveyor.setScale(CONVEYOR_SCALE);
-//            conveyor.setPosition(x,y);
-//            conveyorSprites.add(conveyor);
-//
-//        }
+
         stateTime = 0f;
     }
 
@@ -100,20 +87,12 @@ public class FirstLevelScreen implements Screen {
         maprenderer.render();
 
         stateTime = Gdx.graphics.getDeltaTime();
-        conveyorBelt.update(stateTime);
 
-//        TextureRegion region = conveyorAnimation.getKeyFrame(stateTime, true);
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-//        //conveyors moving
-//        for(Sprite conveyor: conveyorSprites) {
-////            conveyor.flip(true, false);
-//            conveyor.setRegion(region);
-//            conveyor.flip(true, false); // Flip the conveyor
-//            conveyor.draw(batch);
-//        }
+        conveyorBelt.update(stateTime);
         conveyorBelt.draw(batch);
 
         batch.end();

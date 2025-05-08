@@ -2,22 +2,19 @@ package io.github.eco_warrior.entity;
 
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 
 public class ConveyorBelt {
-    private TextureAtlas atlas;
-    private Animation<TextureRegion> animation;
+    private final TextureAtlas atlas;
+    private final Animation<TextureRegion> animation;
     private ArrayList<Sprite> sprites;
     private float stateTime;
-    private float scale;
-    private float y;
+    private final float scale;
+    private final float y;
 
     public ConveyorBelt(String atlasPath, float scale, float yOffset, Viewport viewport) {
-        this.scale = scale;
+        this.scale = scale; //place here just in case I need to use it
         this.y = yOffset;
         this.sprites = new ArrayList<>();
 
