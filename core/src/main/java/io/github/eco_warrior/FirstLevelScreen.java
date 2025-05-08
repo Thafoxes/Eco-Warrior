@@ -12,6 +12,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.util.ArrayList;
+
 import static com.badlogic.gdx.Gdx.gl;
 import static io.github.eco_warrior.constant.ConstantsVar.*;
 
@@ -28,10 +30,10 @@ public class FirstLevelScreen implements Screen {
 
     //conveyor
     private TextureAtlas conveyorAtlas;
-    private Sprite conveyor;
     private float stateTime;
     private final int CONVEYOR_SCALE = 10;
-
+    // add more conveyor to extend whole screen
+    private ArrayList<Sprite> conveyorSprites;
 
 
     @Override
@@ -54,15 +56,25 @@ public class FirstLevelScreen implements Screen {
     }
 
     private void loadingConveyorAnimation() {
+        conveyorSprites = new ArrayList<>();
         conveyorAtlas = new TextureAtlas("atlas/conveyor/conveyor.atlas");
-        conveyorAnimation = new Animation(0.1f, conveyorAtlas.findRegions("image"),
+        conveyorAnimation = new Animation<>(0.1f, conveyorAtlas.findRegions("image"),
             Animation.PlayMode.LOOP);
 
-        conveyor = new Sprite(conveyorAnimation.getKeyFrame(0));
-        conveyor.scale(CONVEYOR_SCALE);
-        Vector2 conveyorPosition = new Vector2(viewport.getWorldWidth()/CONVEYOR_SCALE + 1, viewport.getWorldHeight()/CONVEYOR_SCALE + 50);
+        //get the sprite width first
+        TextureRegion firstFrame = conveyorAnimation.getKeyFrame(0);
+        float scaledWidth = firstFrame.getRegionWidth() * CONVEYOR_SCALE;
+        float y = viewport.getWorldHeight()/CONVEYOR_SCALE + 50;
 
-        conveyor.setPosition(conveyorPosition.x,conveyorPosition.y);
+
+        //fill in all the conveyor length
+        for(float x = 0f; x < viewport.getWorldWidth() + scaledWidth; x += scaledWidth) {
+            Sprite conveyor = new Sprite(firstFrame);
+            conveyor.setScale(CONVEYOR_SCALE);
+            conveyor.setPosition(x,y);
+            conveyorSprites.add(conveyor);
+
+        }
         stateTime = 0f;
     }
 
@@ -78,6 +90,10 @@ public class FirstLevelScreen implements Screen {
     @Override
     public void render(float delta) {
 
+        draw();
+    }
+
+    private void draw() {
         camera.update();
         gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
 
@@ -86,12 +102,17 @@ public class FirstLevelScreen implements Screen {
 
         stateTime += Gdx.graphics.getDeltaTime();
         TextureRegion region = conveyorAnimation.getKeyFrame(stateTime, true);
-        conveyor.setRegion(region);
+
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-        conveyor.flip(true, false);
-        conveyor.draw(batch);
+        //conveyors moving
+        for(Sprite conveyor: conveyorSprites) {
+//            conveyor.flip(true, false);
+            conveyor.setRegion(region);
+            conveyor.flip(true, false); // Flip the conveyor
+            conveyor.draw(batch);
+        }
 
         batch.end();
     }
@@ -124,5 +145,7 @@ public class FirstLevelScreen implements Screen {
         map.dispose();
         maprenderer.dispose();
         batch.dispose();
+        conveyorAtlas.dispose();
+
     }
 }
