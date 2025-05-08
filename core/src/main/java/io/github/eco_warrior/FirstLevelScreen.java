@@ -11,6 +11,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import io.github.eco_warrior.entity.ConveyorBelt;
 
 import java.util.ArrayList;
 
@@ -29,12 +30,11 @@ public class FirstLevelScreen implements Screen {
     private SpriteBatch batch;
 
     //conveyor
-    private TextureAtlas conveyorAtlas;
+    private ConveyorBelt conveyorBelt;
     private float stateTime;
     private final int CONVEYOR_SCALE = 10;
     // add more conveyor to extend whole screen
-    private ArrayList<Sprite> conveyorSprites;
-
+//    private ArrayList<Sprite> conveyorSprites;
 
     @Override
     public void show() {
@@ -56,25 +56,25 @@ public class FirstLevelScreen implements Screen {
     }
 
     private void loadingConveyorAnimation() {
-        conveyorSprites = new ArrayList<>();
-        conveyorAtlas = new TextureAtlas("atlas/conveyor/conveyor.atlas");
-        conveyorAnimation = new Animation<>(0.1f, conveyorAtlas.findRegions("image"),
-            Animation.PlayMode.LOOP);
-
-        //get the sprite width first
-        TextureRegion firstFrame = conveyorAnimation.getKeyFrame(0);
-        float scaledWidth = firstFrame.getRegionWidth() * CONVEYOR_SCALE;
-        float y = viewport.getWorldHeight()/CONVEYOR_SCALE + 50;
-
-
-        //fill in all the conveyor length
-        for(float x = 0f; x < viewport.getWorldWidth() + scaledWidth; x += scaledWidth) {
-            Sprite conveyor = new Sprite(firstFrame);
-            conveyor.setScale(CONVEYOR_SCALE);
-            conveyor.setPosition(x,y);
-            conveyorSprites.add(conveyor);
-
-        }
+        conveyorBelt = new ConveyorBelt("atlas/conveyor/conveyor.atlas",
+            CONVEYOR_SCALE,
+            viewport.getWorldHeight()/10f + 50f,
+            viewport
+            );
+//        //get the sprite width first
+//        TextureRegion firstFrame = conveyorAnimation.getKeyFrame(0);
+//        float scaledWidth = firstFrame.getRegionWidth() * CONVEYOR_SCALE;
+//        float y = viewport.getWorldHeight()/CONVEYOR_SCALE + 50;
+//
+//
+//        //fill in all the conveyor length
+//        for(float x = 0f; x < viewport.getWorldWidth() + scaledWidth; x += scaledWidth) {
+//            Sprite conveyor = new Sprite(firstFrame);
+//            conveyor.setScale(CONVEYOR_SCALE);
+//            conveyor.setPosition(x,y);
+//            conveyorSprites.add(conveyor);
+//
+//        }
         stateTime = 0f;
     }
 
@@ -89,7 +89,6 @@ public class FirstLevelScreen implements Screen {
 
     @Override
     public void render(float delta) {
-
         draw();
     }
 
@@ -100,19 +99,22 @@ public class FirstLevelScreen implements Screen {
         maprenderer.setView(camera);
         maprenderer.render();
 
-        stateTime += Gdx.graphics.getDeltaTime();
-        TextureRegion region = conveyorAnimation.getKeyFrame(stateTime, true);
+        stateTime = Gdx.graphics.getDeltaTime();
+        conveyorBelt.update(stateTime);
+
+//        TextureRegion region = conveyorAnimation.getKeyFrame(stateTime, true);
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-        //conveyors moving
-        for(Sprite conveyor: conveyorSprites) {
-//            conveyor.flip(true, false);
-            conveyor.setRegion(region);
-            conveyor.flip(true, false); // Flip the conveyor
-            conveyor.draw(batch);
-        }
+//        //conveyors moving
+//        for(Sprite conveyor: conveyorSprites) {
+////            conveyor.flip(true, false);
+//            conveyor.setRegion(region);
+//            conveyor.flip(true, false); // Flip the conveyor
+//            conveyor.draw(batch);
+//        }
+        conveyorBelt.draw(batch);
 
         batch.end();
     }
@@ -145,7 +147,7 @@ public class FirstLevelScreen implements Screen {
         map.dispose();
         maprenderer.dispose();
         batch.dispose();
-        conveyorAtlas.dispose();
+        conveyorBelt.dispose();
 
     }
 }
