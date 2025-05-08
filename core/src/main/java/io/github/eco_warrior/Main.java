@@ -1,4 +1,4 @@
-package io.github.Eco_warrior;
+package io.github.eco_warrior;
 
 import com.badlogic.gdx.Game;
 

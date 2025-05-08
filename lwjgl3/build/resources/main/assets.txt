@@ -1,4 +1,7 @@
 .gitkeep
+maps/recycle_map.tmx
+textures/recycle_map.png
+tilesets/recycle_map.tsx
 ui/font-list.fnt
 ui/font-subtitle.fnt
 ui/font-window.fnt

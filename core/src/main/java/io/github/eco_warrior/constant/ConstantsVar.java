@@ -1,6 +1,6 @@
-package io.github.Eco_warrior.constant;
+package io.github.eco_warrior.constant;
 
-class ConstantsVar {
+public class ConstantsVar {
 
     public static final int WINDOW_HEIGHT = 720;
     public static final int WINDOW_WIDTH = 1280;
