@@ -47,14 +47,14 @@ public class gameSprite {
     }
 
     public gameSprite(String atlasPath, String regionName, Vector2 position , String correctSoundPath, String wrongSoundPath) {
-       new gameSprite(atlasPath, regionName, position, 1f, correctSoundPath, wrongSoundPath, null);
+       this(atlasPath, regionName, position, 1f, correctSoundPath, wrongSoundPath, null);
     }
 
     public gameSprite(String atlasPath, String regionName, Vector2 position) {
-        new gameSprite(atlasPath, regionName, position, 1f, null, null, null);
+        this(atlasPath, regionName, position, 1f, null, null, null);
     }
     public gameSprite(String atlasPath, String regionName, Vector2 position, float scale) {
-        new gameSprite(atlasPath, regionName, position, scale, null, null, null);
+        this(atlasPath, regionName, position, scale, null, null, null);
     }
 
 

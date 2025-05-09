@@ -11,3 +11,5 @@ crash.log
 /.gradle
 /.idea
 *.class
+*.class
+*.class

@@ -80,7 +80,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
     private void initSprites() {
         redBin = new RedBin(new Vector2(WINDOW_WIDTH / 2 , WINDOW_HEIGHT / 2 + 50f));
-        trashPile = new TrashPile(new Vector2(WINDOW_WIDTH / 4 , WINDOW_HEIGHT / 2 + 50f));
+        trashPile = new TrashPile(new Vector2(WINDOW_WIDTH - 10f , WINDOW_HEIGHT / 5));
 
     }
 
@@ -149,20 +149,24 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
 
         batch.setProjectionMatrix(camera.combined);
+        redBin.update(stateTime);
+        trashPile.update(stateTime);
+        conveyorBelt.update(stateTime);
+
+
         batch.begin();
 
-        try{
-//            trashPile.update(stateTime);
-//            trashPile.draw(batch);
-            System.out.println(trashPile.getCollisionRect().getX());
-        }catch (Exception e){
-            e.printStackTrace();
-        }
 
-        redBin.update(stateTime);
+
+        //recyclables here
+
         redBin.draw(batch);
-        conveyorBelt.update(stateTime);
+
         conveyorBelt.draw(batch);
+        trashPile.draw(batch);
+
+
+
 
         batch.end();
         scoreFont.fontDraw(uiBatch, "Score: " + score , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.LEFT, textEnum.TOP);
