@@ -63,7 +63,7 @@ public class fontGenerator {
 
     }
 
-    public void fontDraw(SpriteBatch uiBatch, String text , OrthographicCamera camera, Vector2 position, textEnum alignText){
+    public void fontDraw(SpriteBatch uiBatch, String text , OrthographicCamera camera, Vector2 position, textEnum alignText, textEnum borderText){
         GlyphLayout layout = new GlyphLayout(font, text);
         uiBatch.begin();
         uiBatch.setProjectionMatrix(camera.combined);
@@ -77,11 +77,25 @@ public class fontGenerator {
                 break;
             case LEFT:
                 position.x = 10f;
+                break;
             default:
                 break;
 
         }
+        switch(borderText){
+            case TOP:
+                position.y -= layout.height + 10f;
+                break;
+            case BOTTOM:
+                position.y = layout.height + 10f;
+                break;
+            case MIDDLE:
+                position.y =  (position.y - layout.height)/ 2f;
+                break;
+            default:
+                break;
 
+        }
 
         font.draw(uiBatch, text , position.x, position.y);
 

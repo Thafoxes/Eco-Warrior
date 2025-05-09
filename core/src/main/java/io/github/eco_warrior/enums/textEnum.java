@@ -1,5 +1,5 @@
 package io.github.eco_warrior.enums;
 
 public enum textEnum {
-    LEFT, CENTER, RIGHT
+    LEFT, CENTER, RIGHT, TOP, MIDDLE, BOTTOM
 }

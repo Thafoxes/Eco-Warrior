@@ -106,9 +106,9 @@ public class FirstLevelScreen implements Screen {
         conveyorBelt.draw(batch);
 
         batch.end();
-        scoreFont.fontDraw(uiBatch, "Score: " + score , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.CENTER);
-        timerFont.fontDraw(uiBatch, "Countdown: 60s " , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.RIGHT);
-        timerFont.fontDraw(uiBatch, "Countdown: 12122s" , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.LEFT);
+        scoreFont.fontDraw(uiBatch, "Score: " + score , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.CENTER, textEnum.TOP);
+        timerFont.fontDraw(uiBatch, "Countdown: 60s " , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.RIGHT , textEnum.TOP);
+        timerFont.fontDraw(uiBatch, "Countdown: 12122s" , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.LEFT , textEnum.TOP);
     }
 
     @Override
