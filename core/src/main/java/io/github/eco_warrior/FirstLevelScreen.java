@@ -11,9 +11,9 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import io.github.eco_warrior.controller.fontGenerator;
 import io.github.eco_warrior.entity.ConveyorBelt;
-
-import java.util.ArrayList;
+import io.github.eco_warrior.enums.textEnum;
 
 import static com.badlogic.gdx.Gdx.gl;
 import static io.github.eco_warrior.constant.ConstantsVar.*;
@@ -33,8 +33,14 @@ public class FirstLevelScreen implements Screen {
     private ConveyorBelt conveyorBelt;
     private float stateTime;
     private final int CONVEYOR_SCALE = 10;
-    // add more conveyor to extend whole screen
-//    private ArrayList<Sprite> conveyorSprites;
+
+    //uiBatch
+    private fontGenerator scoreFont;
+    private fontGenerator timerFont;
+    private SpriteBatch uiBatch;
+
+    //score
+    private int score = 0;
 
     @Override
     public void show() {
@@ -43,12 +49,16 @@ public class FirstLevelScreen implements Screen {
         camera = new OrthographicCamera();
         viewport = new FitViewport(WINDOW_WIDTH, WINDOW_HEIGHT, camera);
         batch = new SpriteBatch();
+        uiBatch = new SpriteBatch();
 
 
         //setup camera to middle
         camera.position.set(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0);
         camera.update();
 
+
+        scoreFont = new fontGenerator();
+        timerFont = new fontGenerator();
         loadMap();
 
         loadingConveyorAnimation();
@@ -96,6 +106,9 @@ public class FirstLevelScreen implements Screen {
         conveyorBelt.draw(batch);
 
         batch.end();
+        scoreFont.fontDraw(uiBatch, "Score: " + score , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.CENTER);
+        timerFont.fontDraw(uiBatch, "Countdown: 60s " , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.RIGHT);
+        timerFont.fontDraw(uiBatch, "Countdown: 12122s" , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.LEFT);
     }
 
     @Override
@@ -127,6 +140,7 @@ public class FirstLevelScreen implements Screen {
         maprenderer.dispose();
         batch.dispose();
         conveyorBelt.dispose();
-
+        scoreFont.dispose();
+        timerFont.dispose();
     }
 }

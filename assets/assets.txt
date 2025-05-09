@@ -1,6 +1,9 @@
 .gitkeep
 atlas/conveyor/conveyor.atlas
 atlas/conveyor/conveyor.png
+fonts/Square One.ttf
+fonts/TT Octosquares Trial Medium.ttf
+fonts/cubic.ttf
 maps/recycle_center_map.tmx
 textures/floor.png
 textures/orange_wall.png
