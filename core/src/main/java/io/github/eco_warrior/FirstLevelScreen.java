@@ -81,6 +81,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     private void initSprites() {
         redBin = new RedBin(new Vector2(WINDOW_WIDTH / 2 , WINDOW_HEIGHT / 2 + 50f));
         trashPile = new TrashPile(new Vector2(WINDOW_WIDTH / 4 , WINDOW_HEIGHT / 2 + 50f));
+
     }
 
     private void loadingConveyorAnimation() {
@@ -150,6 +151,14 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
+        try{
+//            trashPile.update(stateTime);
+//            trashPile.draw(batch);
+            System.out.println(trashPile.getCollisionRect().getX());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         redBin.update(stateTime);
         redBin.draw(batch);
         conveyorBelt.update(stateTime);
@@ -192,6 +201,8 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         conveyorBelt.dispose();
         scoreFont.dispose();
         timerFont.dispose();
+        redBin.dispose();
+        trashPile.dispose();
     }
 
     @Override

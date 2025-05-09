@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -23,22 +24,24 @@ public class gameSprite {
     public gameSprite(String atlasPath, String regionName, Vector2 position, float scale , String correctSoundPath, String wrongSoundPath, String hittingSoundPath) {
         this.atlasPath = atlasPath;
         TextureAtlas atlas = new TextureAtlas(Gdx.files.internal(this.atlasPath));
-        this.sprite = atlas.createSprite(regionName);
-        if(sprite == null){
+        TextureRegion region = new TextureRegion(atlas.findRegion(regionName));
+
+        if(region == null){
             throw new NullPointerException("sprite is null");
         }
-
+        this.sprite = new Sprite(region);
         this.scale = scale;
-        sprite.setScale(this.scale);
-        sprite.setPosition(position.x, position.y);
+        this.sprite.setScale(this.scale);
+        this.sprite.setPosition(position.x, position.y);
         this.collisionRect =  new Rectangle(position.x, position.y, sprite.getWidth() * scale, sprite.getHeight() * scale);
-        if(!correctSoundPath.equals("") || correctSoundPath != null){
+
+        if(correctSoundPath != null){
             this.correctSoundFX = Gdx.audio.newSound(Gdx.files.internal(correctSoundPath));
         }
-        if(!wrongSoundPath.equals("") || wrongSoundPath != null){
+        if(wrongSoundPath != null){
             this.wrongSoundFx = Gdx.audio.newSound(Gdx.files.internal(wrongSoundPath));
         }
-        if(!hittingSoundPath.equals("") || hittingSoundPath != null){
+        if(hittingSoundPath != null){
             this.hittingSFX = Gdx.audio.newSound(Gdx.files.internal(hittingSoundPath));
         }
     }
@@ -56,15 +59,15 @@ public class gameSprite {
 
 
     public void update(float delta){
-        sprite.setPosition(collisionRect.x, collisionRect.y);
+        this.sprite.setPosition(this.collisionRect.x, this.collisionRect.y);
     }
 
     public void draw(SpriteBatch batch){
-        sprite.draw(batch);
+        this.sprite.draw(batch);
     }
 
     public boolean checkCollision(Rectangle rect){
-        return rect.overlaps(rect);
+        return this.collisionRect.overlaps(rect);
     }
 
     public boolean isPressed(Vector2 cursorPosition){
@@ -115,23 +118,23 @@ public class gameSprite {
 
     public Sound getCorrectSoundFX() {
         if(correctSoundFX != null){
-            return correctSoundFX;
+            return this.correctSoundFX;
 
         }
         throw new NullPointerException("correctSoundFX is null");
     }
 
     public Sound getWrongSoundFx() {
-        if(wrongSoundFx != null) return wrongSoundFx;
+        if(wrongSoundFx != null) return this.wrongSoundFx;
         throw new NullPointerException("wrongSoundFx is null");
     }
 
     public Sound getHittingSFX() {
-       if (hittingSFX != null) return hittingSFX;
+       if (hittingSFX != null) return this.hittingSFX;
        throw new NullPointerException("hittingSFX is null");
     }
 
     public float getScale() {
-        return scale;
+        return this.scale;
     }
 }

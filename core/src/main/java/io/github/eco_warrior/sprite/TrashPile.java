@@ -10,9 +10,9 @@ public class TrashPile extends gameSprite {
     public TrashPile(Vector2 position) {
         super(
             "sprite/recyclables/recyclables.atlas",
-            "trash_pile",
+            "cans",
             position,
-            1f
+            2f
             );
     }
 
