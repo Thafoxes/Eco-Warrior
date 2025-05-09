@@ -28,7 +28,6 @@ public class ConveyorBelt {
             Sprite conveyor = new Sprite(firstFrame);
             conveyor.setScale(scale);
             conveyor.setPosition(x, y);
-            conveyor.flip(true, false); // pre-flip once
             sprites.add(conveyor);
         }
 
