@@ -70,7 +70,7 @@ public class fontGenerator {
 
         switch(alignText){
             case RIGHT:
-                position.x -= layout.width;
+                position.x -= layout.width + 10f;
                 break;
             case CENTER:
                 position.x = (position.x - layout.width) / 2f;

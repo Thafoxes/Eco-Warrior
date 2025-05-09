@@ -5,6 +5,13 @@ fonts/Square One.ttf
 fonts/TT Octosquares Trial Medium.ttf
 fonts/cubic.ttf
 maps/recycle_center_map.tmx
+sound_effects/correct.mp3
+sound_effects/hitting_bin.mp3
+sound_effects/wrong.mp3
+sprite/bins/bins.atlas
+sprite/bins/bins.png
+sprite/recyclables/recyclables.atlas
+sprite/recyclables/recyclables.png
 textures/floor.png
 textures/orange_wall.png
 tilesets/orange_wall.tsx

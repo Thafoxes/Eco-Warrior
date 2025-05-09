@@ -1,6 +1,7 @@
 package io.github.eco_warrior;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -9,17 +10,21 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.controller.fontGenerator;
 import io.github.eco_warrior.entity.ConveyorBelt;
+import io.github.eco_warrior.entity.LevelMaker;
 import io.github.eco_warrior.enums.textEnum;
+import io.github.eco_warrior.sprite.RedBin;
+import io.github.eco_warrior.sprite.TrashPile;
 
 import static com.badlogic.gdx.Gdx.gl;
 import static io.github.eco_warrior.constant.ConstantsVar.*;
 
 /** First screen of the application. Displayed after the application is created. */
-public class FirstLevelScreen implements Screen {
+public class FirstLevelScreen extends LevelMaker implements Screen {
 
     private TiledMap map;
     private OrthographicCamera camera;
@@ -41,6 +46,12 @@ public class FirstLevelScreen implements Screen {
 
     //score
     private int score = 0;
+    private float timerSeconds = 60f;
+    private boolean timerEnded = false;
+
+    //Sprites
+    RedBin redBin;
+    TrashPile trashPile;
 
     @Override
     public void show() {
@@ -63,6 +74,13 @@ public class FirstLevelScreen implements Screen {
 
         loadingConveyorAnimation();
 
+        initSprites();
+
+    }
+
+    private void initSprites() {
+        redBin = new RedBin(new Vector2(WINDOW_WIDTH / 2 , WINDOW_HEIGHT / 2 + 50f));
+        trashPile = new TrashPile(new Vector2(WINDOW_WIDTH / 4 , WINDOW_HEIGHT / 2 + 50f));
     }
 
     private void loadingConveyorAnimation() {
@@ -87,7 +105,37 @@ public class FirstLevelScreen implements Screen {
     @Override
     public void render(float delta) {
         draw();
+        countdownTimer();
+        input();
     }
+
+    private void input() {
+
+        //if touch key to test my score up
+        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)){
+            redBin.correctSound();
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)){
+            redBin.wrongSound();
+        }
+        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
+            Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(touch);
+            if(Gdx.input.justTouched()) redBin.isPressed(new Vector2(touch.x, touch.y));
+        }
+
+    }
+
+    private void countdownTimer() {
+        if (!timerEnded) {
+            timerSeconds -= Gdx.graphics.getDeltaTime();
+            if (timerSeconds <= 0) {
+                //do something here
+                isFinished();
+            }
+        }
+    }
+
 
     private void draw() {
         camera.update();
@@ -102,14 +150,16 @@ public class FirstLevelScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
+        redBin.update(stateTime);
+        redBin.draw(batch);
         conveyorBelt.update(stateTime);
         conveyorBelt.draw(batch);
 
         batch.end();
-        scoreFont.fontDraw(uiBatch, "Score: " + score , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.CENTER, textEnum.TOP);
-        timerFont.fontDraw(uiBatch, "Countdown: 60s " , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.RIGHT , textEnum.TOP);
-        timerFont.fontDraw(uiBatch, "Countdown: 12122s" , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.LEFT , textEnum.TOP);
+        scoreFont.fontDraw(uiBatch, "Score: " + score , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.LEFT, textEnum.TOP);
+        timerFont.fontDraw(uiBatch, displayTimer(timerSeconds) , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.RIGHT , textEnum.TOP);
     }
+
 
     @Override
     public void resize(int width, int height) {
@@ -142,5 +192,15 @@ public class FirstLevelScreen implements Screen {
         conveyorBelt.dispose();
         scoreFont.dispose();
         timerFont.dispose();
+    }
+
+    @Override
+    protected void winningDisplay() {
+
+    }
+
+    @Override
+    protected void losingDisplay() {
+
     }
 }

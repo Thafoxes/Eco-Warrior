@@ -1,0 +1,15 @@
+recyclables.png
+size:512,128
+repeat:none
+can
+bounds:266,2,64,64
+cans
+bounds:2,2,64,64
+newspaper
+bounds:200,2,64,64
+plastic_bottle
+bounds:332,2,64,64
+tin_cans
+bounds:68,2,64,64
+trash_pile
+bounds:134,2,64,64
