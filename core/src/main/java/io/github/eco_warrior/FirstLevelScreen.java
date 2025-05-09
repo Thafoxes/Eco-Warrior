@@ -55,7 +55,13 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     //Sprites
 //    WasteBin wasteBin;
     TrashPile trashPile;
-    List<gameSprite> recyclables = new ArrayList<>();
+    private List<gameSprite> recyclables = new ArrayList<>();
+    private final Class<?>[] recyclableClasses = new Class[] {
+        PlasticBottle.class,
+        Newspaper.class,
+        TinCans.class,
+        TrashPile.class,
+    };
     //recyclable spawn pos
     private float startX = WINDOW_WIDTH +  50f;
     private float startY = WINDOW_HEIGHT / 8;
@@ -63,7 +69,6 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     //spawn time
     private float spawnTimer = 0f;
     private float spawnInterval = 3f; //every 3 secs
-    private int randomInterval;
 
     //input section
     private boolean isDragging = false;
@@ -111,17 +116,20 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     }
 
     private void initAllBins() {
-        bins.put("paper", new BlueBin(new Vector2(WINDOW_WIDTH / 1.5f , WINDOW_HEIGHT / 2)));
-        bins.put("can" , new CanBin(new Vector2(WINDOW_WIDTH / 3f , WINDOW_HEIGHT / 2)));
-        bins.put("plastic" , new PlasticBin(new Vector2(WINDOW_WIDTH / 4.5f , WINDOW_HEIGHT / 2)));
-        bins.put("general waste", new WasteBin(new Vector2(WINDOW_WIDTH / 6f , WINDOW_HEIGHT / 2)));
+        bins.put("paper", new BlueBin(new Vector2(WINDOW_WIDTH / 5f , WINDOW_HEIGHT / 2)));
+        bins.put("can" , new CanBin(new Vector2(WINDOW_WIDTH * 2 / 5f , WINDOW_HEIGHT / 2)));
+        bins.put("plastic" , new PlasticBin(new Vector2(WINDOW_WIDTH * 3 / 5f , WINDOW_HEIGHT / 2)));
+        bins.put("general waste", new WasteBin(new Vector2(WINDOW_WIDTH * 4 / 5f , WINDOW_HEIGHT / 2)));
     }
 
     private void initSprites() {
 //        wasteBin = new WasteBin(new Vector2(WINDOW_WIDTH / 1.5f , WINDOW_HEIGHT / 2));
 
         trashPile = new TrashPile(new Vector2(startX , startY ));
-        recyclables.add(trashPile);
+        recyclables.add(new TrashPile(new Vector2(startX , startY )));
+        recyclables.add(new Newspaper(new Vector2(startX , startY )));
+        recyclables.add(new TinCans(new Vector2(startX , startY )));
+        recyclables.add(new PlasticBottle(new Vector2(startX , startY )));
 
     }
 
@@ -147,21 +155,47 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     @Override
     public void render(float delta) {
 
+        timerCount(delta);
         draw();
         countdownTimer();
         input();
+    }
+
+    private void timerCount(float delta) {
+        spawnTimer += delta;
+        if(spawnTimer > spawnInterval) {
+            spawnTimer = 0f;
+            spawnRecyclable();
+        }
+    }
+
+    private void spawnRecyclable() {
+        int index = new Random().nextInt(recyclableClasses.length);
+
+        Class<?> selectedClass = recyclableClasses[index];
+
+        gameSprite newItem = null;
+
+        //create constructor for selected class
+        try{
+            newItem = (gameSprite) selectedClass.getConstructor(Vector2.class)
+                .newInstance(new Vector2(startX, startY));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if(newItem != null) {
+            recyclables.add(newItem);
+        }
+
     }
 
 
     private void input() {
 
         //if touch key to test my score up
-        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)){
+        gameSprite draggingItem = null;
 
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)){
-
-        }
         if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
             currentTouchPos.set(Gdx.input.getX(), Gdx.input.getY());
             viewport.unproject(currentTouchPos);
@@ -219,19 +253,6 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
                 }
             }
         }
-//        //check for recycables
-//        if(!trashPile.getCollisionRect().overlaps(wasteBin.getCollisionRect())) {
-//            hasbeenDroppedInBin = false; //reset if drag failed
-//
-//        }else{
-////                do something that makes it dissapear
-//            if(!hasbeenDroppedInBin && !isDragging ){
-//                wasteBin.playCorrectSound();
-//                hasbeenDroppedInBin = true;
-//                //do something to remove the trash
-//
-//            }
-//        }
 
     }
 
@@ -277,7 +298,10 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
 
         batch.setProjectionMatrix(camera.combined);
-        wasteBin.update(stateTime);
+        for(gameSprite bin: bins.values()){
+            bin.update(stateTime);
+        }
+//        wasteBin.update(stateTime);
 //        trashPile.update(stateTime);
         conveyorBelt.update(stateTime);
         Iterator<gameSprite> iterator = recyclables.iterator();
@@ -287,7 +311,10 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
 
 
-        wasteBin.draw(batch);
+        for(gameSprite bin: bins.values()){
+            bin.draw(batch);
+        }
+//        wasteBin.draw(batch);
 
         conveyorBelt.draw(batch);
 
@@ -313,7 +340,12 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         for (gameSprite item : recyclables) {
             item.drawDebug(shapeRenderer);
         }
-        wasteBin.drawDebug(shapeRenderer);
+
+        //check if the overlapping occurs
+        for(gameSprite bin: bins.values()){
+            bin.drawDebug(shapeRenderer);
+        }
+//        wasteBin.drawDebug(shapeRenderer);
 
         shapeRenderer.end();
 
@@ -353,8 +385,10 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         conveyorBelt.dispose();
         scoreFont.dispose();
         timerFont.dispose();
-        wasteBin.dispose();
+//        wasteBin.dispose();
         trashPile.dispose();
+        //disposing bins
+        for(gameSprite bin: bins.values()){}
     }
 
     @Override

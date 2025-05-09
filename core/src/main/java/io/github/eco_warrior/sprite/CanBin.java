@@ -9,7 +9,7 @@ import io.github.eco_warrior.enums.ERecycleMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class CanBin extends gameSprite {
+public class CanBin extends WasteBin {
 
 
     private ArrayList<ERecycleMap> acceptingMaterial = new ArrayList<>(

@@ -6,7 +6,7 @@ import io.github.eco_warrior.enums.ERecycleMap;
 
 public class TrashPile extends gameSprite {
     private ERecycleMap categoryPile = ERecycleMap.trash_pile;
-    private float speed = -50f;
+    private float speed = 150f;
 
     public TrashPile(Vector2 position) {
         super(
@@ -17,10 +17,21 @@ public class TrashPile extends gameSprite {
             );
     }
 
+    public TrashPile(Vector2 position, String regionName) {
+        super(
+            "sprite/recyclables/recyclables.atlas",
+            regionName,
+            position,
+            3f
+        );
+    }
+
+
+
     //move from right to left
     @Override
     public void update(float delta){
-        getSprite().setX( getSprite().getX() - 100f * delta);
+        getSprite().setX( getSprite().getX() - speed * delta);
         getCollisionRect().setX(getSprite().getX() );
     }
 

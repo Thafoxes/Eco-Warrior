@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.enums.ERecycleMap;
 
-public class BlueBin extends gameSprite {
+public class BlueBin extends WasteBin {
 
     private ERecycleMap acceptingMaterial = ERecycleMap.newspaper;
     public BlueBin(Vector2 pos) {
