@@ -6,23 +6,28 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.enums.ERecycleMap;
 
-public class RedBin extends gameSprite {
+public class WasteBin extends gameSprite {
     //animation
     private float animationTimer = 0f;
     private boolean isAnimating = false;
     private float animationDuration = 0.3f;
 
     private ERecycleMap acceptingMaterial = ERecycleMap.trash_pile;
-    public RedBin(Vector2 pos) {
+    public WasteBin(Vector2 pos) {
         super(
             "sprite/bins/bins.atlas",
             "waste_bin",
             pos,
-            7f ,
+            5f ,
             "sound_effects/correct.mp3",
             "sound_effects/wrong.mp3",
             "sound_effects/hitting_bin.mp3"
             );
+    }
+
+    public WasteBin(String atlasPath, String regionName, Vector2 pos, float scale,
+                    String correctSoundPath, String wrongSoundPath, String hittingSoundPath) {
+        super(atlasPath, regionName, pos, scale, correctSoundPath, wrongSoundPath, hittingSoundPath);
     }
 
     @Override

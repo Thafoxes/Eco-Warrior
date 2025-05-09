@@ -20,8 +20,8 @@ public class TrashPile extends gameSprite {
     //move from right to left
     @Override
     public void update(float delta){
-        getSprite().setX(getSprite().getX() + this.speed * delta);
-        getCollisionRect().setX(getSprite().getX());
+        getSprite().setX( getSprite().getX() - 100f * delta);
+        getCollisionRect().setX(getSprite().getX() );
     }
 
 

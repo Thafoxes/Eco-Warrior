@@ -34,7 +34,7 @@ prettyPrint=false
 legacyOutput=false
 
 scaleFactors=[{suffix:"",factor:1,resampling:bicubic}]
-inputFiles=[{path:../bins/cans_bin.png,type:Input,regionName:null},{path:../bins/paper_bin.png,type:Input,regionName:null},{path:../bins/plastic_bin.png,type:Input,regionName:null},{path:../bins/waste_bin.png,type:Input,regionName:null}]
+inputFiles=[{path:../bins/paper_bin.png,type:Input,regionName:null},{path:../bins/plastic_bin.png,type:Input,regionName:null},{path:../bins/waste_bin.png,type:Input,regionName:null},{path:../bins/cans_bin.png,type:Input,regionName:null}]
 keepInputFileExtensions=false
 
 
