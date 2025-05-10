@@ -28,10 +28,20 @@ public class ButtonFactory {
 
     }
 
-
+    /**
+     *  Create a new custom button based on user preference
+     *  buttonStyleName: the button you want to call
+     *  borderColor: the button border colour
+     *  backgroundColor: the button background colour
+     *  hoveredButtonName: the hovered button call,
+     *  hoveredBackgroundColor: hovered background button colour
+     *
+     * */
     public void createCustomButton(String buttonStyleName, Color borderColor, Color backgroundColor,
-                                   String hoveredButtonName, Color hoveredBackgroundColor
+                                   Color hoveredBackgroundColor
                                    ) {
+        String hoveredButtonName = buttonStyleName+"-hovered";
+
         designDefaultButton(buttonStyleName, borderColor, backgroundColor);
         designHoverDefaultButton(hoveredButtonName, borderColor, hoveredBackgroundColor);
         styleButton(buttonStyleName, hoveredButtonName, buttonStyleName);
@@ -58,6 +68,9 @@ public class ButtonFactory {
         designHoverDefaultButton();
     }
 
+    /**
+     *  function overload, I want to split different instruction for future design
+     */
     private void designDefaultButton(String buttonName, Color borderColor, Color backgroundColor) {
         Pixmap defaultPixmap = new Pixmap(BUTTON_WIDTH , BUTTON_HEIGHT, Pixmap.Format.RGBA8888);
         //border circle
@@ -149,6 +162,10 @@ public class ButtonFactory {
     }
 
 
+    /**
+    *  the position is measured starting from the bottom left. If you want to measure from the mid point you have to - the width and height
+    *
+    * */
     public TextButton createNewButton(String text, String buttonStyle , float width, float height) {
 
         TextButton button = new TextButton(text, skin, buttonStyle);

@@ -79,18 +79,23 @@ public class ResultScreen implements Screen {
             }
         });
 
-        //add custom button here check
-        buttonFactory.createCustomButton("modernista", Color.BLUE, Color.BROWN, "hovered-modernista", Color.CHARTREUSE);
-        TextButton exitButton = buttonFactory.createNewButton(
-            "Test button",
-            "modernista",
-            WINDOW_HEIGHT/2,
-            WINDOW_HEIGHT/2
+//        //add custom button here check if custom button design works
+//        buttonFactory.createCustomButton(
+//            "modernista",
+//            Color.BLUE,
+//            Color.BROWN,
+//            Color.CHARTREUSE);
+//        TextButton exitButton = buttonFactory.createNewButton(
+//            "Test button",
+//            "modernista",
+//            WINDOW_WIDTH/4,
+//            WINDOW_HEIGHT
+//
+//        );
+//        stage.addActor(exitButton);
 
-        );
 
         stage.addActor(backButton);
-        stage.addActor(exitButton);
     }
 
 
