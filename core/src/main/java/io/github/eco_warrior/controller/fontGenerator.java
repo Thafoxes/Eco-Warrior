@@ -19,6 +19,31 @@ public class fontGenerator {
 
     private SpriteBatch uiBatch;
 
+    public fontGenerator(Integer size,Color fontColor, Color borderColor, String fontPath) {
+        if(fontColor != null){
+            this.fontColor = fontColor;
+        }
+        if(borderColor != null){
+            this.borderColor = borderColor;
+        }
+
+        generator = new FreeTypeFontGenerator(Gdx.files.internal(fontPath));
+        parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+
+        parameter.size = size;
+
+
+        parameter.color = this.fontColor;
+        parameter.borderWidth = 1;
+        parameter.borderColor = this.borderColor;
+
+        parameter.shadowOffsetX = 1;
+        parameter.shadowOffsetY = 1;
+
+        font = generator.generateFont(parameter);
+
+    }
+
     public fontGenerator(Integer size,Color fontColor, Color borderColor) {
         if(fontColor != null){
             this.fontColor = fontColor;
@@ -61,6 +86,10 @@ public class fontGenerator {
 
         font = generator.generateFont(parameter);
 
+    }
+
+    public BitmapFont getFont() {
+        return font;
     }
 
     public void fontDraw(SpriteBatch uiBatch, String text , OrthographicCamera camera, Vector2 position, textEnum alignText, textEnum borderText){
