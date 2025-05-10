@@ -6,6 +6,7 @@ fonts/TT Octosquares Trial Medium.ttf
 fonts/cubic.ttf
 maps/recycle_center_map.tmx
 sound_effects/correct.mp3
+sound_effects/happy_wheels_victory.mp3
 sound_effects/hitting_bin.mp3
 sound_effects/wrong.mp3
 sprite/bins/bins.atlas

@@ -72,7 +72,7 @@ public class fontGenerator {
             case RIGHT:
                 position.x -= layout.width + 10f;
                 break;
-            case CENTER:
+            case X_CENTER:
                 position.x = (position.x - layout.width) / 2f;
                 break;
             case LEFT:
@@ -89,7 +89,7 @@ public class fontGenerator {
             case BOTTOM:
                 position.y = layout.height + 10f;
                 break;
-            case MIDDLE:
+            case Y_MIDDLE:
                 position.y =  (position.y - layout.height)/ 2f;
                 break;
             default:

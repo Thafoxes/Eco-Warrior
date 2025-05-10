@@ -132,9 +132,15 @@ public class gameSprite extends AbsBin {
     }
 
     public void dispose(){
-        wrongSoundFx.dispose();
-        correctSoundFX.dispose();
-        hittingSFX.dispose();
+        if(wrongSoundFx != null){
+            wrongSoundFx.dispose();
+        }
+        if (correctSoundFX != null) {
+            correctSoundFX.dispose();
+        }
+        if (hittingSFX != null) {
+            hittingSFX.dispose();
+        }
     }
 
     public Sound getCorrectSoundFX() {

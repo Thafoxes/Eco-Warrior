@@ -165,8 +165,8 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     private void controller() {
         if(score >= winningScore || timerEnded) {
             //show wins
-            game.setScreen(new ResultScreen(game, score, timerSeconds <= 0));
             conveyorBelt.stopAnimation();
+            game.setScreen(new ResultScreen(game, score));
 
         }
     }
