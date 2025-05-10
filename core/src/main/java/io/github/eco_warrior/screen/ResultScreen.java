@@ -4,22 +4,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.Main;
+import io.github.eco_warrior.controller.ButtonFactory;
 import io.github.eco_warrior.controller.fontGenerator;
 import io.github.eco_warrior.enums.textEnum;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import static io.github.eco_warrior.constant.ConstantsVar.*;
 
@@ -35,15 +31,23 @@ public class ResultScreen implements Screen {
     private Viewport viewport;
     private OrthographicCamera camera;
 
+    //button setup
     private Stage stage;
     private Skin skin;
 
+    private ButtonFactory buttonFactory;
 
+
+    public ResultScreen(Main game, int score, ButtonFactory buttonFactory) {
+        this.game = game;
+        this.score = score;
+        this.buttonFactory = buttonFactory;
+    }
 
     public ResultScreen(Main game, int score) {
         this.game = game;
         this.score = score;
-
+        buttonFactory = game.getButtonFactory();
     }
 
     @Override
@@ -57,79 +61,15 @@ public class ResultScreen implements Screen {
         stage = new Stage(viewport, batch);
         Gdx.input.setInputProcessor(stage);
 
-        createSkin();
+        createReturnButton();
     }
 
-    private void createSkin() {
-        skin = new Skin();
-        skin.add("default-font", uiFont.getFont());
-
-//        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-//        textButtonStyle.font = uiFont.getFont();
-//        skin.add("default", textButtonStyle);
-
-        //pixmap for button background
-        Pixmap pixmap = new Pixmap(BUTTON_WIDTH, BUTTON_HEIGHT, Pixmap.Format.RGBA8888);
-
-        //draw border
-        pixmap.setColor(Color.BLACK);
-        pixmap.fillRectangle(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT);
-
-        //draw button background, basically this is just recolour but smaller size to show this is background.
-        pixmap.setColor(Color.LIGHT_GRAY);
-        pixmap.fillRectangle(2,2, BUTTON_WIDTH - 4, BUTTON_HEIGHT - 4);
-
-        TextureRegionDrawable buttonBackground = new TextureRegionDrawable(
-            new TextureRegion(
-                new Texture(pixmap)
-            )
-        );
-        skin.add("button-bg", buttonBackground, Drawable.class);
-
-
-
-        //hover pixmap
-        Pixmap hoverPixmap = new Pixmap(BUTTON_WIDTH, BUTTON_HEIGHT, Pixmap.Format.RGBA8888);
-        hoverPixmap.setColor(Color.BLACK);
-        hoverPixmap.fillRectangle(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT);
-
-        hoverPixmap.setColor(Color.DARK_GRAY);
-        hoverPixmap.fillRectangle(2,2, BUTTON_WIDTH - 4, BUTTON_HEIGHT - 4);
-
-        TextureRegionDrawable hoverBackground = new TextureRegionDrawable(
-            new TextureRegion(
-                new Texture(hoverPixmap)
-            )
-        );
-        skin.add("button-hover-bg", hoverBackground, Drawable.class);
-
-
-
-
-
-        //setup font
-        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
-        buttonStyle.font = uiFont.getFont();
-        buttonStyle.up = skin.getDrawable("button-bg"); // default
-        buttonStyle.over = skin.getDrawable("button-hover-bg"); //hover effect
-        buttonStyle.down = skin.getDrawable("button-bg");
-
-        skin.add("button-style", buttonStyle);
-
-        pixmap.dispose();
-        hoverPixmap.dispose();
-
-        createButton();
-    }
-
-    private void createButton() {
-        //create button
-        float horizontalPadding = 20f;
-        TextButton backButton = new TextButton("Return to main menu", skin, "button-style");
-        backButton.pack();
-        backButton.setSize(backButton.getWidth() + horizontalPadding, backButton.getHeight());
-        backButton.setPosition((WINDOW_WIDTH - backButton.getWidth()) / 2, (WINDOW_HEIGHT - backButton.getHeight()) / 2);
-
+    private void createReturnButton() {
+       TextButton backButton = buttonFactory.createDefaultButton(
+           "Return to main menu",
+           WINDOW_WIDTH,
+           WINDOW_HEIGHT
+       );
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -139,8 +79,20 @@ public class ResultScreen implements Screen {
             }
         });
 
+        //add custom button here check
+        buttonFactory.createCustomButton("modernista", Color.BLUE, Color.BROWN, "hovered-modernista", Color.CHARTREUSE);
+        TextButton exitButton = buttonFactory.createNewButton(
+            "Test button",
+            "modernista",
+            WINDOW_HEIGHT/2,
+            WINDOW_HEIGHT/2
+
+        );
+
         stage.addActor(backButton);
+        stage.addActor(exitButton);
     }
+
 
     @Override
     public void render(float delta) {
