@@ -11,14 +11,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import static io.github.eco_warrior.constant.ConstantsVar.BUTTON_HEIGHT;
 import static io.github.eco_warrior.constant.ConstantsVar.BUTTON_WIDTH;
 
-public class ButtonFactory {
+public class buttonGenerator {
 
     private Stage stage;
     private Skin skin;
     private fontGenerator fontGen;
     private float horizontalPadding = 20f;
 
-    public ButtonFactory() {
+    public buttonGenerator() {
         fontGen = new fontGenerator();
         skin = new Skin();
         //get font from font Generator

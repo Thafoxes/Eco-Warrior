@@ -54,7 +54,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
     //score
     private int score = 0;
-    private float timerSeconds = 3f;
+    private float timerSeconds = 60f;
     private boolean timerEnded = false;
 
     //Sprites
@@ -80,7 +80,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     private Vector2 lastTouchPos;
     private Vector2 currentTouchPos;
     private boolean isReturning = false;
-    private static int winningScore = 30;
+    private static int winningScore = 20;
 
     //all bins
     private Map<String, WasteBin> bins = new HashMap<>();
@@ -382,7 +382,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         batch.end();
 
         //debugging draw green line
-        debugSprite();
+//        debugSprite();
 
         scoreFont.fontDraw(uiBatch, "Score: " + score , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.LEFT, textEnum.TOP);
         timerFont.fontDraw(uiBatch, displayTimer(timerSeconds) , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.RIGHT , textEnum.TOP);

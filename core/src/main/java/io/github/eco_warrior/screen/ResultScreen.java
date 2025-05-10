@@ -13,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.Main;
-import io.github.eco_warrior.controller.ButtonFactory;
+import io.github.eco_warrior.controller.buttonGenerator;
 import io.github.eco_warrior.controller.fontGenerator;
 import io.github.eco_warrior.enums.textEnum;
 
@@ -35,19 +35,19 @@ public class ResultScreen implements Screen {
     private Stage stage;
     private Skin skin;
 
-    private ButtonFactory buttonFactory;
+    private buttonGenerator buttonGenerator;
 
 
-    public ResultScreen(Main game, int score, ButtonFactory buttonFactory) {
+    public ResultScreen(Main game, int score, buttonGenerator buttonGenerator) {
         this.game = game;
         this.score = score;
-        this.buttonFactory = buttonFactory;
+        this.buttonGenerator = buttonGenerator;
     }
 
     public ResultScreen(Main game, int score) {
         this.game = game;
         this.score = score;
-        buttonFactory = game.getButtonFactory();
+        buttonGenerator = game.getButtonFactory();
     }
 
     @Override
@@ -65,7 +65,7 @@ public class ResultScreen implements Screen {
     }
 
     private void createReturnButton() {
-       TextButton backButton = buttonFactory.createDefaultButton(
+       TextButton backButton = buttonGenerator.createDefaultButton(
            "Return to main menu",
            WINDOW_WIDTH,
            WINDOW_HEIGHT
