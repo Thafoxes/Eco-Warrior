@@ -33,7 +33,6 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     private OrthographicCamera camera;
     private OrthogonalTiledMapRenderer maprenderer;
     private Viewport viewport;
-    private Animation<TextureRegion> conveyorAnimation;
 
     private SpriteBatch batch;
 
@@ -54,13 +53,13 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
     //Sprites
     private List<gameSprite> recyclables = new ArrayList<>();
-    private final Class<?>[] recyclableClasses = new Class[] {
+    private final Class<? extends gameSprite>[] recyclableClasses = new Class[] {
         PlasticBottle.class,
         Newspaper.class,
         TinCans.class,
         TrashPile.class,
     };
-    private gameSprite draggingItem = null;
+    private TrashPile draggingItem = null;
 
     //recyclable spawn pos
     private float startX = WINDOW_WIDTH +  50f;
@@ -68,7 +67,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
     //spawn time
     private float spawnTimer = 0f;
-    private float spawnInterval = 1f; //every ?? secs
+    private float spawnInterval = 2f; //every ?? secs
 
     //input section
     private boolean isDragging = false;
@@ -77,7 +76,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     private boolean isReturning = false;
 
     //all bins
-    private Map<String, gameSprite> bins = new HashMap<>();
+    private Map<String, WasteBin> bins = new HashMap<>();
 
     //debug method
     private ShapeRenderer shapeRenderer;
@@ -114,10 +113,15 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     }
 
     private void initAllBins() {
-        bins.put("paper", new BlueBin(new Vector2(WINDOW_WIDTH / 5f , WINDOW_HEIGHT / 2)));
-        bins.put("can" , new CanBin(new Vector2(WINDOW_WIDTH * 2 / 5f , WINDOW_HEIGHT / 2)));
-        bins.put("plastic" , new PlasticBin(new Vector2(WINDOW_WIDTH * 3 / 5f , WINDOW_HEIGHT / 2)));
-        bins.put("general waste", new WasteBin(new Vector2(WINDOW_WIDTH * 4 / 5f , WINDOW_HEIGHT / 2)));
+        int totalBins = 4;
+        float spacing = WINDOW_WIDTH / (totalBins + 1);
+
+        float binWidth = new BlueBin(new Vector2(0,0)).getMidX();
+
+        bins.put("paper", new BlueBin(new Vector2(spacing - binWidth , WINDOW_HEIGHT / 2)));
+        bins.put("can" , new CanBin(new Vector2(spacing * 2 - binWidth , WINDOW_HEIGHT / 2)));
+        bins.put("plastic" , new PlasticBin(new Vector2(spacing * 3 - binWidth, WINDOW_HEIGHT / 2)));
+        bins.put("general waste", new WasteBin(new Vector2(spacing * 4 - binWidth , WINDOW_HEIGHT / 2)));
     }
 
     private void loadingConveyorAnimation() {
@@ -191,7 +195,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
             if(Gdx.input.justTouched()){
                 for(gameSprite item : recyclables){
                     if(item.getCollisionRect().contains(currentTouchPos)){
-                        draggingItem = item;
+                        draggingItem = (TrashPile) item;
                         isDragging = true;
                         lastTouchPos.set(currentTouchPos);
                         break;
@@ -250,9 +254,18 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         isReturning = true;
         if(draggingItem != null){
             //if the sprite hits the bin
-            for(gameSprite bin: bins.values()){
+            for(WasteBin bin: bins.values()){
                 if(draggingItem.getCollisionRect().overlaps(bin.getCollisionRect())){
-                    bin.playCorrectSound();
+                    //check if the draggingItem is place into the right bin
+                    System.out.println(draggingItem.getCategoryPile());
+                    if(bin.isCorrectCategory(draggingItem.getCategoryPile())){
+
+                        bin.playCorrectSound();
+
+                    }else{
+                        bin.playWrongSound();
+                    }
+
                     recyclables.remove(draggingItem);
                     draggingItem = null;
                     break;

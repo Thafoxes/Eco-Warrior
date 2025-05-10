@@ -27,5 +27,16 @@ public class CanBin extends WasteBin {
             );
     }
 
+    @Override
+    public boolean isCorrectCategory(ERecycleMap categoryPile){
+        for(ERecycleMap m : acceptingMaterial){
+            if(m.equals(categoryPile)){
+                return true;
+            }else{
+                return false;
+            }
+        }
+        return false;
 
+    }
 }

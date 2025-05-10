@@ -1,5 +1,6 @@
 package io.github.eco_warrior.sprite;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.enums.ERecycleMap;
@@ -33,6 +34,11 @@ public class TrashPile extends gameSprite {
     public void update(float delta){
         getSprite().setX( getSprite().getX() - speed * delta);
         getCollisionRect().setX(getSprite().getX() );
+    }
+
+
+    public ERecycleMap getCategoryPile() {
+        return categoryPile;
     }
 
 

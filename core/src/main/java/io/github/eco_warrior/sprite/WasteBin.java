@@ -71,4 +71,13 @@ public class WasteBin extends gameSprite {
     }
 
 
+    public boolean isCorrectCategory(ERecycleMap categoryPile){
+        if(acceptingMaterial.equals(categoryPile)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
 }

@@ -22,5 +22,12 @@ public class BlueBin extends WasteBin {
     }
 
 
-
+    @Override
+    public boolean isCorrectCategory(ERecycleMap categoryPile){
+        if(acceptingMaterial.equals(categoryPile)){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
