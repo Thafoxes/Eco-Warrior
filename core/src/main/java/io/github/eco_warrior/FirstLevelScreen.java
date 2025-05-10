@@ -19,6 +19,7 @@ import io.github.eco_warrior.entity.ConveyorBelt;
 import io.github.eco_warrior.entity.LevelMaker;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.enums.textEnum;
+import io.github.eco_warrior.screen.ResultScreen;
 import io.github.eco_warrior.sprite.*;
 
 import java.util.*;
@@ -29,6 +30,11 @@ import static io.github.eco_warrior.constant.ConstantsVar.*;
 /** First screen of the application. Displayed after the application is created. */
 public class FirstLevelScreen extends LevelMaker implements Screen {
 
+    private Main game;
+
+    public FirstLevelScreen(Main game) {
+        this.game = game;
+    }
     private TiledMap map;
     private OrthographicCamera camera;
     private OrthogonalTiledMapRenderer maprenderer;
@@ -48,7 +54,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
     //score
     private int score = 0;
-    private float timerSeconds = 60f;
+    private float timerSeconds = 3f;
     private boolean timerEnded = false;
 
     //Sprites
@@ -67,13 +73,14 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
     //spawn time
     private float spawnTimer = 0f;
-    private float spawnInterval = 2f; //every ?? secs
+    private float spawnInterval = 1.5f; //every ?? secs
 
     //input section
     private boolean isDragging = false;
     private Vector2 lastTouchPos;
     private Vector2 currentTouchPos;
     private boolean isReturning = false;
+    private static int winningScore = 30;
 
     //all bins
     private Map<String, WasteBin> bins = new HashMap<>();
@@ -150,9 +157,20 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         draw();
         countdownTimer();
         input();
+        controller();
 
 
     }
+
+    private void controller() {
+        if(score >= winningScore || timerEnded) {
+            //show wins
+            game.setScreen(new ResultScreen(game, score, timerSeconds <= 0));
+            conveyorBelt.stopAnimation();
+
+        }
+    }
+
 
     private void timerCount(float delta) {
         spawnTimer += delta;
@@ -257,13 +275,13 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
             for(WasteBin bin: bins.values()){
                 if(draggingItem.getCollisionRect().overlaps(bin.getCollisionRect())){
                     //check if the draggingItem is place into the right bin
-                    System.out.println(draggingItem.getCategoryPile());
+//                    System.out.println(draggingItem.getCategoryPile());
                     if(bin.isCorrectCategory(draggingItem.getCategoryPile())){
 
-                        bin.playCorrectSound();
+                        playCorrectAction(bin);
 
                     }else{
-                        bin.playWrongSound();
+                        playWrongAction(bin);
                     }
 
                     recyclables.remove(draggingItem);
@@ -272,6 +290,17 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
                 }
             }
         }
+    }
+
+    private void playWrongAction(WasteBin bin) {
+        bin.playWrongSound();
+        if(score > 0) score--;
+
+    }
+
+    private void playCorrectAction(WasteBin bin) {
+        bin.playCorrectSound();
+        score++;
     }
 
     private void returnOriginalPosition() {
@@ -303,7 +332,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
             timerSeconds -= Gdx.graphics.getDeltaTime();
             if (timerSeconds <= 0) {
                 //do something here
-                isFinished();
+                timerEnded = true;
             }
         }
     }
@@ -323,11 +352,10 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         for(gameSprite bin: bins.values()){
             bin.update(stateTime);
         }
-//        wasteBin.update(stateTime);
-//        trashPile.update(stateTime);
-        conveyorBelt.update(stateTime);
-        Iterator<gameSprite> iterator = recyclables.iterator();
 
+
+
+        conveyorBelt.update(stateTime);
 
         batch.begin();
 
@@ -336,11 +364,10 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         for(gameSprite bin: bins.values()){
             bin.draw(batch);
         }
-//        wasteBin.draw(batch);
 
         conveyorBelt.draw(batch);
 
-        //draw recycables loop
+        //draw recyclables loop
         for(gameSprite item: recyclables){
             item.update(stateTime);
             item.draw(batch);
@@ -354,6 +381,14 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
         batch.end();
 
+        //debugging draw green line
+        debugSprite();
+
+        scoreFont.fontDraw(uiBatch, "Score: " + score , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.LEFT, textEnum.TOP);
+        timerFont.fontDraw(uiBatch, displayTimer(timerSeconds) , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.RIGHT , textEnum.TOP);
+    }
+
+    private void debugSprite() {
         //debug mode start
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -368,12 +403,9 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         for(gameSprite bin: bins.values()){
             bin.drawDebug(shapeRenderer);
         }
-//        wasteBin.drawDebug(shapeRenderer);
+
 
         shapeRenderer.end();
-
-        scoreFont.fontDraw(uiBatch, "Score: " + score , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.LEFT, textEnum.TOP);
-        timerFont.fontDraw(uiBatch, displayTimer(timerSeconds) , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.RIGHT , textEnum.TOP);
     }
 
 
@@ -408,11 +440,12 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         conveyorBelt.dispose();
         scoreFont.dispose();
         timerFont.dispose();
-//        wasteBin.dispose();
-//        trashPile.dispose();
         //disposing bins
         for(gameSprite bin: bins.values()){
             bin.dispose();
+        }
+        for(gameSprite item: recyclables){
+            item.dispose();
         }
     }
 

@@ -12,6 +12,8 @@ public class ConveyorBelt {
     private float stateTime;
     private final float scale;
     private final float y;
+    private boolean isAnimating = true;
+
 
     public ConveyorBelt(String atlasPath, float scale, float yOffset, Viewport viewport) {
         this.scale = scale; //place here just in case I need to use it
@@ -35,7 +37,10 @@ public class ConveyorBelt {
     }
 
     public void update(float delta) {
-        stateTime += delta;
+        if(isAnimating){
+            stateTime += delta;
+
+        }
     }
 
     public void draw(SpriteBatch batch) {
@@ -45,6 +50,14 @@ public class ConveyorBelt {
             sprite.flip(true, false); // Flip the conveyor
             sprite.draw(batch);
         }
+    }
+
+    public void stopAnimation() {
+        isAnimating = false;
+    }
+
+    public void startAnimation() {
+        isAnimating = true;
     }
 
     public void dispose() {
