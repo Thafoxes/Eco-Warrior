@@ -114,7 +114,8 @@ public class ResultScreen implements Screen {
             stage.act(delta);
             stage.draw();
 
-            uiFont.fontDraw(uiBatch, "Your score is " + score + "\n", camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.X_CENTER, textEnum.Y_MIDDLE);
+            uiFont.fontDraw(uiBatch, "Challenge completed! ", camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.X_CENTER, textEnum.Y_MIDDLE);
+            uiFont.fontDraw(uiBatch, "Your score is " + score + "\n", camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT + 20f - 10f), textEnum.X_CENTER, textEnum.Y_MIDDLE);
 
         }catch (Exception e){
             e.printStackTrace();
