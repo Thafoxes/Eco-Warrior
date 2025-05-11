@@ -9,7 +9,7 @@ public class Main extends Game {
     @Override
     public void create() {
         buttonGenerator = new buttonGenerator();
-        setScreen(new FirstLevelScreen(this));
+        setScreen(new LevelTwoScreen(this));
     }
 
     public buttonGenerator getButtonFactory() {
