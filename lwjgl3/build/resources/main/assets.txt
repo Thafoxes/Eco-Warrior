@@ -5,6 +5,7 @@ fonts/Square One.ttf
 fonts/TT Octosquares Trial Medium.ttf
 fonts/cubic.ttf
 maps/recycle_center_map.tmx
+maps/soil_map.tmx
 sound_effects/correct.mp3
 sound_effects/happy_wheels_victory.mp3
 sound_effects/hitting_bin.mp3
@@ -14,9 +15,13 @@ sprite/bins/bins.png
 sprite/recyclables/recyclables.atlas
 sprite/recyclables/recyclables.png
 textures/floor.png
+textures/garden_texture.png
 textures/orange_wall.png
+textures/soil_texture.png
+tilesets/garden_tile.tsx
 tilesets/orange_wall.tsx
 tilesets/recycle_floor.tsx
+tilesets/soil.tsx
 ui/font-list.fnt
 ui/font-subtitle.fnt
 ui/font-window.fnt
