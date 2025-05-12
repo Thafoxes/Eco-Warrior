@@ -1,0 +1,61 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "water map.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "Pipes.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        },
+        "industrial_tiles.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 2
+        },
+        "industrial_tiles_test.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        },
+        "water map.tmx": {
+            "scale": 2,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 160.5,
+                "y": 46.5
+            }
+        },
+        "water_pipe.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.imagePath": "D:/github_project/Eco-Warrior/external data and info/design and sprite/level water map",
+    "map.height": 6,
+    "map.lastUsedFormat": "tmx",
+    "map.width": 10,
+    "openFiles": [
+        "industrial_tiles.tsx",
+        "Pipes.tsx",
+        "water map.tmx"
+    ],
+    "project": "water_map.tiled-project",
+    "recentFiles": [
+        "industrial_tiles.tsx",
+        "Pipes.tsx",
+        "water map.tmx",
+        "water_pipe.tsx",
+        "industrial_tiles_test.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.margin": 0,
+    "tileset.spacing": 0
+}

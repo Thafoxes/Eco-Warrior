@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="10" height="6" tilewidth="32" tileheight="32" infinite="0" nextlayerid="2" nextobjectid="1">
+ <tileset firstgid="1" source="../tilesets/industrial_tiles.tsx"/>
+ <tileset firstgid="129" source="../tilesets/Pipes.tsx"/>
+ <layer id="1" name="Tile Layer 1" width="10" height="6">
+  <data encoding="csv">
+129,81,144,81,81,81,81,81,81,81,
+132,130,130,130,130,130,130,130,134,84,
+178,175,144,175,175,175,175,175,132,130,
+176,84,147,145,145,145,145,145,145,145,
+36,36,36,36,36,36,36,36,36,36,
+12,12,12,12,12,12,12,12,12,12
+</data>
+ </layer>
+</map>
