@@ -7,8 +7,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import io.github.eco_warrior.entity.tool;
+import io.github.eco_warrior.sprite.DuctTape;
+import io.github.eco_warrior.sprite.WaterSpray;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.badlogic.gdx.Gdx.gl;
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_HEIGHT;
@@ -32,6 +39,9 @@ public class LevelThreeScreen implements Screen {
     //delta time
     private float stateTime;
 
+    //tools
+    private Map<String, tool> tools = new HashMap<>();
+
 
     public LevelThreeScreen(Main main) {
         this.game = main;
@@ -50,6 +60,20 @@ public class LevelThreeScreen implements Screen {
         camera.update();
 
         loadMap();
+        initializeTools();
+    }
+
+    private void initializeTools() {
+        int toolCount = 4;
+        float spacing = WINDOW_WIDTH / (toolCount + 1);
+        float toolScale = 5f;
+
+        float toolWidth = new DuctTape(new Vector2(0, 0), toolScale).getSprite().getWidth();
+        tools.put("duct_tape", new DuctTape(new Vector2(spacing - toolWidth, WINDOW_HEIGHT/10), toolScale));
+        tools.put("water_spray", new WaterSpray(new Vector2(spacing * 2 - toolWidth, WINDOW_HEIGHT/10), toolScale));
+        tools.put("cutter", new DuctTape(new Vector2(spacing * 3 - toolWidth, WINDOW_HEIGHT/10), toolScale));
+        tools.put("asda", new DuctTape(new Vector2(spacing * 4 - toolWidth, WINDOW_HEIGHT/10), toolScale));
+
     }
 
     private void loadMap(){
@@ -71,6 +95,15 @@ public class LevelThreeScreen implements Screen {
 
         maprenderer.setView(camera);
         maprenderer.render();
+
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+
+        //display tools
+        for (tool tool : tools.values()) {
+            tool.draw(batch);
+        }
+        batch.end();
     }
 
     @Override
@@ -99,5 +132,8 @@ public class LevelThreeScreen implements Screen {
         batch.dispose();
         maprenderer.dispose();
         map.dispose();
+        for (tool tool : tools.values()) {
+            tool.dispose();
+        }
     }
 }

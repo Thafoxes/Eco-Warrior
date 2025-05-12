@@ -1,6 +1,8 @@
 .gitkeep
 atlas/conveyor/conveyor.atlas
 atlas/conveyor/conveyor.png
+atlas/tools/tools.atlas
+atlas/tools/tools.png
 fonts/Square One.ttf
 fonts/TT Octosquares Trial Medium.ttf
 fonts/cubic.ttf

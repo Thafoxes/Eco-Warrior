@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-public class gameSprite extends AbsBin {
+public class gameSprite extends spriteGenerator {
     private Sprite sprite;
     private Rectangle collisionRect;
     private Sound correctSoundFX;
@@ -66,6 +66,10 @@ public class gameSprite extends AbsBin {
         this(atlasPath, regionName, position, scale, null, null, null);
     }
 
+    public gameSprite(String atlasPath, String regionName, Vector2 position, float scale, String correctSoundPath) {
+        this(atlasPath, regionName, position, scale, correctSoundPath, null, null);
+    }
+
     public void drawDebug(ShapeRenderer shapeRenderer) {
         if (collisionRect != null) {
             shapeRenderer.setColor(Color.GREEN);
@@ -82,6 +86,10 @@ public class gameSprite extends AbsBin {
         this.sprite.setPosition(this.collisionRect.x, this.collisionRect.y);
     }
 
+    /**
+     * Normal draw, if you want animation you have to custom design it yourself. Refer to WasteBin.java
+     * @param batch
+     */
     public void draw(SpriteBatch batch){
         this.sprite.draw(batch);
     }
