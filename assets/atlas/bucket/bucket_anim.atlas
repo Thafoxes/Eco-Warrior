@@ -1,0 +1,12 @@
+bucket_anim.png
+size:104,36
+repeat:none
+bucket
+index:4
+bounds:2,2,32,32
+bucket
+index:3
+bounds:36,2,32,32
+bucket
+index:2
+bounds:70,2,32,32

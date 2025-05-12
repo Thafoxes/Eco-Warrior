@@ -11,8 +11,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.entity.tool;
-import io.github.eco_warrior.sprite.DuctTape;
-import io.github.eco_warrior.sprite.WaterSpray;
+import io.github.eco_warrior.sprite.tools.DuctTape;
+import io.github.eco_warrior.sprite.tools.PipeWrench;
+import io.github.eco_warrior.sprite.tools.WaterSpray;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -71,7 +72,7 @@ public class LevelThreeScreen implements Screen {
         float toolWidth = new DuctTape(new Vector2(0, 0), toolScale).getSprite().getWidth();
         tools.put("duct_tape", new DuctTape(new Vector2(spacing - toolWidth, WINDOW_HEIGHT/10), toolScale));
         tools.put("water_spray", new WaterSpray(new Vector2(spacing * 2 - toolWidth, WINDOW_HEIGHT/10), toolScale));
-        tools.put("cutter", new DuctTape(new Vector2(spacing * 3 - toolWidth, WINDOW_HEIGHT/10), toolScale));
+        tools.put("pipe_wrench", new PipeWrench(new Vector2(spacing * 3 - toolWidth, WINDOW_HEIGHT/10), toolScale));
         tools.put("asda", new DuctTape(new Vector2(spacing * 4 - toolWidth, WINDOW_HEIGHT/10), toolScale));
 
     }

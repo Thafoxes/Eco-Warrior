@@ -1,14 +1,14 @@
-package io.github.eco_warrior.sprite;
+package io.github.eco_warrior.sprite.tools;
 
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.entity.tool;
 
-public class DuctTape extends tool {
+public class WaterSpray extends tool {
 
-    public DuctTape(Vector2 position, float scale) {
+    public WaterSpray(Vector2 position, float scale) {
         super(
             "atlas/tools/tools.atlas",
-            "duct_tape",
+            "water_spray_x33",
             position,
             scale,
             null);

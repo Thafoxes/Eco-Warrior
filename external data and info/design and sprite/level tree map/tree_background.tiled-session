@@ -3,11 +3,25 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "D:/github_project/Eco-Warrior/assets/maps/water_map.tmx",
     "expandedProjectPaths": [
         "."
     ],
     "fileStates": {
+        "D:/github_project/Eco-Warrior/assets/maps/water_map.tmx": {
+            "scale": 1.5318749999999999,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 297.34802121583033,
+                "y": 134.14932680538556
+            }
+        },
+        "D:/github_project/Eco-Warrior/assets/tilesets/Pipes.tsx": {
+            "scaleInDock": 1
+        },
+        "D:/github_project/Eco-Warrior/assets/tilesets/industrial_tiles.tsx": {
+            "scaleInDock": 1
+        },
         "level_2_map_v2.tmx": {
             "scale": 2.7787499999999996,
             "selectedLayer": 0,
@@ -31,9 +45,11 @@
     "map.lastUsedFormat": "tmx",
     "map.width": 10,
     "openFiles": [
+        "D:/github_project/Eco-Warrior/assets/maps/water_map.tmx"
     ],
     "project": "tree_background.tiled-project",
     "recentFiles": [
+        "D:/github_project/Eco-Warrior/assets/maps/water_map.tmx",
         "water_and_island_tiles_v2.tsx",
         "trees.tsx",
         "level_2_map_v2.tmx"
