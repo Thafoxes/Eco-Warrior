@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
 public class gameSprite extends spriteGenerator {
     private Sprite sprite;
@@ -23,6 +24,9 @@ public class gameSprite extends spriteGenerator {
 
     //debug mthod
     private ShapeRenderer shapeRenderer;
+
+    //for manual frame
+    private int frameCount;
 
 
     public gameSprite(String atlasPath, String regionName, Vector2 position, float scale , String correctSoundPath, String wrongSoundPath, String hittingSoundPath) {
@@ -55,6 +59,36 @@ public class gameSprite extends spriteGenerator {
         shapeRenderer = new ShapeRenderer();
     }
 
+    /**manual animation sprite design
+     *
+     * @param atlasPath
+     * @param regionBaseName
+     * @param frameCount
+     * @param position
+     * @param scale
+     */
+    public gameSprite(String atlasPath, String regionBaseName, int frameCount, Vector2 position, float scale) {
+
+        this.frameCount = frameCount;
+        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal(atlasPath));
+        Array<TextureAtlas.AtlasRegion> regions = atlas.findRegions(regionBaseName);
+        if(regions == null || regions.size < frameCount){
+            throw new NullPointerException("Not enough regions found for " + regionBaseName);
+        }
+
+        frames = new TextureRegion[frameCount];
+        for (int i = 0; i < frameCount; i++) {
+            frames[i] = regions.get(i);
+        }
+
+        currentFrameIndex = 0;
+        sprite = new Sprite(frames[currentFrameIndex]);
+        sprite.setSize(sprite.getWidth() * scale, sprite.getHeight() * scale);
+        sprite.setPosition(position.x, position.y);
+
+        collisionRect = new Rectangle(position.x, position.y, sprite.getWidth(), sprite.getHeight());
+    }
+
     public gameSprite(String atlasPath, String regionName, Vector2 position , String correctSoundPath, String wrongSoundPath) {
        this(atlasPath, regionName, position, 1f, correctSoundPath, wrongSoundPath, null);
     }
@@ -82,7 +116,47 @@ public class gameSprite extends spriteGenerator {
         }
     }
 
+    /**
+     for manual frame change index
+     *
+     */
+    public void setFrame(int index){
+        if (index >= 0 && index < frames.length) {
+            currentFrameIndex = index;
+            sprite.setRegion(frames[index]);
+        }
+    }
+
+    /**
+     * reset the frame back to 0
+     */
+    public void resetFrame(){
+        currentFrameIndex = 0;
+        sprite.setRegion(frames[currentFrameIndex]);
+    }
+
+    /**
+     * for manual frame get index
+     *
+     */
+    public int getCurrentFrame() {
+        return currentFrameIndex;
+    }
+
+    public int getFrameCount() {
+        return frames.length;
+    }
+
+    /**
+     *  for manual frame shift to next frame.
+     */
+    public void nextFrame(){
+        currentFrameIndex = ++currentFrameIndex % frameCount;
+        sprite.setRegion(frames[currentFrameIndex]);
+    }
+
     public void update(float delta){
+
         this.sprite.setPosition(this.collisionRect.x, this.collisionRect.y);
     }
 

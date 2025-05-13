@@ -10,9 +10,10 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import io.github.eco_warrior.entity.tool;
+import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.sprite.tools.DuctTape;
 import io.github.eco_warrior.sprite.tools.PipeWrench;
+import io.github.eco_warrior.sprite.tools.WaterBucket;
 import io.github.eco_warrior.sprite.tools.WaterSpray;
 
 import java.util.HashMap;
@@ -21,6 +22,10 @@ import java.util.Map;
 import static com.badlogic.gdx.Gdx.gl;
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_HEIGHT;
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_WIDTH;
+
+enum BucketState {
+    EMPTY, HALF_FULL, FULL
+}
 
 public class LevelThreeScreen implements Screen {
 
@@ -41,7 +46,8 @@ public class LevelThreeScreen implements Screen {
     private float stateTime;
 
     //tools
-    private Map<String, tool> tools = new HashMap<>();
+    private Map<String, gameSprite> tools = new HashMap<>();
+    private BucketState bucketState;
 
 
     public LevelThreeScreen(Main main) {
@@ -62,6 +68,13 @@ public class LevelThreeScreen implements Screen {
 
         loadMap();
         initializeTools();
+        initializeCrack();
+
+
+    }
+
+    private void initializeCrack() {
+
     }
 
     private void initializeTools() {
@@ -70,13 +83,35 @@ public class LevelThreeScreen implements Screen {
         float toolScale = 5f;
 
         float toolWidth = new DuctTape(new Vector2(0, 0), toolScale).getSprite().getWidth();
-        tools.put("duct_tape", new DuctTape(new Vector2(spacing - toolWidth, WINDOW_HEIGHT/10), toolScale));
-        tools.put("water_spray", new WaterSpray(new Vector2(spacing * 2 - toolWidth, WINDOW_HEIGHT/10), toolScale));
-        tools.put("pipe_wrench", new PipeWrench(new Vector2(spacing * 3 - toolWidth, WINDOW_HEIGHT/10), toolScale));
-        tools.put("asda", new DuctTape(new Vector2(spacing * 4 - toolWidth, WINDOW_HEIGHT/10), toolScale));
+
+        tools.put("water_bucket", new WaterBucket(new Vector2(spacing - toolWidth/2, WINDOW_HEIGHT/10), toolScale));
+        tools.put("water_spray", new WaterSpray(new Vector2(spacing * 2 - toolWidth/2, WINDOW_HEIGHT/10), toolScale));
+        tools.put("pipe_wrench", new PipeWrench(new Vector2(spacing * 3 - toolWidth/2, WINDOW_HEIGHT/10), toolScale));
+        tools.put("duct_tape", new DuctTape(new Vector2(spacing * 4 - toolWidth /2, WINDOW_HEIGHT/10), toolScale));
 
     }
 
+    private void fillBucket(){
+
+        BucketState[] states = BucketState.values();
+        int nextOrdinal = bucketState.ordinal() + 1;
+        gameSprite waterBucket = tools.get("water_bucket");
+        if(waterBucket != null){
+            throw new RuntimeException();
+        }
+        if(nextOrdinal < states.length){
+            waterBucket.nextFrame();
+            bucketState = states[nextOrdinal];
+        }
+    }
+
+    private void resetBucket(){
+        gameSprite waterBucket = tools.get("water_bucket");
+        if(waterBucket != null){
+            waterBucket.resetFrame();
+            bucketState = bucketState.EMPTY;
+        }
+    }
     private void loadMap(){
         TmxMapLoader.Parameters parameters = new TmxMapLoader.Parameters();
         parameters.generateMipMaps = false;
@@ -101,7 +136,7 @@ public class LevelThreeScreen implements Screen {
         batch.begin();
 
         //display tools
-        for (tool tool : tools.values()) {
+        for (gameSprite tool : tools.values()) {
             tool.draw(batch);
         }
         batch.end();
@@ -133,7 +168,7 @@ public class LevelThreeScreen implements Screen {
         batch.dispose();
         maprenderer.dispose();
         map.dispose();
-        for (tool tool : tools.values()) {
+        for (gameSprite tool : tools.values()) {
             tool.dispose();
         }
     }

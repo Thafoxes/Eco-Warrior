@@ -1,6 +1,10 @@
 .gitkeep
+atlas/bucket/bucket_anim.atlas
+atlas/bucket/bucket_anim.png
 atlas/conveyor/conveyor.atlas
 atlas/conveyor/conveyor.png
+atlas/crack/crackx64.atlas
+atlas/crack/crackx64.png
 atlas/tools/tools.atlas
 atlas/tools/tools.png
 fonts/Square One.ttf
