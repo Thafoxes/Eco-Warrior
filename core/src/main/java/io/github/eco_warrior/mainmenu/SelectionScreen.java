@@ -15,13 +15,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import io.github.eco_warrior.FirstLevelScreen;
 import io.github.eco_warrior.LevelThreeScreen;
+import io.github.eco_warrior.LevelTwoScreen;
 import io.github.eco_warrior.Main;
 
 import java.util.ArrayList;
 
 import static io.github.eco_warrior.constant.ConstantsVar.*;
 
-public class NextScreen implements Screen {
+public class SelectionScreen implements Screen {
     private Stage stage;
     private Texture[] frames;
     private float frameDuration = 0.1f; // Time per frame in seconds
@@ -34,7 +35,7 @@ public class NextScreen implements Screen {
 
     private Main game;
 
-    public NextScreen(Main game) {
+    public SelectionScreen(Main game) {
         this.game = game;
     }
 
@@ -103,7 +104,7 @@ public class NextScreen implements Screen {
         // Create buttons for levels
         buttons = new ArrayList<>();
         buttons.add(createLevelButton(buttonStyle, "Level 1", new FirstLevelScreen(game))); // Navigate to Level1Screen
-        buttons.add(createLevelButton(buttonStyle, "Level 2", new Level2Screen())); // Navigate to Level2Screen
+        buttons.add(createLevelButton(buttonStyle, "Level 2", new LevelTwoScreen(game))); // Navigate to Level2Screen
         buttons.add(createLevelButton(buttonStyle, "Level 3", new LevelThreeScreen(game))); // Navigate to Level3Screen
 
         for (TextButton button : buttons) {

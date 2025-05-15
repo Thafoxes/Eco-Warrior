@@ -1,6 +1,5 @@
 package io.github.eco_warrior.mainmenu;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
@@ -94,7 +93,7 @@ public class MainMenuScreen implements Screen {
             @Override
             public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
                 clickSound.play(SettingsManager.getInstance().getClickSoundVolume()); // Play click sound with saved volume
-                ((com.badlogic.gdx.Game) Gdx.app.getApplicationListener()).setScreen(new NextScreen(main));
+                ((com.badlogic.gdx.Game) Gdx.app.getApplicationListener()).setScreen(new SelectionScreen(main));
             }
         });
 
