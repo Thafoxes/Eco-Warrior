@@ -21,6 +21,7 @@ public class gameSprite extends spriteGenerator {
     private boolean soundPlayed = false;
     private String atlasPath;
     private float scale = 1f;
+    private Vector2 initPosition;
 
     //debug mthod
     private ShapeRenderer shapeRenderer;
@@ -44,6 +45,7 @@ public class gameSprite extends spriteGenerator {
         this.sprite.setSize(this.sprite.getWidth() * this.scale, this.sprite.getHeight() * this.scale);
         this.sprite.setPosition(position.x, position.y);
         this.collisionRect =  new Rectangle(position.x, position.y, sprite.getWidth(), sprite.getHeight());
+        this.initPosition = position;
 
         if(correctSoundPath != null){
             this.correctSoundFX = Gdx.audio.newSound(Gdx.files.internal(correctSoundPath));
@@ -76,15 +78,16 @@ public class gameSprite extends spriteGenerator {
             throw new NullPointerException("Not enough regions found for " + regionBaseName);
         }
 
-        frames = new TextureRegion[frameCount];
+        this.frames = new TextureRegion[frameCount];
         for (int i = 0; i < frameCount; i++) {
             frames[i] = regions.get(i);
         }
 
-        currentFrameIndex = 0;
-        sprite = new Sprite(frames[currentFrameIndex]);
-        sprite.setSize(sprite.getWidth() * scale, sprite.getHeight() * scale);
-        sprite.setPosition(position.x, position.y);
+        this.currentFrameIndex = 0;
+        this.sprite = new Sprite(frames[currentFrameIndex]);
+        this.sprite.setSize(sprite.getWidth() * scale, sprite.getHeight() * scale);
+        this.sprite.setPosition(position.x, position.y);
+        this.initPosition = position;
 
         collisionRect = new Rectangle(position.x, position.y, sprite.getWidth(), sprite.getHeight());
     }
@@ -179,6 +182,10 @@ public class gameSprite extends spriteGenerator {
             return true;
         }
         return false;
+    }
+
+    public Vector2 getInitPosition(){
+        return this.initPosition;
     }
 
     public void playCorrectSound(){
