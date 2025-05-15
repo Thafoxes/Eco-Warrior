@@ -16,6 +16,7 @@ import io.github.eco_warrior.Main;
 import io.github.eco_warrior.controller.buttonGenerator;
 import io.github.eco_warrior.controller.fontGenerator;
 import io.github.eco_warrior.enums.textEnum;
+import io.github.eco_warrior.mainmenu.MainMenuScreen;
 
 import static io.github.eco_warrior.constant.ConstantsVar.*;
 
@@ -75,7 +76,8 @@ public class ResultScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
 //                game.setScreen();
                 //return back to main menu
-                System.out.println("back button clicked");
+                game.setScreen(new MainMenuScreen(game));
+//                System.out.println("back button clicked");
             }
         });
 
@@ -114,8 +116,8 @@ public class ResultScreen implements Screen {
             stage.act(delta);
             stage.draw();
 
-            uiFont.fontDraw(uiBatch, "Challenge completed! ", camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.X_CENTER, textEnum.Y_MIDDLE);
-            uiFont.fontDraw(uiBatch, "Your score is " + score + "\n", camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT + 20f - 10f), textEnum.X_CENTER, textEnum.Y_MIDDLE);
+            uiFont.fontDraw(uiBatch, "Challenge completed! ", camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT ), textEnum.X_CENTER, textEnum.TOP);
+            uiFont.fontDraw(uiBatch, "Your score is " + score + "\n", camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT ), textEnum.X_CENTER, textEnum.BOTTOM);
 
         }catch (Exception e){
             e.printStackTrace();

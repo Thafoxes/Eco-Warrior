@@ -54,7 +54,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
     //score
     private int score = 0;
-    private float timerSeconds = 60f;
+    private float timerSeconds = 30f;
     private boolean timerEnded = false;
 
     //Sprites
