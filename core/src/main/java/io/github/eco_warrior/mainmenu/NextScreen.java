@@ -13,8 +13,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import io.github.eco_warrior.FirstLevelScreen;
+import io.github.eco_warrior.LevelThreeScreen;
+import io.github.eco_warrior.Main;
 
 import java.util.ArrayList;
+
+import static io.github.eco_warrior.constant.ConstantsVar.*;
 
 public class NextScreen implements Screen {
     private Stage stage;
@@ -27,8 +32,15 @@ public class NextScreen implements Screen {
     private TextButton closeButton;
     private ArrayList<TextButton> buttons;
 
+    private Main game;
+
+    public NextScreen(Main game) {
+        this.game = game;
+    }
+
     @Override
     public void show() {
+
         stage = new Stage(new FitViewport(1280, 720));
         Gdx.input.setInputProcessor(stage);
 
@@ -37,24 +49,24 @@ public class NextScreen implements Screen {
 
         // Load the background textures
         frames = new Texture[]{
-            new Texture(Gdx.files.internal("frame_000_delay-0.08s.gif")),
-            new Texture(Gdx.files.internal("frame_001_delay-0.08s.gif")),
-            new Texture(Gdx.files.internal("frame_002_delay-0.08s.gif")),
-            new Texture(Gdx.files.internal("frame_003_delay-0.08s.gif")),
-            new Texture(Gdx.files.internal("frame_004_delay-0.08s.gif")),
-            new Texture(Gdx.files.internal("frame_005_delay-0.08s.gif")),
-            new Texture(Gdx.files.internal("frame_006_delay-0.08s.gif")),
-            new Texture(Gdx.files.internal("frame_007_delay-0.08s.gif")),
-            new Texture(Gdx.files.internal("frame_008_delay-0.08s.gif")),
-            new Texture(Gdx.files.internal("frame_009_delay-0.08s.gif"))
+            new Texture(Gdx.files.internal("Background_Image/frame_000_delay-0.08s.gif")),
+            new Texture(Gdx.files.internal("Background_Image/frame_001_delay-0.08s.gif")),
+            new Texture(Gdx.files.internal("Background_Image/frame_002_delay-0.08s.gif")),
+            new Texture(Gdx.files.internal("Background_Image/frame_003_delay-0.08s.gif")),
+            new Texture(Gdx.files.internal("Background_Image/frame_004_delay-0.08s.gif")),
+            new Texture(Gdx.files.internal("Background_Image/frame_005_delay-0.08s.gif")),
+            new Texture(Gdx.files.internal("Background_Image/frame_006_delay-0.08s.gif")),
+            new Texture(Gdx.files.internal("Background_Image/frame_007_delay-0.08s.gif")),
+            new Texture(Gdx.files.internal("Background_Image/frame_008_delay-0.08s.gif")),
+            new Texture(Gdx.files.internal("Background_Image/frame_009_delay-0.08s.gif"))
         };
         batch = new SpriteBatch();
 
         // Load the skin
-        Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+        Skin skin = new Skin(Gdx.files.internal(UI_SKIN_PATH));
 
         // Generate the custom font
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("cubic.ttf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT_TYPE));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 36;
         BitmapFont customFont = generator.generateFont(parameter);
@@ -74,7 +86,7 @@ public class NextScreen implements Screen {
         }
 
         // Load the click sound
-        clickSound = Gdx.audio.newSound(Gdx.files.internal("Button_Click.mp3"));
+        clickSound = Gdx.audio.newSound(Gdx.files.internal(BUTTON_CLICK_SFX));
 
         // Create the "<" button
         closeButton = new TextButton("<", buttonStyle);
@@ -83,16 +95,16 @@ public class NextScreen implements Screen {
             @Override
             public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
                 clickSound.play(SettingsManager.getInstance().getClickSoundVolume());
-                ((com.badlogic.gdx.Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen());
+                ((com.badlogic.gdx.Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
             }
         });
         stage.addActor(closeButton);
 
         // Create buttons for levels
         buttons = new ArrayList<>();
-        buttons.add(createLevelButton(buttonStyle, "Level 1", new Level1Screen())); // Navigate to Level1Screen
+        buttons.add(createLevelButton(buttonStyle, "Level 1", new FirstLevelScreen(game))); // Navigate to Level1Screen
         buttons.add(createLevelButton(buttonStyle, "Level 2", new Level2Screen())); // Navigate to Level2Screen
-        buttons.add(createLevelButton(buttonStyle, "Level 3", new Level3Screen())); // Navigate to Level3Screen
+        buttons.add(createLevelButton(buttonStyle, "Level 3", new LevelThreeScreen(game))); // Navigate to Level3Screen
 
         for (TextButton button : buttons) {
             stage.addActor(button);

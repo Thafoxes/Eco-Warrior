@@ -10,7 +10,7 @@ public class MusicManager {
 
     private MusicManager() {
         // Load the background music (only once)
-        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Menu.mp3"));
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Background_Music/Menu.mp3"));
         backgroundMusic.setLooping(true); // Make the music loop
         backgroundMusic.setVolume(musicVolume); // Set initial volume
     }

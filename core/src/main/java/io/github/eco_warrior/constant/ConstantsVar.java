@@ -7,4 +7,12 @@ public class ConstantsVar {
     public static final String WINDOW_TITLE = "Eco Warrior";
     public static final int BUTTON_WIDTH = 300;
     public static final int BUTTON_HEIGHT = 60;
+    public static final String FONT_TYPE = "fonts/cubic.ttf";
+    public static final String BUTTON_CLICK_SFX = "sound_effects/Button_Click.mp3";
+    public static final String SETTING_IMAGE_PATH =  "Background_Image/SettingPage.png";
+    public static final String UI_SKIN_PATH = "ui/uiskin.json";
+
+
+//    "Background_Image/SettingPage.png"
+//    "ui/uiskin.json"
 }

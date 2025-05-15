@@ -1,5 +1,4 @@
 .gitkeep
-Background_Image/Scary2.jpg
 Background_Image/SettingPage.png
 Background_Image/frame_000_delay-0.08s.gif
 Background_Image/frame_001_delay-0.08s.gif

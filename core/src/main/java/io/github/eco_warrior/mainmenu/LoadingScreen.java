@@ -16,7 +16,7 @@ public class LoadingScreen implements Screen {
     private float totalElapsedTime = 0; // Total time elapsed for the loading screen
     private int currentFrame = 0;
     private SpriteBatch batch;
-    private float maxLoadingTime = 5f; // Total time to display the loading screen
+    private float maxLoadingTime = 3f; // Total time to display the loading screen
     private Screen nextScreen; // The screen to navigate to after loading
 
     // Constructor to accept the target screen
@@ -31,10 +31,10 @@ public class LoadingScreen implements Screen {
 
         // Load the background texture
         frames = new Texture[]{
-            new Texture(Gdx.files.internal("frame_0_delay-0.22s.gif")),
-            new Texture(Gdx.files.internal("frame_1_delay-0.22s.gif")),
-            new Texture(Gdx.files.internal("frame_2_delay-0.22s.gif")),
-            new Texture(Gdx.files.internal("frame_3_delay-0.22s.gif")),
+            new Texture(Gdx.files.internal("Background_Image/frame_0_delay-0.22s.gif")),
+            new Texture(Gdx.files.internal("Background_Image/frame_1_delay-0.22s.gif")),
+            new Texture(Gdx.files.internal("Background_Image/frame_2_delay-0.22s.gif")),
+            new Texture(Gdx.files.internal("Background_Image/frame_3_delay-0.22s.gif")),
             // Add more frames as needed
         };
         batch = new SpriteBatch();

@@ -17,6 +17,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import io.github.eco_warrior.Main;
+
+import static io.github.eco_warrior.constant.ConstantsVar.*;
 
 public class SettingsScreen implements Screen {
     private SpriteBatch batch;
@@ -32,7 +35,10 @@ public class SettingsScreen implements Screen {
     private BitmapFont customFont; // Custom font generated using FreeType
     private Texture backgroundTexture; // Background image
 
-    public SettingsScreen() {
+    private Main game;
+
+    public SettingsScreen(Main game) {
+        this.game = game;
         batch = new SpriteBatch();
         stage = new Stage(new FitViewport(1280, 720));
         Gdx.input.setInputProcessor(stage);
@@ -41,16 +47,16 @@ public class SettingsScreen implements Screen {
         MusicManager.getInstance().playMusic();
 
         // Load the skin
-        Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+        Skin skin = new Skin(Gdx.files.internal(UI_SKIN_PATH));
 
         // Load the click sound
-        clickSound = Gdx.audio.newSound(Gdx.files.internal("Button_Click.mp3")); // Replace with your sound file
+        clickSound = Gdx.audio.newSound(Gdx.files.internal(BUTTON_CLICK_SFX)); // Replace with your sound file
 
         // Load the background image
-        backgroundTexture = new Texture(Gdx.files.internal("SettingPage.png")); // Replace with your image file
+        backgroundTexture = new Texture(Gdx.files.internal("Background_Image/SettingPage.png")); // Replace with your image file
 
         // Create a FreeType font generator
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("cubic.ttf")); // Replace with your .ttf file
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT_TYPE)); // Replace with your .ttf file
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 36; // Set the font size
         customFont = generator.generateFont(parameter);
@@ -100,7 +106,7 @@ public class SettingsScreen implements Screen {
             @Override
             public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
                 clickSound.play(SettingsManager.getInstance().getClickSoundVolume());
-                ((com.badlogic.gdx.Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen());
+                ((com.badlogic.gdx.Game) Gdx.app.getApplicationListener()).setScreen(new MainMenuScreen(game));
             }
         });
         stage.addActor(closeButton);
