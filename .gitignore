@@ -17,3 +17,7 @@ crash.log
 /external data and info/design and sprite/tools_icons
 assets/Background_Image/Scary2.jpg
 *.html
+*.uniqueId1
+/core/build/tmp
+/core/build/tmp
+*.bin
