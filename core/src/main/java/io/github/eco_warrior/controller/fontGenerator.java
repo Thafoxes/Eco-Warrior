@@ -52,7 +52,7 @@ public class fontGenerator {
             this.borderColor = borderColor;
         }
 
-        generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/cubic.ttf"));
+        generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Square One.ttf"));
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 
         parameter.size = size;

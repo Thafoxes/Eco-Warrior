@@ -39,6 +39,10 @@ atlas/crack/crackx64.atlas
 atlas/crack/crackx64.png
 atlas/tools/tools.atlas
 atlas/tools/tools.png
+atlas/water_meter/water_meter.atlas
+atlas/water_meter/water_meter.png
+atlas/water_resevior_funnel/water_resevoir.atlas
+atlas/water_resevior_funnel/water_resevoir.png
 effects/blue_explosion.atlas
 effects/blue_explosion.png
 effects/blue_explosion2.png

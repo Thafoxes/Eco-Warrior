@@ -18,7 +18,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.animation.WaterExplosion;
+import io.github.eco_warrior.controller.fontGenerator;
 import io.github.eco_warrior.entity.gameSprite;
+import io.github.eco_warrior.enums.textEnum;
 import io.github.eco_warrior.sprite.CrackSprite;
 import io.github.eco_warrior.sprite.Enemy.SpiderSprite;
 import io.github.eco_warrior.sprite.tools.DuctTape;
@@ -40,6 +42,8 @@ public class LevelThreeScreen implements Screen {
 
 
     public static final int MAX_SPAWN_RATE = 5;
+    public static final int CRACK_FIX_SCORE_INCREMENT = 25;
+    public static final int SPLASHED_SPIDER_SCORE = 5;
     private Main game;
 
     private OrthographicCamera camera;
@@ -87,6 +91,12 @@ public class LevelThreeScreen implements Screen {
     private List<CrackSprite> crackSprites;
     private static final float CRACK_SPAWN_CHANCE = 0.75f;
 
+    //scoring section
+    private int score = 0;
+    private float levelTimerSec = 60f;
+    private fontGenerator scoreFont;
+    private fontGenerator timerFont;
+
     public LevelThreeScreen(Main main) {
         this.game = main;
 
@@ -101,6 +111,10 @@ public class LevelThreeScreen implements Screen {
 
         lastTouchPos = new Vector2();
         currentTouchPos = new Vector2();
+
+        //initialize font
+        scoreFont = new fontGenerator(24, Color.WHITE, Color.BLACK);
+        timerFont = new fontGenerator(24, Color.WHITE, Color.BLACK);
 
         //spider
         activeSpiders = new ArrayList<>();
@@ -118,7 +132,6 @@ public class LevelThreeScreen implements Screen {
 
         loadMap();
         initializeTools();
-        initializeCrack();
 
         initializeSpawningArea();
         spiderSpawnInterval = MathUtils.random(2.0f, 3.0f);
@@ -136,17 +149,15 @@ public class LevelThreeScreen implements Screen {
         spiderSpawnArea = new Rectangle(leftMargin, bottomOffset, rightMargin, topMargin);
     }
 
-    private void initializeCrack() {
 
-    }
 
     private void initializeTools() {
         int toolCount = 4;
         float spacing = WINDOW_WIDTH / (toolCount + 1);
-        float toolScale = 5f;
+        float toolScale = 3f;
 
         float toolWidth = new DuctTape(new Vector2(0, 0), toolScale).getSprite().getWidth();
-        startY = WINDOW_HEIGHT/10;
+        startY = WINDOW_HEIGHT/7f;
         tools.put("water_bucket", new WaterBucket(new Vector2(spacing - toolWidth/2, startY), toolScale));
         tools.put("water_spray", new WaterSpray(new Vector2(spacing * 2 - toolWidth/2, startY), toolScale));
         tools.put("pipe_wrench", new PipeWrench(new Vector2(spacing * 3 - toolWidth/2, startY), toolScale));
@@ -188,6 +199,18 @@ public class LevelThreeScreen implements Screen {
         update(delta);
         input();
         draw();
+        font(delta);
+    }
+
+    private void font(float delta) {
+        levelTimerSec -= delta;
+        if(levelTimerSec <= 0f){
+            levelTimerSec = 0;
+        }
+    }
+
+    private void increaseCrackFixScore() {
+        score += CRACK_FIX_SCORE_INCREMENT;
     }
 
     private void update(float delta) {
@@ -333,6 +356,7 @@ public class LevelThreeScreen implements Screen {
                    if(!spider.isDead() && spider.getCollisionRect().overlaps(draggingTool.getCollisionRect())){
                         if(spider.kill()){
                             createExplosion(spider);
+                            score += SPLASHED_SPIDER_SCORE;
                         }
                    }
                }
@@ -350,8 +374,8 @@ public class LevelThreeScreen implements Screen {
                    if(crack.isVisible() && crack.getCollisionBox().overlaps(draggingTool.getCollisionRect())){
                      if(canRepairCrack(toolKey, crack.getCrackType())){
                          draggingTool.playSound();
-                         crack.setVisible(false);
                          crackIterator.remove();
+                         increaseCrackFixScore();
                      }else{
                          // Wrong tool used
                          System.out.println("Cannot fix this crack with " + toolKey);
@@ -366,6 +390,12 @@ public class LevelThreeScreen implements Screen {
 
     }
 
+
+    private String formatTime(float timeInSeconds){
+        int minutes = (int) (timeInSeconds / 60);
+        int seconds = (int) (timeInSeconds % 60);
+        return String.format("%02d:%02d", minutes, seconds);
+    }
     private boolean canRepairCrack(String toolKey, int crackType) {
         switch (toolKey) {
             case "duct_tape":
@@ -432,8 +462,21 @@ public class LevelThreeScreen implements Screen {
 
         batch.end();
 
+
+        drawGUI();
+
+
         //debugging draw green line
         debugSprite();
+    }
+
+    private void drawGUI() {
+
+        String scoreText = "Score: " + score;
+        scoreFont.fontDraw(uiBatch, scoreText, camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.LEFT, textEnum.TOP);
+        String timerText = "Time: " + formatTime(levelTimerSec);
+        timerFont.fontDraw(uiBatch, timerText, camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.RIGHT, textEnum.TOP);
+
     }
 
     private void debugSprite() {
@@ -519,6 +562,9 @@ public class LevelThreeScreen implements Screen {
         for(CrackSprite crack: crackSprites){
             crack.dispose();
         }
+
+        scoreFont.dispose();
+        timerFont.dispose();
     }
 
     private void createCrack(Vector2 position){

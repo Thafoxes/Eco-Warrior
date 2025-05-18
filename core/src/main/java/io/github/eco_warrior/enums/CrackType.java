@@ -1,4 +1,4 @@
-package io.github.eco_warrior.sprite;
+package io.github.eco_warrior.enums;
 
 public enum CrackType {
     SMALL_CRACK,      // Can be fixed with duct tape

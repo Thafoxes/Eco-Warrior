@@ -1,12 +1,10 @@
 package io.github.eco_warrior.sprite;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.TextureArray;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.entity.gameSprite;
+import io.github.eco_warrior.enums.CrackType;
 import io.github.eco_warrior.enums.ToolType;
 
 enum CrackState {
