@@ -197,6 +197,14 @@ public class gameSprite extends spriteGenerator {
 
     }
 
+    public void playSound(){
+        if(correctSoundFX != null){
+            correctSoundFX.play();
+
+        }
+
+    }
+
     public void playWrongSound(){
 
         if (wrongSoundFx != null) {

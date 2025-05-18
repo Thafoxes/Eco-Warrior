@@ -91,6 +91,14 @@ public class WaterExplosion extends Sprite {
 
     }
 
+    private Object userObject;
 
+    public void setUserObject(Object obj) {
+        this.userObject = obj;
+    }
+
+    public Object getUserObject() {
+        return this.userObject;
+    }
 
 }

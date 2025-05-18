@@ -11,7 +11,7 @@ public class PipeWrench extends tool {
             "pipe_wrenchx32",
             position,
             scale,
-            null);
+            "sound_effects/socket_wrench.mp3");
     }
 
 }

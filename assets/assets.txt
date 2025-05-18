@@ -62,6 +62,8 @@ sound_effects/cartoon_splat.mp3
 sound_effects/correct.mp3
 sound_effects/happy_wheels_victory.mp3
 sound_effects/hitting_bin.mp3
+sound_effects/socket_wrench.mp3
+sound_effects/tape_tearing.mp3
 sound_effects/wrong.mp3
 sprite/bins/bins.atlas
 sprite/bins/bins.png

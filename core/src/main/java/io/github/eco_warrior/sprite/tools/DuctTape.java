@@ -11,7 +11,7 @@ public class DuctTape extends tool {
             "duct_tape",
             position,
             scale,
-            null);
+            "sound_effects/tape_tearing.mp3");
     }
 
 }

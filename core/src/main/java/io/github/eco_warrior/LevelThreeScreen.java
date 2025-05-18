@@ -19,7 +19,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.animation.WaterExplosion;
 import io.github.eco_warrior.entity.gameSprite;
-import io.github.eco_warrior.entity.tool;
+import io.github.eco_warrior.sprite.CrackSprite;
 import io.github.eco_warrior.sprite.Enemy.SpiderSprite;
 import io.github.eco_warrior.sprite.tools.DuctTape;
 import io.github.eco_warrior.sprite.tools.PipeWrench;
@@ -80,8 +80,12 @@ public class LevelThreeScreen implements Screen {
     private float spiderSpawnInterval = 2f;
     private ArrayList<SpiderSprite> activeSpiders;
     private List<WaterExplosion> activeExplosions;
-
     private Rectangle spiderSpawnArea;
+
+
+    //crack instance
+    private List<CrackSprite> crackSprites;
+    private static final float CRACK_SPAWN_CHANCE = 0.75f;
 
     public LevelThreeScreen(Main main) {
         this.game = main;
@@ -98,6 +102,14 @@ public class LevelThreeScreen implements Screen {
         lastTouchPos = new Vector2();
         currentTouchPos = new Vector2();
 
+        //spider
+        activeSpiders = new ArrayList<>();
+        activeExplosions = new ArrayList<>();
+
+        //crack
+        crackSprites = new ArrayList<>();
+
+
         //setup camera to middle
         camera.position.set(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0);
         camera.update();
@@ -110,16 +122,15 @@ public class LevelThreeScreen implements Screen {
 
         initializeSpawningArea();
         spiderSpawnInterval = MathUtils.random(2.0f, 3.0f);
-        activeSpiders = new ArrayList<>();
-        activeExplosions = new ArrayList<>();
+
 
 
     }
 
     private void initializeSpawningArea() {
         // Define spawn zone as percentages of screen size
-        float leftMargin = viewport.getWorldWidth() * 0.05f;
-        float rightMargin = viewport.getWorldWidth() * 0.9f;
+        float leftMargin = viewport.getWorldWidth() * 0.1f;
+        float rightMargin = viewport.getWorldWidth() * 0.7f;
         float topMargin = viewport.getWorldHeight() * 0.5f;
         float bottomOffset = viewport.getWorldHeight() * 0.35f;
         spiderSpawnArea = new Rectangle(leftMargin, bottomOffset, rightMargin, topMargin);
@@ -206,6 +217,11 @@ public class LevelThreeScreen implements Screen {
             explosion.update(delta);
 
             if(explosion.isFinished()){
+                Object crackObj = explosion.getUserObject();
+                if(crackObj instanceof Vector2){
+                    System.out.println("Creating crack at: " + crackObj);
+                    createCrack((Vector2) crackObj);
+                }
                 explosionIterator.remove();
             }
         }
@@ -322,9 +338,52 @@ public class LevelThreeScreen implements Screen {
                }
 
            }
+
+           String toolKey = getToolKeyForTool(draggingTool);
+           if(toolKey != null){
+               Iterator<CrackSprite> crackIterator = crackSprites.iterator();
+               while(crackIterator.hasNext()){
+                   CrackSprite crack = crackIterator.next();
+
+
+
+                   if(crack.isVisible() && crack.getCollisionBox().overlaps(draggingTool.getCollisionRect())){
+                     if(canRepairCrack(toolKey, crack.getCrackType())){
+                         draggingTool.playSound();
+                         crack.setVisible(false);
+                         crackIterator.remove();
+                     }else{
+                         // Wrong tool used
+                         System.out.println("Cannot fix this crack with " + toolKey);
+                         //sound please?
+                     }
+
+                   }
+               }
+           }
         }
 
 
+    }
+
+    private boolean canRepairCrack(String toolKey, int crackType) {
+        switch (toolKey) {
+            case "duct_tape":
+                return crackType == 1; // duct_tape fixes crack1
+            case "pipe_wrench":
+                return crackType == 2 || crackType == 3; // pipe_wrench fixes crack2 and crack3
+            default:
+                return false;
+        }
+    }
+
+    private String getToolKeyForTool(gameSprite draggingTool) {
+        for (Map.Entry<String, gameSprite> entry : tools.entrySet()) {
+            if (entry.getValue().equals(draggingTool)) {
+                return entry.getKey();
+            }
+        }
+        return null; // Tool not found
     }
 
     private void createExplosion(SpiderSprite spider) {
@@ -336,7 +395,10 @@ public class LevelThreeScreen implements Screen {
 
         WaterExplosion explosion = new WaterExplosion(position, 0.5f);
         activeExplosions.add(explosion);
+
+        explosion.setUserObject(position);
     }
+
 
     private void draw() {
         camera.update();
@@ -347,6 +409,11 @@ public class LevelThreeScreen implements Screen {
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
+
+        // Draw cracks first (they should be at the bottom layer)
+        for (CrackSprite crack : crackSprites) {
+            crack.draw(batch);
+        }
 
         //display tools
         for (gameSprite tool : tools.values()) {
@@ -391,7 +458,28 @@ public class LevelThreeScreen implements Screen {
             spiderSpawnArea.width,
             spiderSpawnArea.height
         );
+
+        // Draw crack bounds
+        shapeRenderer.setColor(Color.CYAN);
+        for (CrackSprite crack : crackSprites) {
+            if (crack.isVisible()) {
+                shapeRenderer.rect(
+                    crack.getX(),
+                    crack.getY(),
+                    crack.getOriginX(),
+                    crack.getOriginY(),
+                    crack.getWidth(),
+                    crack.getHeight(),
+                    crack.getScaleX(),
+                    crack.getScaleY(),
+                    crack.getRotation()
+                );
+            }
+        }
+
     }
+
+
 
     @Override
     public void resize(int width, int height) {
@@ -427,6 +515,35 @@ public class LevelThreeScreen implements Screen {
         }
         for(WaterExplosion explosions: activeExplosions){
             explosions.dispose();
+        }
+        for(CrackSprite crack: crackSprites){
+            crack.dispose();
+        }
+    }
+
+    private void createCrack(Vector2 position){
+        // Determine if we should create a crack (75% chance)
+        if (MathUtils.random() > CRACK_SPAWN_CHANCE) {
+            return; // No crack this time (25% chance)
+        }
+
+        // Choose a random crack type (1, 2, or 3)
+        int crackType = MathUtils.random(1, 3);
+
+        try {
+            // Create the crack sprite at the given position
+            CrackSprite crack = new CrackSprite(crackType, position);
+
+            // Optionally set a random rotation or scale for variety
+            crack.setRotation(MathUtils.random(0f, 360f));
+            float scale = MathUtils.random(1f, 2f);
+            crack.setScale(scale);
+
+            // Add the crack to our list
+            crackSprites.add(crack);
+        } catch (IllegalArgumentException e) {
+            // Handle case where crack region isn't found in atlas
+            Gdx.app.error("LevelThreeScreen", "Could not create crack: " + e.getMessage());
         }
     }
 }
