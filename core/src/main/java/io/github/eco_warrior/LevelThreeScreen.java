@@ -12,18 +12,21 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import io.github.eco_warrior.animation.WaterExplosion;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.entity.tool;
+import io.github.eco_warrior.sprite.Enemy.SpiderSprite;
 import io.github.eco_warrior.sprite.tools.DuctTape;
 import io.github.eco_warrior.sprite.tools.PipeWrench;
 import io.github.eco_warrior.sprite.tools.WaterBucket;
 import io.github.eco_warrior.sprite.tools.WaterSpray;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static com.badlogic.gdx.Gdx.gl;
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_HEIGHT;
@@ -36,6 +39,7 @@ enum BucketState {
 public class LevelThreeScreen implements Screen {
 
 
+    public static final int MAX_SPAWN_RATE = 5;
     private Main game;
 
     private OrthographicCamera camera;
@@ -71,6 +75,14 @@ public class LevelThreeScreen implements Screen {
     //debug method
     private ShapeRenderer shapeRenderer;
 
+    //spider spawn
+    private float spiderSpawnTimer = 0f;
+    private float spiderSpawnInterval = 2f;
+    private ArrayList<SpiderSprite> activeSpiders;
+    private List<WaterExplosion> activeExplosions;
+
+    private Rectangle spiderSpawnArea;
+
     public LevelThreeScreen(Main main) {
         this.game = main;
 
@@ -96,7 +108,21 @@ public class LevelThreeScreen implements Screen {
         initializeTools();
         initializeCrack();
 
+        initializeSpawningArea();
+        spiderSpawnInterval = MathUtils.random(2.0f, 3.0f);
+        activeSpiders = new ArrayList<>();
+        activeExplosions = new ArrayList<>();
 
+
+    }
+
+    private void initializeSpawningArea() {
+        // Define spawn zone as percentages of screen size
+        float leftMargin = viewport.getWorldWidth() * 0.05f;
+        float rightMargin = viewport.getWorldWidth() * 0.9f;
+        float topMargin = viewport.getWorldHeight() * 0.5f;
+        float bottomOffset = viewport.getWorldHeight() * 0.35f;
+        spiderSpawnArea = new Rectangle(leftMargin, bottomOffset, rightMargin, topMargin);
     }
 
     private void initializeCrack() {
@@ -148,8 +174,51 @@ public class LevelThreeScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        update(delta);
         input();
         draw();
+    }
+
+    private void update(float delta) {
+        spiderSpawnTimer += delta;
+
+        if(spiderSpawnTimer >= spiderSpawnInterval){
+            spawnSpider();
+            spiderSpawnTimer = 0f;
+            spiderSpawnInterval = MathUtils.random(2.0f, 3.0f);
+        }
+
+        //update spiders
+        Iterator<SpiderSprite> spiderIterator = activeSpiders.iterator();
+        while(spiderIterator.hasNext()){
+            SpiderSprite spider = spiderIterator.next();
+            spider.update(delta);
+
+            if(spider.isDead()){
+                spiderIterator.remove();
+            }
+        }
+
+        //update explosions
+        Iterator<WaterExplosion> explosionIterator = activeExplosions.iterator();
+        while(explosionIterator.hasNext()){
+            WaterExplosion explosion = explosionIterator.next();
+            explosion.update(delta);
+
+            if(explosion.isFinished()){
+                explosionIterator.remove();
+            }
+        }
+    }
+
+    private void spawnSpider() {
+        if(activeSpiders.size() < MAX_SPAWN_RATE) {
+            float x = spiderSpawnArea.x + MathUtils.random(spiderSpawnArea.width);
+            float y = spiderSpawnArea.y + MathUtils.random(spiderSpawnArea.height);
+
+            SpiderSprite spider = new SpiderSprite(new Vector2(x, y), 2f);
+            activeSpiders.add(spider);
+        }
     }
 
     private void input(){
@@ -242,10 +311,31 @@ public class LevelThreeScreen implements Screen {
         isReturning = true;
         if(draggingTool != null){
 
-            // the water crack needed to add here later
+           if(draggingTool.equals(tools.get("water_spray"))){
+
+               for(SpiderSprite spider: activeSpiders){
+                   if(!spider.isDead() && spider.getCollisionRect().overlaps(draggingTool.getCollisionRect())){
+                        if(spider.kill()){
+                            createExplosion(spider);
+                        }
+                   }
+               }
+
+           }
         }
 
 
+    }
+
+    private void createExplosion(SpiderSprite spider) {
+
+        Vector2 position = new Vector2(
+            spider.getCollisionRect().x + spider.getCollisionRect().width / 2,
+            spider.getCollisionRect().y + spider.getCollisionRect().height / 2
+        );
+
+        WaterExplosion explosion = new WaterExplosion(position, 0.5f);
+        activeExplosions.add(explosion);
     }
 
     private void draw() {
@@ -263,6 +353,15 @@ public class LevelThreeScreen implements Screen {
             tool.draw(batch);
         }
 
+        //draw spiders
+        for(SpiderSprite spider: activeSpiders){
+            spider.draw(batch);
+        }
+
+        //draw explosions
+        for(WaterExplosion explosion: activeExplosions){
+            explosion.draw(batch);
+        }
 
         batch.end();
 
@@ -279,8 +378,19 @@ public class LevelThreeScreen implements Screen {
         for(gameSprite tool: tools.values()){
             tool.drawDebug(shapeRenderer);
         }
+        debugSpawnArea();
 
         shapeRenderer.end();
+    }
+
+    private void debugSpawnArea() {
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.rect(
+            spiderSpawnArea.x,
+            spiderSpawnArea.y,
+            spiderSpawnArea.width,
+            spiderSpawnArea.height
+        );
     }
 
     @Override
@@ -311,6 +421,12 @@ public class LevelThreeScreen implements Screen {
         map.dispose();
         for (gameSprite tool : tools.values()) {
             tool.dispose();
+        }
+        for(SpiderSprite spiders: activeSpiders){
+            spiders.dispose();
+        }
+        for(WaterExplosion explosions: activeExplosions){
+            explosions.dispose();
         }
     }
 }

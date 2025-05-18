@@ -130,6 +130,7 @@ public class SelectionScreen implements Screen {
         levelButton.addListener(new ClickListener() {
             @Override
             public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
+                MusicManager.getInstance().stopMusic();
                 clickSound.play(SettingsManager.getInstance().getClickSoundVolume());
                 // Navigate to LoadingScreen first, and then to targetScreen
                 ((com.badlogic.gdx.Game) Gdx.app.getApplicationListener()).setScreen(new LoadingScreen(targetScreen));

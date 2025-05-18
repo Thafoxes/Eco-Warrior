@@ -39,6 +39,18 @@ atlas/crack/crackx64.atlas
 atlas/crack/crackx64.png
 atlas/tools/tools.atlas
 atlas/tools/tools.png
+effects/blue_explosion.atlas
+effects/blue_explosion.png
+effects/blue_explosion2.png
+effects/explosion_effect.atlas
+effects/explosion_effect.png
+effects/explosion_effect2.png
+effects/explosion_effect3.png
+effects/red_explosion.atlas
+effects/red_explosion.png
+effects/red_explosion2.png
+enemy/spider.atlas
+enemy/spider.png
 fonts/Square One.ttf
 fonts/TT Octosquares Trial Medium.ttf
 fonts/cubic.ttf
@@ -46,6 +58,7 @@ maps/recycle_center_map.tmx
 maps/soil_map.tmx
 maps/water_map.tmx
 sound_effects/Button_Click.mp3
+sound_effects/cartoon_splat.mp3
 sound_effects/correct.mp3
 sound_effects/happy_wheels_victory.mp3
 sound_effects/hitting_bin.mp3
