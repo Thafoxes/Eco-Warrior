@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -15,7 +17,7 @@ public class WaterDrop {
     private Sprite dropSprite;
     private float volume; // in liters
     private boolean active = true;
-    private static Texture texture;
+    private static TextureAtlas texture;
 
     public WaterDrop(Vector2 position) {
 
@@ -25,8 +27,9 @@ public class WaterDrop {
 
 
         // edit the file path here
-        texture = new Texture(Gdx.files.internal("water_drop.png"));
-        this.dropSprite = new Sprite(texture);
+        texture = new TextureAtlas(Gdx.files.internal("atlas/water_resevior_funnel/water_drop.atlas"));
+        TextureRegion region = texture.findRegion("water_drop");
+        this.dropSprite = new Sprite(region);
         this.dropSprite.setPosition(position.x, position.y);
         this.dropSprite.setScale(0.5f); // Small drop size
 

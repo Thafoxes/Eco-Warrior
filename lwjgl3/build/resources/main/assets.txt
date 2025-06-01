@@ -1,4 +1,9 @@
 .gitkeep
+.lwjgl/3.3.3+5/x64/OpenAL.dll
+.lwjgl/3.3.3+5/x64/glfw.dll
+.lwjgl/3.3.3+5/x64/jemalloc.dll
+.lwjgl/3.3.3+5/x64/lwjgl.dll
+.lwjgl/3.3.3+5/x64/lwjgl_opengl.dll
 Background_Image/SettingPage.png
 Background_Image/frame_000_delay-0.08s.gif
 Background_Image/frame_001_delay-0.08s.gif
@@ -41,6 +46,8 @@ atlas/tools/tools.atlas
 atlas/tools/tools.png
 atlas/water_meter/water_meter.atlas
 atlas/water_meter/water_meter.png
+atlas/water_resevior_funnel/water drop.png
+atlas/water_resevior_funnel/water_drop.atlas
 atlas/water_resevior_funnel/water_resevoir.atlas
 atlas/water_resevior_funnel/water_resevoir.png
 effects/blue_explosion.atlas

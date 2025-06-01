@@ -13,13 +13,19 @@ public class ReservoirSprite {
     private Rectangle bounds;
     private float waterLevel = 0f; // in liters
     private final float CAPACITY = 100f; // 100 liters
+    private TextureRegion region;
 
     private static TextureAtlas reservoirAtlas;
 
     public ReservoirSprite(Vector2 position) {
-        reservoirAtlas = new TextureAtlas(Gdx.files.internal("assets/atlas/water_resevior_funnel/water_resevoir.atlas"));
-        // Get the region from the atlas
-        TextureRegion region = reservoirAtlas.findRegion("resevior_pipe");
+
+        try {
+            reservoirAtlas = new TextureAtlas(Gdx.files.internal("assets/atlas/water_resevior_funnel/water_resevoir.atlas"));
+            // Get the region from the atlas
+            region = reservoirAtlas.findRegion("resevior_pipe");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         this.sprite = new Sprite(region);
         this.sprite.setPosition(position.x, position.y);
         this.sprite.setScale(2f); // Scale up the reservoir

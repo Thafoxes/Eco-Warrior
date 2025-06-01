@@ -22,6 +22,7 @@ import static io.github.eco_warrior.constant.ConstantsVar.*;
 
 public class ResultScreen implements Screen {
 
+    private boolean isGameOver = false;
     private final Main game;
     private int score;
 
@@ -48,6 +49,13 @@ public class ResultScreen implements Screen {
     public ResultScreen(Main game, int score) {
         this.game = game;
         this.score = score;
+        buttonGenerator = game.getButtonFactory();
+    }
+
+    public ResultScreen(Main game, int score, boolean isGameOver) {
+        this.game = game;
+        this.score = score;
+        this.isGameOver = isGameOver;
         buttonGenerator = game.getButtonFactory();
     }
 
@@ -116,7 +124,8 @@ public class ResultScreen implements Screen {
             stage.act(delta);
             stage.draw();
 
-            uiFont.fontDraw(uiBatch, "Challenge completed! ", camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT ), textEnum.X_CENTER, textEnum.TOP);
+            String resultMessage = isGameOver ?  "Game Over!": "Challenge completed!";
+            uiFont.fontDraw(uiBatch, resultMessage, camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT ), textEnum.X_CENTER, textEnum.TOP);
             uiFont.fontDraw(uiBatch, "Your score is " + score + "\n", camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT ), textEnum.X_CENTER, textEnum.BOTTOM);
 
         }catch (Exception e){

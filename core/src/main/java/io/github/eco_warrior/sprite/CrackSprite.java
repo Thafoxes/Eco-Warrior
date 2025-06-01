@@ -94,6 +94,10 @@ public class CrackSprite extends Sprite {
         }
     }
 
+    public Vector2 getWaterDropPosition() {
+        return new Vector2(getX(), getY());
+    }
+
 
     /**
      * Centers this crack at the given position

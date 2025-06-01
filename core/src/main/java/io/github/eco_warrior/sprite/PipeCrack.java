@@ -7,13 +7,14 @@ import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.enums.CrackType;
 import io.github.eco_warrior.enums.ToolType;
 
+@Deprecated
 enum CrackState {
     ACTIVE,           // Currently leaking/damaged
     BEING_FIXED,      // In the process of being fixed
     FIXED             // Fully repaired
 }
 
-
+@Deprecated
 public class PipeCrack extends gameSprite {
 
     // Crack states

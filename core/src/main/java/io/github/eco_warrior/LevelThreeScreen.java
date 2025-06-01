@@ -18,11 +18,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.animation.WaterExplosion;
+import io.github.eco_warrior.controller.WaterSystemManager;
 import io.github.eco_warrior.controller.fontGenerator;
 import io.github.eco_warrior.entity.gameSprite;
+import io.github.eco_warrior.enums.BucketState;
 import io.github.eco_warrior.enums.textEnum;
+import io.github.eco_warrior.screen.ResultScreen;
 import io.github.eco_warrior.sprite.CrackSprite;
 import io.github.eco_warrior.sprite.Enemy.SpiderSprite;
+import io.github.eco_warrior.sprite.UI.WaterWasteBarUI;
 import io.github.eco_warrior.sprite.tools.DuctTape;
 import io.github.eco_warrior.sprite.tools.PipeWrench;
 import io.github.eco_warrior.sprite.tools.WaterBucket;
@@ -33,10 +37,6 @@ import java.util.*;
 import static com.badlogic.gdx.Gdx.gl;
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_HEIGHT;
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_WIDTH;
-
-enum BucketState {
-    EMPTY, HALF_FULL, FULL
-}
 
 public class LevelThreeScreen implements Screen {
 
@@ -97,6 +97,12 @@ public class LevelThreeScreen implements Screen {
     private fontGenerator scoreFont;
     private fontGenerator timerFont;
 
+    //water drop UI
+    private WaterSystemManager waterSystem;
+    // water meter
+    private WaterWasteBarUI waterMeter;
+    private boolean gameOverTriggered = false;
+
     public LevelThreeScreen(Main main) {
         this.game = main;
 
@@ -130,6 +136,7 @@ public class LevelThreeScreen implements Screen {
 
         shapeRenderer = new ShapeRenderer();
 
+        waterDropManagerInitialize();
         loadMap();
         initializeTools();
 
@@ -138,6 +145,13 @@ public class LevelThreeScreen implements Screen {
 
 
 
+    }
+
+    private void waterDropManagerInitialize() {
+        float waterMeterScale = 1.5f;
+        waterMeter = new WaterWasteBarUI(WINDOW_WIDTH * 3/4 - (128 * waterMeterScale), 40 , waterMeterScale);
+        //water system UI
+        waterSystem = new WaterSystemManager(waterMeter);
     }
 
     private void initializeSpawningArea() {
@@ -248,6 +262,22 @@ public class LevelThreeScreen implements Screen {
                 explosionIterator.remove();
             }
         }
+
+        //water system update
+        waterSystem.update(delta, crackSprites);
+        waterMeter.update();
+
+        if (waterSystem.isWaterMeterFull() && !gameOverTriggered) {
+            gameOverTriggered = true;
+            Gdx.app.log("LevelThreeScreen", "Water meter is full! Game Over!");
+                com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+                @Override
+                public void run() {
+                    game.setScreen(new ResultScreen(game, score, true)); // true indicates game over
+                }
+            }, 1); // 1 second delay
+        }
+
     }
 
     private void spawnSpider() {
@@ -445,6 +475,10 @@ public class LevelThreeScreen implements Screen {
             crack.draw(batch);
         }
 
+        //water drop bottom of the crack
+        waterSystem.draw(batch);
+        waterMeter.draw(batch);
+
         //display tools
         for (gameSprite tool : tools.values()) {
             tool.draw(batch);
@@ -563,8 +597,10 @@ public class LevelThreeScreen implements Screen {
             crack.dispose();
         }
 
+        waterSystem.dispose();
         scoreFont.dispose();
         timerFont.dispose();
+        waterMeter.dispose();
     }
 
     private void createCrack(Vector2 position){
