@@ -2,6 +2,7 @@ package io.github.eco_warrior.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -41,17 +42,25 @@ public class ResultScreen implements Screen {
 
     private String additionalMessage = "";
 
+    //sound
+    private Sound winningSound;
+    private Sound gameOverSound;
+
 
     public ResultScreen(Main game, int score, buttonGenerator buttonGenerator) {
         this.game = game;
         this.score = score;
         this.buttonGenerator = buttonGenerator;
+        soundSetup();
     }
+
+
 
     public ResultScreen(Main game, int score) {
         this.game = game;
         this.score = score;
         buttonGenerator = game.getButtonFactory();
+        soundSetup();
     }
 
     public ResultScreen(Main game, int score, boolean isGameOver, String additionalMessage) {
@@ -60,6 +69,7 @@ public class ResultScreen implements Screen {
         this.isGameOver = isGameOver;
         buttonGenerator = game.getButtonFactory();
         this.additionalMessage = additionalMessage;
+        soundSetup();
     }
 
     public ResultScreen(Main game, int score, boolean isGameOver) {
@@ -68,6 +78,18 @@ public class ResultScreen implements Screen {
         this.isGameOver = isGameOver;
         buttonGenerator = game.getButtonFactory();
         this.additionalMessage = "";
+        soundSetup();
+    }
+
+    private void soundSetup() {
+        gameOverSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/Game_over_sfx.mp3"));
+        winningSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/game_finished_sfx.mp3"));
+
+        if(isGameOver) {
+            gameOverSound.play();
+        } else {
+            winningSound.play();
+        }
     }
 
     @Override
@@ -100,21 +122,6 @@ public class ResultScreen implements Screen {
             }
         });
 
-//        //add custom button here check if custom button design works
-//        buttonFactory.createCustomButton(
-//            "modernista",
-//            Color.BLUE,
-//            Color.BROWN,
-//            Color.CHARTREUSE);
-//        TextButton exitButton = buttonFactory.createNewButton(
-//            "Test button",
-//            "modernista",
-//            WINDOW_WIDTH/4,
-//            WINDOW_HEIGHT
-//
-//        );
-//        stage.addActor(exitButton);
-
 
         stage.addActor(backButton);
     }
@@ -139,6 +146,7 @@ public class ResultScreen implements Screen {
             String resultMessage = isGameOver ?  "Game Over! ": "Challenge completed! ";
             uiFont.fontDraw(uiBatch, resultMessage + additionalMessage, camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT ), textEnum.X_CENTER, textEnum.TOP);
             uiFont.fontDraw(uiBatch, "Your score is " + score + "\n", camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT ), textEnum.X_CENTER, textEnum.BOTTOM);
+
 
         }catch (Exception e){
             e.printStackTrace();

@@ -44,6 +44,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
     public static final int CRACK_FIX_SCORE_INCREMENT = 25;
     public static final int SPLASHED_SPIDER_SCORE = 5;
     private static final int MAX_CRACKS = 8; // Maximum number of cracks allowed at once
+    public static final int WINNING_SCORE = 700;
     private final Main game;
 
     private OrthographicCamera camera;
@@ -160,8 +161,15 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
         //sound
         cantRepairSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/wrong.mp3"));
         explosionSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/underwater_explosion_sfx.mp3"));
+        BGM = Gdx.audio.newMusic(Gdx.files.internal("Background_Music/Pipe.mp3"));
+        playBGM();
 
 
+    }
+
+    private void playBGM() {
+        BGM.setVolume(0.5f);
+        BGM.play();
     }
 
     private void waterDropManagerInitialize() {
@@ -224,6 +232,13 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
         input();
         draw();
         font(delta);
+        checkScore();
+    }
+
+    private void checkScore() {
+        if(score >= WINNING_SCORE){
+            WinningResult();
+        }
     }
 
     private void font(float delta) {
@@ -232,7 +247,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
 
             levelTimerSec = 0;
             //winning
-            WinningResult();
+            TimeOutResult();
         }
     }
 
@@ -291,12 +306,23 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
     }
 
     private void MeterExplodedOver() {
+        StopMusic();
         explosionSound.play();
         LosingResult();
 
     }
 
     private void WinningResult() {
+        StopMusic();
+        game.setScreen(new ResultScreen(game, score, false, "Score hit!")); // true indicates game over
+    }
+
+    private void StopMusic() {
+        BGM.stop();
+    }
+
+    private void TimeOutResult() {
+        StopMusic();
         game.setScreen(new ResultScreen(game, score, false, "Time out!")); // true indicates game over
     }
 
@@ -333,6 +359,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
             if(waterBucket.emptyIntoReservoir(waterResevior)){
 
                 waterResevior.receiveWater(amount);
+                score += amount;
                 // Reset bucket state after emptying
                 resetBucket();
 //                // Play sound effect for emptying
@@ -608,7 +635,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
         for(gameSprite tool: tools.values()){
             tool.drawDebug(shapeRenderer);
         }
-        debugSpawnArea();
+//        debugSpawnArea();
 
         shapeRenderer.end();
     }
@@ -688,6 +715,11 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
         timerFont.dispose();
         waterMeter.dispose();
         waterResevior.dispose();
+        cantRepairSound.dispose();
+        BGM.dispose();
+        explosionSound.dispose();
+        shapeRenderer.dispose();
+
     }
 
     @Override

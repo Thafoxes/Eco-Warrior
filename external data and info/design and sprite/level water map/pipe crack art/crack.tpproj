@@ -1,6 +1,6 @@
 name=crack
-filename=crackx128.atlas
-output=.
+filename=crackx64.atlas
+output=../../../../assets/atlas/crack
 
 alias=true
 alphaThreshold=0
@@ -34,7 +34,7 @@ prettyPrint=false
 legacyOutput=false
 
 scaleFactors=[{suffix:"",factor:0.5,resampling:bicubic}]
-inputFiles=[{path:anim/crack1.png,type:Input,regionName:null},{path:anim/crack2.png,type:Input,regionName:null},{path:anim/crack3.png,type:Input,regionName:null}]
+inputFiles=[{path:v2,type:Input,dirFilePrefix:null,recursive:false,flattenPaths:false}]
 keepInputFileExtensions=false
 
 

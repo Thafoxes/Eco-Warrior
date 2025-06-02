@@ -19,7 +19,7 @@ public class CrackSprite extends Sprite {
      * Actual regions will be named crack1, crack2, crack3
      */
     private static final String BASE_REGION_NAME = "crack";
-    private static final String CRACK_ATLAS_PATH = "atlas/crack/crackx64.atlas";
+    private static final String CRACK_ATLAS_PATH = "atlas/crack/crackx64v2.atlas";
 
     private TextureAtlas atlas;
 

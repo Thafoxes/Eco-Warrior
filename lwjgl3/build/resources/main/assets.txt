@@ -36,12 +36,15 @@ Background_Image/frame_1_delay-0.22s.gif
 Background_Image/frame_2_delay-0.22s.gif
 Background_Image/frame_3_delay-0.22s.gif
 Background_Music/Menu.mp3
+Background_Music/Pipe.mp3
 atlas/bucket/bucket_anim.atlas
 atlas/bucket/bucket_anim.png
 atlas/conveyor/conveyor.atlas
 atlas/conveyor/conveyor.png
 atlas/crack/crackx64.atlas
 atlas/crack/crackx64.png
+atlas/crack/crackx64v2.atlas
+atlas/crack/crackx64v2.png
 atlas/tools/tools.atlas
 atlas/tools/tools.png
 atlas/water_meter/water_meter.atlas
@@ -69,9 +72,11 @@ maps/recycle_center_map.tmx
 maps/soil_map.tmx
 maps/water_map.tmx
 sound_effects/Button_Click.mp3
+sound_effects/Game_over_sfx.mp3
 sound_effects/cartoon_splat.mp3
 sound_effects/correct.mp3
 sound_effects/fill_water_sfx.mp3
+sound_effects/game_finished_sfx.mp3
 sound_effects/happy_wheels_victory.mp3
 sound_effects/hitting_bin.mp3
 sound_effects/socket_wrench.mp3
