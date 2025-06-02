@@ -39,6 +39,8 @@ public class ResultScreen implements Screen {
 
     private buttonGenerator buttonGenerator;
 
+    private String additionalMessage = "";
+
 
     public ResultScreen(Main game, int score, buttonGenerator buttonGenerator) {
         this.game = game;
@@ -52,11 +54,20 @@ public class ResultScreen implements Screen {
         buttonGenerator = game.getButtonFactory();
     }
 
+    public ResultScreen(Main game, int score, boolean isGameOver, String additionalMessage) {
+        this.game = game;
+        this.score = score;
+        this.isGameOver = isGameOver;
+        buttonGenerator = game.getButtonFactory();
+        this.additionalMessage = additionalMessage;
+    }
+
     public ResultScreen(Main game, int score, boolean isGameOver) {
         this.game = game;
         this.score = score;
         this.isGameOver = isGameOver;
         buttonGenerator = game.getButtonFactory();
+        this.additionalMessage = "";
     }
 
     @Override
@@ -109,6 +120,7 @@ public class ResultScreen implements Screen {
     }
 
 
+
     @Override
     public void render(float delta) {
         try{
@@ -124,8 +136,8 @@ public class ResultScreen implements Screen {
             stage.act(delta);
             stage.draw();
 
-            String resultMessage = isGameOver ?  "Game Over!": "Challenge completed!";
-            uiFont.fontDraw(uiBatch, resultMessage, camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT ), textEnum.X_CENTER, textEnum.TOP);
+            String resultMessage = isGameOver ?  "Game Over! ": "Challenge completed! ";
+            uiFont.fontDraw(uiBatch, resultMessage + additionalMessage, camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT ), textEnum.X_CENTER, textEnum.TOP);
             uiFont.fontDraw(uiBatch, "Your score is " + score + "\n", camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT ), textEnum.X_CENTER, textEnum.BOTTOM);
 
         }catch (Exception e){

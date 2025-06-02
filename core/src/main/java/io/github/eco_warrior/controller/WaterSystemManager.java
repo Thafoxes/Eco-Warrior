@@ -22,12 +22,22 @@ public class WaterSystemManager {
     private float currentSpawnInterval;
     private WaterWasteBarUI waterMeter;
     private int dropsLost = 0;
-    private static final float DROP_VOLUME = 0.2f; // Amount each drop adds to meter
+    private static final float DROP_VOLUME = 0.5f; // Amount each drop adds to meter
+    private float dropVolume;
 
     public WaterSystemManager(WaterWasteBarUI waterMeter) {
         activeWaterDrops = new ArrayList<>();
         resetSpawnInterval();
         this.waterMeter = waterMeter;
+        this.dropVolume = DROP_VOLUME;
+
+    }
+
+    public WaterSystemManager(WaterWasteBarUI waterMeter, float dropVolume) {
+        activeWaterDrops = new ArrayList<>();
+        resetSpawnInterval();
+        this.waterMeter = waterMeter;
+        this.dropVolume = dropVolume;
     }
 
     private void resetSpawnInterval() {
@@ -60,7 +70,7 @@ public class WaterSystemManager {
             if (drop.getY() < 0 || !drop.isActive()) {
                 if(drop.getY() < 0) {
                     // If drop is below screen, increment drops lost
-                    waterMeter.addWater(DROP_VOLUME);
+                    waterMeter.addWater(dropVolume);
                     dropsLost++;
                 }
                 iterator.remove();

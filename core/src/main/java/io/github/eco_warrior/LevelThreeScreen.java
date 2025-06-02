@@ -43,7 +43,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
     public static final int MAX_SPAWN_RATE = 5;
     public static final int CRACK_FIX_SCORE_INCREMENT = 25;
     public static final int SPLASHED_SPIDER_SCORE = 5;
-    private static final int MAX_CRACKS = 5; // Maximum number of cracks allowed at once
+    private static final int MAX_CRACKS = 8; // Maximum number of cracks allowed at once
     private final Main game;
 
     private OrthographicCamera camera;
@@ -77,6 +77,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
 
     //sound effects
     private Sound cantRepairSound;
+    private Sound explosionSound;
 
     //debug
     //debug method
@@ -92,7 +93,6 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
 
     //crack instance
     private List<CrackSprite> crackSprites;
-    private static final float CRACK_SPAWN_CHANCE = 0.75f;
 
     //scoring section
     private int score = 0;
@@ -109,6 +109,13 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
     //water bucket logics
     private WaterBucket waterBucket;
     private WaterResevior waterResevior;
+
+    //Water capacity thresholds
+    private int BuckethalfFullThreshold = 5;
+    private int bucketMaxCapacity = BuckethalfFullThreshold * 2;
+
+    //meter drop volume size
+    private float dropVolume = 1f;
 
     public LevelThreeScreen(Main main) {
         this.game = main;
@@ -152,6 +159,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
 
         //sound
         cantRepairSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/wrong.mp3"));
+        explosionSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/underwater_explosion_sfx.mp3"));
 
 
     }
@@ -160,7 +168,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
         float waterMeterScale = 2f;
         waterMeter = new WaterWasteBarUI(WINDOW_WIDTH * 3/4 - (128 * waterMeterScale), 100 , waterMeterScale);
         //water system UI
-        waterSystem = new WaterSystemManager(waterMeter);
+        waterSystem = new WaterSystemManager(waterMeter, dropVolume);
 
     }
 
@@ -182,7 +190,9 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
         float toolWidth = new DuctTape(new Vector2(0, 0), toolScale).getSprite().getWidth();
         startY = WINDOW_HEIGHT/7f;
 
-        waterBucket = new WaterBucket(new Vector2(spacing * 1 - toolWidth/2, startY), toolScale);
+        waterBucket = new WaterBucket(new Vector2(spacing * 1 - toolWidth/2, startY), toolScale,
+            BuckethalfFullThreshold,
+            bucketMaxCapacity);
         tools.put("water_bucket", waterBucket);
         tools.put("water_spray", new WaterSpray(new Vector2(spacing * 2 - toolWidth/2, startY), toolScale));
         tools.put("pipe_wrench", new PipeWrench(new Vector2(spacing * 3 - toolWidth/2, startY), toolScale));
@@ -219,9 +229,14 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
     private void font(float delta) {
         levelTimerSec -= delta;
         if(levelTimerSec <= 0f){
+
             levelTimerSec = 0;
+            //winning
+            WinningResult();
         }
     }
+
+
 
     private void increaseCrackFixScore() {
         score += CRACK_FIX_SCORE_INCREMENT;
@@ -268,18 +283,32 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
         waterMeter.update();
 
         if (waterSystem.isWaterMeterFull() && !gameOverTriggered) {
-            gameOverTriggered = true;
-            Gdx.app.log("LevelThreeScreen", "Water meter is full! Game Over!");
-                com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
-                @Override
-                public void run() {
-                    game.setScreen(new ResultScreen(game, score, true)); // true indicates game over
-                }
-            }, 1); // 1 second delay
+            MeterExplodedOver();
         }
 
         updateWaterInteractions(delta);
 
+    }
+
+    private void MeterExplodedOver() {
+        explosionSound.play();
+        LosingResult();
+
+    }
+
+    private void WinningResult() {
+        game.setScreen(new ResultScreen(game, score, false, "Time out!")); // true indicates game over
+    }
+
+    private void LosingResult() {
+        gameOverTriggered = true;
+        Gdx.app.log("LevelThreeScreen", "Water meter is full! Game Over!");
+        com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
+        @Override
+        public void run() {
+            game.setScreen(new ResultScreen(game, score, true, "Too much water wasted!")); // true indicates game over
+        }
+    }, 5); // 5 second delay
     }
 
     private void updateWaterInteractions(float delta) {
@@ -298,8 +327,8 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
 
 
         // Check if full bucket overlaps with reservoir during drag, when is not dragging check the condition
-       if(!isDragging && draggingTool == waterBucket){
-           int amount = waterResevior.getWaterCollected() + waterBucket.getWaterDropCount();
+       if(draggingTool == waterBucket){
+           int amount = waterBucket.getWaterDropCount();
 
             if(waterBucket.emptyIntoReservoir(waterResevior)){
 

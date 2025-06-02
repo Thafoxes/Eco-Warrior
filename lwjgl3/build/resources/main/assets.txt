@@ -77,6 +77,7 @@ sound_effects/hitting_bin.mp3
 sound_effects/socket_wrench.mp3
 sound_effects/sonido-correcto.mp3
 sound_effects/tape_tearing.mp3
+sound_effects/underwater_explosion_sfx.mp3
 sound_effects/water_pouring.mp3
 sound_effects/wrong.mp3
 sprite/bins/bins.atlas

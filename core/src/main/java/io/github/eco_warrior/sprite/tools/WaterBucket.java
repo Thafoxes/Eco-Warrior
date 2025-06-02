@@ -18,8 +18,8 @@ public class WaterBucket extends gameSprite {
     private int waterDropCount = 0;
 
     //Water capacity thresholds
-    private static int HALF_FULL_THRESHOLD = 10;
-    private static int MAX_CAPACITY = 20;
+    private int halfFullThreshold = 10;
+    private int maxCapacity = 20;
 
     private boolean isFull = false;
 
@@ -40,6 +40,14 @@ public class WaterBucket extends gameSprite {
 
     }
 
+    public WaterBucket(Vector2 position, float scale, int halfFullThreshold, int maxCapacity) {
+        this(position, scale);
+        this.halfFullThreshold = halfFullThreshold;
+        this.maxCapacity = maxCapacity;
+        updateBucketApperance();
+
+    }
+
     public boolean catchWaterDrop() {
        if(isFull){
            return false;
@@ -55,11 +63,11 @@ public class WaterBucket extends gameSprite {
 
     private void updateBucketApperance() {
         //update animation based on water level
-        if (waterDropCount >= MAX_CAPACITY) {
+        if (waterDropCount >= maxCapacity) {
             waterLevel = WaterBucketState.FILLED.ordinal();
             isFull = true;
 
-        } else if (waterDropCount >= HALF_FULL_THRESHOLD) {
+        } else if (waterDropCount >= halfFullThreshold) {
             waterLevel = WaterBucketState.HALF_FULL.ordinal();
 
         } else {

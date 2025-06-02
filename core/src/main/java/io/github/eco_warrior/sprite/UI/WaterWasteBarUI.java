@@ -9,7 +9,11 @@ import io.github.eco_warrior.controller.fontGenerator;
 import io.github.eco_warrior.enums.textEnum;
 
 public class WaterWasteBarUI {
-    private static final int MAX_WATER_LEVEL = 44; // Based on atlas frames
+    private static final int MAX_WATER_LEVEL = 40; // Based on atlas framesprivate static final int MAX_WATER_LEVEL = 40; // Normal max level before animation
+    private static final int MAX_ANIMATION_FRAME = 44; // Final frame including animation
+    private boolean isAnimating = false; // Track if we're in the animation sequence
+    private float animationTimer = 0f; // Timer for controlling animation speed
+    private static final float ANIMATION_FRAME_DURATION = 0.15f; // Time per animation frame in seconds
 
     private TextureAtlas waterMeterAtlas;
     private Sprite meterSprite;
@@ -61,14 +65,42 @@ public class WaterWasteBarUI {
 
 
     public void update() {
-        int newFrame = Math.min((int)currentWaterLevel, MAX_WATER_LEVEL);
-        if (newFrame != currentFrame) {
-            currentFrame = newFrame;
-            updateMeterSprite();
-            meterSprite.setPosition(position.x, position.y);
+        // Handle normal water level updates
+        if (!isAnimating) {
+            int newFrame = Math.min((int) currentWaterLevel, MAX_WATER_LEVEL);
+            if (newFrame != currentFrame) {
+                currentFrame = newFrame;
+                updateMeterSprite();
+                meterSprite.setPosition(position.x, position.y);
 
-            if (currentFrame >= MAX_WATER_LEVEL) {
-                isFull = true;
+                // If we've reached max level, start animation
+                if (currentFrame >= MAX_WATER_LEVEL && !isFull) {
+                    isAnimating = true;
+                    animationTimer = 0f;
+                    currentFrame = MAX_WATER_LEVEL; // Start animation from this frame
+                }
+            }
+        }
+        // Handle animation sequence when meter is full
+        else {
+            // Update animation timer
+            animationTimer += Gdx.graphics.getDeltaTime();
+
+            // Move to next animation frame based on timer
+            if (animationTimer >= ANIMATION_FRAME_DURATION) {
+                animationTimer -= ANIMATION_FRAME_DURATION;
+                currentFrame++;
+
+                // If we've gone through all animation frames
+                if (currentFrame > MAX_ANIMATION_FRAME) {
+                    // Either loop the animation or stop at the last frame
+                    currentFrame = MAX_WATER_LEVEL + 1; // Restart animation from first explosion frame
+                    isFull = true; // Mark as full
+                }
+
+                // Update the sprite with the new animation frame
+                updateMeterSprite();
+                meterSprite.setPosition(position.x, position.y);
             }
         }
     }
