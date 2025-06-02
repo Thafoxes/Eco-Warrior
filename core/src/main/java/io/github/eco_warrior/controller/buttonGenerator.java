@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import io.github.eco_warrior.enums.textEnum;
+
 
 import static io.github.eco_warrior.constant.ConstantsVar.BUTTON_HEIGHT;
 import static io.github.eco_warrior.constant.ConstantsVar.BUTTON_WIDTH;
@@ -172,6 +174,49 @@ public class buttonGenerator {
         button.pack();
         button.setSize(button.getWidth() + horizontalPadding, button.getHeight() + horizontalPadding);
         button.setPosition((width - button.getWidth())/2, (height - button.getHeight())/2);
+
+        return button;
+    }
+
+    /**
+     *  the position is measured starting from the bottom left. If you want to measure from the mid point you have to - the width and height
+     *
+     * */
+    public TextButton createNewButton(String text, String buttonStyle , float screenWidth, float screenHeight,
+                                      textEnum xPosition, textEnum yPosition) {
+
+        TextButton button = new TextButton(text, skin, buttonStyle);
+        button.pack();
+        button.setSize(button.getWidth() + horizontalPadding, button.getHeight() + horizontalPadding);
+
+        float xPos, yPos;
+        switch(xPosition){
+           case LEFT:
+            xPos = 20f;
+            break;
+            case X_CENTER:
+                xPos = screenWidth/2 - button.getWidth()/2;
+                break;
+            case RIGHT:
+                xPos = screenWidth - button.getWidth() - 20f;
+                break;
+            default:
+                xPos = screenWidth - button.getWidth() - 20f;
+        }
+        switch(yPosition){
+            case TOP:
+                yPos = screenHeight - button.getHeight() - 10f;
+                break;
+            case Y_MIDDLE:
+                yPos = (screenHeight - button.getHeight())/2;
+                break;
+            case BOTTOM:
+                yPos = 10f;
+                break;
+            default:
+                yPos = (screenHeight - button.getHeight())/2;
+        }
+        button.setPosition(xPos, yPos);
 
         return button;
     }

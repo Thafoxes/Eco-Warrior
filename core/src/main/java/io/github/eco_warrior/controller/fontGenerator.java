@@ -52,7 +52,7 @@ public class fontGenerator {
             this.borderColor = borderColor;
         }
 
-        generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Square One.ttf"));
+        generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/TT Octosquares Trial Medium.ttf"));
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 
         parameter.size = size;
@@ -71,7 +71,7 @@ public class fontGenerator {
 
     public fontGenerator() {
         int size = 32;
-        generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Square One.ttf"));
+        generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/TT Octosquares Trial Medium.ttf"));
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 
         parameter.size = size;
@@ -125,6 +125,20 @@ public class fontGenerator {
                 break;
 
         }
+
+        font.draw(uiBatch, text , position.x, position.y);
+
+        uiBatch.end();
+    }
+
+    //no need align just position
+    public void fontDraw(SpriteBatch uiBatch, String text , OrthographicCamera camera, Vector2 position){
+        GlyphLayout layout = new GlyphLayout(font, text);
+        uiBatch.begin();
+        uiBatch.setProjectionMatrix(camera.combined);
+
+        position.x = (position.x - layout.width) / 2f;
+
 
         font.draw(uiBatch, text , position.x, position.y);
 
