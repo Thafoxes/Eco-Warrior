@@ -38,6 +38,8 @@ Background_Image/frame_3_delay-0.22s.gif
 Background_Music/Menu.mp3
 Background_Music/Pipe.mp3
 Image/girl.png
+Image/plumber_girl_defeated.png
+Image/plumbergirl_cheerful.png
 atlas/bucket/bucket_anim.atlas
 atlas/bucket/bucket_anim.png
 atlas/conveyor/conveyor.atlas

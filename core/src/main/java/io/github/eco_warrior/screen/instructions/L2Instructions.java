@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.LevelThreeScreen;
+import io.github.eco_warrior.LevelTwoScreen;
 import io.github.eco_warrior.Main;
 import io.github.eco_warrior.controller.buttonGenerator;
 import io.github.eco_warrior.controller.fontGenerator;
@@ -23,7 +24,7 @@ import io.github.eco_warrior.enums.textEnum;
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_HEIGHT;
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_WIDTH;
 
-public class L3Instructions implements Screen {
+public class L2Instructions implements Screen {
     private Main game;
     private OrthographicCamera camera;
     private Viewport viewport;
@@ -42,7 +43,7 @@ public class L3Instructions implements Screen {
     private buttonGenerator buttonGen;
     private TextButton acknowledgeButton;
 
-    public L3Instructions(Main game) {
+    public L2Instructions(Main game) {
         this.game = game;
     }
 
@@ -79,7 +80,7 @@ public class L3Instructions implements Screen {
                 Gdx.audio.newSound(Gdx.files.internal("sound_effects/Button_Click.mp3")).play(0.5f);
 
                 // Proceed to Level Three Screen
-                game.setScreen(new LevelThreeScreen(game));
+                game.setScreen(new LevelTwoScreen(game));
             }
         });
 
@@ -100,7 +101,7 @@ public class L3Instructions implements Screen {
         batch.setProjectionMatrix(camera.combined);
 
         // Draw title
-        titleFont.fontDraw(batch, "Level 3: Water Conservation", camera,
+        titleFont.fontDraw(batch, "Level 2: Forest in Peril ", camera,
             new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT),
             textEnum.X_CENTER, textEnum.TOP);
 

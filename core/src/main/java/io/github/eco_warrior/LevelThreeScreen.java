@@ -5,10 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.GL32;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -119,6 +116,10 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
     //meter drop volume size
     private float dropVolume = 1f;
 
+    //Losing image image face
+    private Texture losingImage;
+    private Texture winningImage;
+
     public LevelThreeScreen(Main main) {
         this.game = main;
 
@@ -144,6 +145,10 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
 
         //crack
         crackSprites = new ArrayList<>();
+
+        //losing Image
+        losingImage = new Texture(Gdx.files.internal("Image/plumber_girl_defeated.png"));
+        winningImage = new Texture(Gdx.files.internal("Image/plumbergirl_cheerful.png"));
 
 
         //setup camera to middle
@@ -234,6 +239,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
         draw();
         font(delta);
         checkScore();
+
     }
 
     private void checkScore() {
@@ -248,6 +254,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
 
             levelTimerSec = 0;
             //winning
+
             TimeOutResult();
         }
     }
@@ -305,6 +312,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
             MeterExplodedOver();
         }
 
+
         updateWaterInteractions(delta);
 
     }
@@ -318,7 +326,9 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
 
     private void WinningResult() {
         StopMusic();
-        game.setScreen(new ResultScreen(game, score, false, "Score hit!")); // true indicates game over
+        game.setScreen(new ResultScreen(game, score, false,
+            "Score hit!",
+            winningImage)); // true indicates game over
     }
 
     private void StopMusic() {
@@ -336,7 +346,10 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
         com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task() {
         @Override
         public void run() {
-            game.setScreen(new ResultScreen(game, score, true, "Too much water wasted!")); // true indicates game over
+            game.setScreen(new ResultScreen(game, score, true,
+                "Too much water wasted!",
+                losingImage
+                )); // true indicates game over
         }
     }, 5); // 5 second delay
     }

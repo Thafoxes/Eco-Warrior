@@ -46,6 +46,8 @@ public class ResultScreen implements Screen {
     private Sound winningSound;
     private Sound gameOverSound;
 
+    private Texture backgroundCharacterImg;
+
 
     public ResultScreen(Main game, int score, buttonGenerator buttonGenerator) {
         this.game = game;
@@ -69,6 +71,16 @@ public class ResultScreen implements Screen {
         this.isGameOver = isGameOver;
         buttonGenerator = game.getButtonFactory();
         this.additionalMessage = additionalMessage;
+        soundSetup();
+    }
+
+    public ResultScreen(Main game, int score, boolean isGameOver, String additionalMessage, Texture backgroundCharacterImg) {
+        this.game = game;
+        this.score = score;
+        this.isGameOver = isGameOver;
+        buttonGenerator = game.getButtonFactory();
+        this.additionalMessage = additionalMessage;
+        this.backgroundCharacterImg = backgroundCharacterImg;
         soundSetup();
     }
 
@@ -139,6 +151,13 @@ public class ResultScreen implements Screen {
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
 
+            if(backgroundCharacterImg != null){
+                // Draw background image (scaled to fit screen)
+                float scaleBGM = 3;
+                batch.draw(backgroundCharacterImg, 0, 0, backgroundCharacterImg.getWidth() * scaleBGM, backgroundCharacterImg.getHeight() * scaleBGM);
+
+            }
+
             batch.end();
             stage.act(delta);
             stage.draw();
@@ -146,6 +165,7 @@ public class ResultScreen implements Screen {
             String resultMessage = isGameOver ?  "Game Over! ": "Challenge completed! ";
             uiFont.fontDraw(uiBatch, resultMessage + additionalMessage, camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT ), textEnum.X_CENTER, textEnum.TOP);
             uiFont.fontDraw(uiBatch, "Your score is " + score + "\n", camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT ), textEnum.X_CENTER, textEnum.BOTTOM);
+
 
 
         }catch (Exception e){
