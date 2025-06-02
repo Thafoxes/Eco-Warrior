@@ -3,14 +3,10 @@ package io.github.eco_warrior.sprite.UI;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
-
-import static jdk.jfr.internal.consumer.EventLog.update;
+import io.github.eco_warrior.controller.fontGenerator;
+import io.github.eco_warrior.enums.textEnum;
 
 public class WaterWasteBarUI {
     private static final int MAX_WATER_LEVEL = 44; // Based on atlas frames
@@ -21,6 +17,10 @@ public class WaterWasteBarUI {
     private int currentFrame = 1; // Starting with first frame
     private boolean isFull = false;
     private Vector2 position;
+
+    //font show
+    private fontGenerator uiFont;
+    private String labelText = "Water Waste Meter: ";
 
 
     public WaterWasteBarUI(float x, float y, float scale) {
@@ -34,6 +34,8 @@ public class WaterWasteBarUI {
         updateMeterSprite();
         meterSprite.setPosition(x, y);
         meterSprite.setScale(scale);
+
+        uiFont = new fontGenerator(20, Color.WHITE, Color.BLACK);
     }
 
     private void updateMeterSprite() {
@@ -71,6 +73,30 @@ public class WaterWasteBarUI {
         }
     }
 
+    public void drawWithLabel(SpriteBatch batch, OrthographicCamera camera) {
+
+        meterSprite.draw(batch);
+
+        // End the batch to prepare for font drawing (which has its own batch cycle)
+        batch.end();
+
+        // Draw the label text to the left of the sprite
+        // The y position should be vertically centered with the sprite
+        float textY = position.y  + (meterSprite.getHeight() * meterSprite.getScaleY() / 10f);
+        float textX = position.x - (getTextWidth(labelText) - 130f);
+
+        uiFont.fontDraw(batch, labelText, camera, new Vector2(textX, textY),
+            textEnum.RIGHT, textEnum.Y_MIDDLE);
+
+
+        // Start the batch again for the caller
+        batch.begin();
+    }
+
+    private float getTextWidth(String text) {
+        GlyphLayout layout = new GlyphLayout(uiFont.getFont(), text);
+        return layout.width;
+    }
 
     public void draw(SpriteBatch batch) {
         meterSprite.draw(batch);
@@ -82,6 +108,7 @@ public class WaterWasteBarUI {
 
     public void dispose() {
         waterMeterAtlas.dispose();
+        uiFont.dispose();
     }
 
 

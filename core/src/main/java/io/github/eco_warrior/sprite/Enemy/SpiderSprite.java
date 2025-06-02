@@ -2,6 +2,7 @@ package io.github.eco_warrior.sprite.Enemy;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -16,6 +17,7 @@ public class SpiderSprite extends gameSprite {
         DEAD
     }
 
+    private static final float TIME_BEFORE_ATTACK = 5.0F; // time before spider can attack again
     private static final String ATLAS_PATH = "enemy/spider.atlas";
     private static final String ALIVE_REGION = "spider_v2x64";
     private static final String DEAD_REGION = "spider_v2x65";
@@ -29,13 +31,25 @@ public class SpiderSprite extends gameSprite {
     private float velocityY = 0F;
     private TextureRegion aliveRegion;
     private TextureRegion deadRegion;
+    private float existenceTimer = 0f;
+    private boolean hasMadeCrack = false;
 
     //audio zone
     private boolean hasSoundPlayed = false;
     private Sound splatSound;
 
+    // particle effect for crack
+    private ParticleEffect crackEffect;
 
-    public SpiderSprite(Vector2 Position, float scale) {
+    // callback for crack creation
+    private CrackCreationCallback crackCreationCallback;
+
+    // Interface for crack creation callback
+    public interface CrackCreationCallback {
+        void createCrack(Vector2 position);
+    }
+
+    public SpiderSprite(Vector2 Position, float scale, CrackCreationCallback callback) {
         super(ATLAS_PATH, ALIVE_REGION, Position, scale);
 
         TextureAtlas atlas = new TextureAtlas(ATLAS_PATH);
@@ -43,10 +57,22 @@ public class SpiderSprite extends gameSprite {
         deadRegion = atlas.findRegion(DEAD_REGION);
         splatSound = Gdx.audio.newSound(Gdx.files.internal(SPLAT_SOUND));
 
+        this.crackCreationCallback = callback;
+
+        try {
+            //load particle effect
+            crackEffect = new ParticleEffect();
+            crackEffect.load(Gdx.files.internal("effects/crack_effect.p"), Gdx.files.internal("effects"));
+            crackEffect.setPosition(Position.x, Position.y);
+        } catch (Exception e) {
+            Gdx.app.error("SpiderSprite", "Failed to load crack effect: " + e.getMessage());
+            crackEffect = null; // Set to null if loading fails
+        }
+
     }
 
-    public SpiderSprite (Vector2 position){
-        this(position, 1.0f);
+    public SpiderSprite (Vector2 position, CrackCreationCallback callback){
+        this(position, 1.0f, callback);
     }
 
     /**
@@ -57,6 +83,19 @@ public class SpiderSprite extends gameSprite {
     public void update(float delta){
         super.update(delta);
 
+        if(state == SpiderState.ALIVE){
+            existenceTimer += delta;
+
+            if(existenceTimer >= TIME_BEFORE_ATTACK && !hasMadeCrack){
+                // Create a crack at the spider's position
+                createCrackUnderSpider();
+                hasMadeCrack = true;
+
+                if (crackEffect != null) {
+                    crackEffect.start();
+                }
+            }
+        }
         if(state == SpiderState.DYING){
             velocityY -= GRAVITY * delta; //applying gravity
 
@@ -66,12 +105,25 @@ public class SpiderSprite extends gameSprite {
                 state = SpiderState.DEAD;
             }
         }
+        if(crackEffect != null){
+            crackEffect.update(delta);
+        }
+    }
+
+    private void createCrackUnderSpider() {
+        if(crackCreationCallback != null) {
+            Vector2 crackPosition = new Vector2(getCollisionRect().x + getCollisionRect().width / 2, getCollisionRect().y);
+            crackCreationCallback.createCrack(crackPosition);
+        }
     }
 
     @Override
     public void draw(SpriteBatch batch){
         if(state != SpiderState.DEAD){
             super.draw(batch);
+        }
+        if(crackEffect != null){
+            crackEffect.draw(batch);
         }
     }
 
@@ -136,6 +188,9 @@ public class SpiderSprite extends gameSprite {
     public void dispose() {
         super.dispose();
         splatSound.dispose();
+        if(crackEffect != null){
+            crackEffect.dispose();
+        }
     }
 
 }

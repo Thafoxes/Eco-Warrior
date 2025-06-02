@@ -1,64 +1,51 @@
 package io.github.eco_warrior.sprite;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import io.github.eco_warrior.entity.gameSprite;
 
-public class WaterDrop {
+public class WaterDrop extends gameSprite {
     private static final float GRAVITY = 200f;
-    private Vector2 position;
     private Vector2 velocity;
-    private Sprite dropSprite;
     private float volume; // in liters
     private boolean active = true;
-    private static TextureAtlas texture;
 
     public WaterDrop(Vector2 position) {
+        super("atlas/water_resevior_funnel/water_drop.atlas",
+            "water_drop",
+            position, 0.5f
+        );
 
-
-        this.position = new Vector2(position);
         this.velocity = new Vector2(0, -50f); // Start with small downward velocity
-
-
-        // edit the file path here
-        texture = new TextureAtlas(Gdx.files.internal("atlas/water_resevior_funnel/water_drop.atlas"));
-        TextureRegion region = texture.findRegion("water_drop");
-        this.dropSprite = new Sprite(region);
-        this.dropSprite.setPosition(position.x, position.y);
-        this.dropSprite.setScale(0.5f); // Small drop size
-
 
         // Randomize volume between 0.5L and 1L
         this.volume = MathUtils.random(0.5f, 1.0f);
     }
 
+    @Override
     public void update(float delta) {
         // Apply gravity
         velocity.y -= GRAVITY * delta;
 
         // Update position
-        position.add(velocity.x * delta, velocity.y * delta);
-        dropSprite.setPosition(position.x, position.y);
+        Rectangle collisionRect = getCollisionRect();
+        collisionRect.x += velocity.x * delta;
+        collisionRect.y += velocity.y * delta;
+
+        super.update(delta);
     }
 
+    @Override
     public void draw(SpriteBatch batch) {
         if (active) {
-            dropSprite.draw(batch);
+            super.draw(batch);
         }
     }
 
     public Rectangle getBounds() {
-        return new Rectangle(
-            position.x, position.y,
-            dropSprite.getWidth() * dropSprite.getScaleX(),
-            dropSprite.getHeight() * dropSprite.getScaleY()
-        );
+        return getCollisionRect();
     }
 
     public float getVolume() {
@@ -74,7 +61,10 @@ public class WaterDrop {
     }
 
     public float getY() {
-        return position.y;
+        return getCollisionRect().y;
     }
 
+    public float getX() {
+        return getCollisionRect().x;
+    }
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -27,10 +28,8 @@ import io.github.eco_warrior.screen.ResultScreen;
 import io.github.eco_warrior.sprite.CrackSprite;
 import io.github.eco_warrior.sprite.Enemy.SpiderSprite;
 import io.github.eco_warrior.sprite.UI.WaterWasteBarUI;
-import io.github.eco_warrior.sprite.tools.DuctTape;
-import io.github.eco_warrior.sprite.tools.PipeWrench;
-import io.github.eco_warrior.sprite.tools.WaterBucket;
-import io.github.eco_warrior.sprite.tools.WaterSpray;
+import io.github.eco_warrior.sprite.WaterDrop;
+import io.github.eco_warrior.sprite.tools.*;
 
 import java.util.*;
 
@@ -38,13 +37,14 @@ import static com.badlogic.gdx.Gdx.gl;
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_HEIGHT;
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_WIDTH;
 
-public class LevelThreeScreen implements Screen {
+public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallback {
 
 
     public static final int MAX_SPAWN_RATE = 5;
     public static final int CRACK_FIX_SCORE_INCREMENT = 25;
     public static final int SPLASHED_SPIDER_SCORE = 5;
-    private Main game;
+    private static final int MAX_CRACKS = 5; // Maximum number of cracks allowed at once
+    private final Main game;
 
     private OrthographicCamera camera;
     private Viewport viewport;
@@ -75,6 +75,9 @@ public class LevelThreeScreen implements Screen {
     //music
     private Music BGM;
 
+    //sound effects
+    private Sound cantRepairSound;
+
     //debug
     //debug method
     private ShapeRenderer shapeRenderer;
@@ -102,6 +105,10 @@ public class LevelThreeScreen implements Screen {
     // water meter
     private WaterWasteBarUI waterMeter;
     private boolean gameOverTriggered = false;
+
+    //water bucket logics
+    private WaterBucket waterBucket;
+    private WaterResevior waterResevior;
 
     public LevelThreeScreen(Main main) {
         this.game = main;
@@ -143,15 +150,18 @@ public class LevelThreeScreen implements Screen {
         initializeSpawningArea();
         spiderSpawnInterval = MathUtils.random(2.0f, 3.0f);
 
+        //sound
+        cantRepairSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/wrong.mp3"));
 
 
     }
 
     private void waterDropManagerInitialize() {
-        float waterMeterScale = 1.5f;
-        waterMeter = new WaterWasteBarUI(WINDOW_WIDTH * 3/4 - (128 * waterMeterScale), 40 , waterMeterScale);
+        float waterMeterScale = 2f;
+        waterMeter = new WaterWasteBarUI(WINDOW_WIDTH * 3/4 - (128 * waterMeterScale), 100 , waterMeterScale);
         //water system UI
         waterSystem = new WaterSystemManager(waterMeter);
+
     }
 
     private void initializeSpawningArea() {
@@ -164,7 +174,6 @@ public class LevelThreeScreen implements Screen {
     }
 
 
-
     private void initializeTools() {
         int toolCount = 4;
         float spacing = WINDOW_WIDTH / (toolCount + 1);
@@ -172,26 +181,17 @@ public class LevelThreeScreen implements Screen {
 
         float toolWidth = new DuctTape(new Vector2(0, 0), toolScale).getSprite().getWidth();
         startY = WINDOW_HEIGHT/7f;
-        tools.put("water_bucket", new WaterBucket(new Vector2(spacing - toolWidth/2, startY), toolScale));
+
+        waterBucket = new WaterBucket(new Vector2(spacing * 1 - toolWidth/2, startY), toolScale);
+        tools.put("water_bucket", waterBucket);
         tools.put("water_spray", new WaterSpray(new Vector2(spacing * 2 - toolWidth/2, startY), toolScale));
         tools.put("pipe_wrench", new PipeWrench(new Vector2(spacing * 3 - toolWidth/2, startY), toolScale));
         tools.put("duct_tape", new DuctTape(new Vector2(spacing * 4 - toolWidth /2, startY), toolScale));
 
+        // bottom left water dump funnel resevior
+        waterResevior = new WaterResevior(new Vector2(toolWidth/2, 10f), 1.5f);
     }
 
-    private void fillBucket(){
-
-        BucketState[] states = BucketState.values();
-        int nextOrdinal = bucketState.ordinal() + 1;
-        gameSprite waterBucket = tools.get("water_bucket");
-        if(waterBucket != null){
-            throw new RuntimeException();
-        }
-        if(nextOrdinal < states.length){
-            waterBucket.nextFrame();
-            bucketState = states[nextOrdinal];
-        }
-    }
 
     private void resetBucket(){
         gameSprite waterBucket = tools.get("water_bucket");
@@ -278,6 +278,38 @@ public class LevelThreeScreen implements Screen {
             }, 1); // 1 second delay
         }
 
+        updateWaterInteractions(delta);
+
+    }
+
+    private void updateWaterInteractions(float delta) {
+       List<WaterDrop> waterDrops = waterSystem.getActiveWaterDrops();
+
+       Iterator<WaterDrop> waterDropIterator = waterDrops.iterator();
+       while(waterDropIterator.hasNext()){
+           WaterDrop drop = waterDropIterator.next();
+
+           if(drop.getCollisionRect().overlaps(waterBucket.getCollisionRect())){
+                if(waterBucket.catchWaterDrop()){
+                    waterDropIterator.remove();
+                }
+           }
+       }
+
+
+        // Check if full bucket overlaps with reservoir during drag, when is not dragging check the condition
+       if(!isDragging && draggingTool == waterBucket){
+           int amount = waterResevior.getWaterCollected() + waterBucket.getWaterDropCount();
+
+            if(waterBucket.emptyIntoReservoir(waterResevior)){
+
+                waterResevior.receiveWater(amount);
+                // Reset bucket state after emptying
+                resetBucket();
+//                // Play sound effect for emptying
+//                waterResevior.playSound();
+            }
+       }
     }
 
     private void spawnSpider() {
@@ -285,7 +317,9 @@ public class LevelThreeScreen implements Screen {
             float x = spiderSpawnArea.x + MathUtils.random(spiderSpawnArea.width);
             float y = spiderSpawnArea.y + MathUtils.random(spiderSpawnArea.height);
 
-            SpiderSprite spider = new SpiderSprite(new Vector2(x, y), 2f);
+            Vector2 position = new Vector2(x, y);
+            // Create spider with this as the callback
+            SpiderSprite spider = new SpiderSprite(position, this);
             activeSpiders.add(spider);
         }
     }
@@ -377,8 +411,14 @@ public class LevelThreeScreen implements Screen {
 
     private void onMouseRelease() {
         isDragging = false;
-        isReturning = true;
+
         if(draggingTool != null){
+            // If it's the water bucket, don't set isReturning flag
+            if(draggingTool.equals(tools.get("water_bucket"))) {
+                isReturning = false;
+            } else {
+                isReturning = true;
+            }
 
            if(draggingTool.equals(tools.get("water_spray"))){
 
@@ -402,22 +442,38 @@ public class LevelThreeScreen implements Screen {
 
 
                    if(crack.isVisible() && crack.getCollisionBox().overlaps(draggingTool.getCollisionRect())){
-                     if(canRepairCrack(toolKey, crack.getCrackType())){
-                         draggingTool.playSound();
-                         crackIterator.remove();
-                         increaseCrackFixScore();
-                     }else{
-                         // Wrong tool used
-                         System.out.println("Cannot fix this crack with " + toolKey);
-                         //sound please?
-                     }
+                       boolean spiderOverlapping = false;
+
+                       for(SpiderSprite spider: activeSpiders){
+                            if(spider.getCollisionRect().overlaps(draggingTool.getCollisionRect())){
+                                cantRepairSound.play(0.8f);
+                                 spiderOverlapping = true;
+                                 break;
+                            }
+                       }
+
+                       //if not overlapping with spider, check if can repair the crack
+                       if (!spiderOverlapping) {
+                           if(canRepairCrack(toolKey, crack.getCrackType())){
+                               draggingTool.playSound();
+                               crackIterator.remove();
+                               increaseCrackFixScore();
+                           }else{
+                               // Wrong tool used
+                               System.out.println("Cannot fix this crack with " + toolKey);
+                               //sound please?
+                           }
+                       }
 
                    }
                }
            }
+
+           // If we've released the bucket, make sure it updates its collision rectangle
+           if(draggingTool.equals(tools.get("water_bucket"))) {
+               draggingTool = null;
+           }
         }
-
-
     }
 
 
@@ -477,7 +533,8 @@ public class LevelThreeScreen implements Screen {
 
         //water drop bottom of the crack
         waterSystem.draw(batch);
-        waterMeter.draw(batch);
+        waterMeter.drawWithLabel(batch, camera);
+        waterResevior.drawWithWaterCount(batch, camera);
 
         //display tools
         for (gameSprite tool : tools.values()) {
@@ -601,31 +658,36 @@ public class LevelThreeScreen implements Screen {
         scoreFont.dispose();
         timerFont.dispose();
         waterMeter.dispose();
+        waterResevior.dispose();
     }
 
-    private void createCrack(Vector2 position){
-        // Determine if we should create a crack (75% chance)
-        if (MathUtils.random() > CRACK_SPAWN_CHANCE) {
-            return; // No crack this time (25% chance)
+    @Override
+    public void createCrack(Vector2 position) {
+        // Only create a new crack if we haven't reached the maximum
+        if (crackSprites.size() >= MAX_CRACKS) {
+            return; // Skip crack creation if we've reached the limit
         }
 
+        // Reuse your existing crack creation logic
         // Choose a random crack type (1, 2, or 3)
         int crackType = MathUtils.random(1, 3);
-
         try {
             // Create the crack sprite at the given position
             CrackSprite crack = new CrackSprite(crackType, position);
 
             // Optionally set a random rotation or scale for variety
             crack.setRotation(MathUtils.random(0f, 360f));
-            float scale = MathUtils.random(1f, 2f);
+            float scale = MathUtils.random(0.8f, 1.5f);
             crack.setScale(scale);
 
             // Add the crack to our list
             crackSprites.add(crack);
+
+            // Optional: Play a crack sound effect
+            // crackSound.play();
         } catch (IllegalArgumentException e) {
-            // Handle case where crack region isn't found in atlas
             Gdx.app.error("LevelThreeScreen", "Could not create crack: " + e.getMessage());
         }
     }
+
 }

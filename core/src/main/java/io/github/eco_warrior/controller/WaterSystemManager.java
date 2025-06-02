@@ -22,7 +22,7 @@ public class WaterSystemManager {
     private float currentSpawnInterval;
     private WaterWasteBarUI waterMeter;
     private int dropsLost = 0;
-    private static final float DROP_VOLUME = 0.5f; // Amount each drop adds to meter
+    private static final float DROP_VOLUME = 0.2f; // Amount each drop adds to meter
 
     public WaterSystemManager(WaterWasteBarUI waterMeter) {
         activeWaterDrops = new ArrayList<>();
@@ -85,6 +85,10 @@ public class WaterSystemManager {
 
     public int getDropsLost() {
         return dropsLost;
+    }
+
+    public List<WaterDrop> getActiveWaterDrops() {
+        return activeWaterDrops;
     }
 
     public boolean isWaterMeterFull() {
