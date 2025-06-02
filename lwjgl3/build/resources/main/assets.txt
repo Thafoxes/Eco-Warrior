@@ -37,6 +37,7 @@ Background_Image/frame_2_delay-0.22s.gif
 Background_Image/frame_3_delay-0.22s.gif
 Background_Music/Menu.mp3
 Background_Music/Pipe.mp3
+Image/girl.png
 atlas/bucket/bucket_anim.atlas
 atlas/bucket/bucket_anim.png
 atlas/conveyor/conveyor.atlas
@@ -65,6 +66,7 @@ effects/red_explosion.png
 effects/red_explosion2.png
 enemy/spider.atlas
 enemy/spider.png
+fonts/DigitalDisco.ttf
 fonts/Square One.ttf
 fonts/TT Octosquares Trial Medium.ttf
 fonts/cubic.ttf

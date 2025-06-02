@@ -11,7 +11,7 @@ public class Main extends Game {
     @Override
     public void create() {
         buttonGenerator = new buttonGenerator();
-        setScreen(new MainMenuScreen(this));
+        setScreen(new L3Instructions(this));
     }
 
     public buttonGenerator getButtonFactory() {

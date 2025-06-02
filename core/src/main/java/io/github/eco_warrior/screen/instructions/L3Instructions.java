@@ -34,8 +34,9 @@ public class L3Instructions implements Screen {
     private fontGenerator titleFont;
     private fontGenerator instructionFont;
 
-    // Instructions images
-    private Texture[] instructionImages;
+    // Images
+    private Texture instructionImage;
+    private Texture backgroundImage;
 
     // Button
     private buttonGenerator buttonGen;
@@ -60,10 +61,9 @@ public class L3Instructions implements Screen {
         titleFont = new fontGenerator(36, Color.WHITE, Color.BLACK);
         instructionFont = new fontGenerator(24, Color.WHITE, Color.BLACK);
 
-        // Load instruction images
-        instructionImages = new Texture[]{
-            new Texture(Gdx.files.internal("ui/instructions/L3instructions.png")),
-        };
+        // Load images
+        instructionImage = new Texture(Gdx.files.internal("ui/instructions/L3instructions.png"));
+        backgroundImage = new Texture(Gdx.files.internal("Image/girl.png"));
 
         // Create acknowledge button
         buttonGen = new buttonGenerator();
@@ -106,19 +106,19 @@ public class L3Instructions implements Screen {
 
         batch.begin();
 
+        // Draw background image (scaled to fit screen)
+        batch.draw(backgroundImage, 0, 0, backgroundImage.getWidth(), backgroundImage.getHeight());
 
 
-        // Draw instruction images (arranged horizontally)
-       float scale = 0.6f; // Scale factor for images
+        // Draw the instruction image centered
+        float scale = 0.6f; // Scale factor for image
+        float imageWidth = instructionImage.getWidth() * scale;
+        float imageHeight = instructionImage.getHeight() * scale;
 
-        for (int i = 0; i < instructionImages.length; i++) {
-            float imageWidth = instructionImages[i].getWidth() * scale;
-            float imageHeight = instructionImages[i].getHeight() * (scale); // Maintain aspect ratio
-            batch.draw(instructionImages[i],
+        batch.draw(instructionImage,
                 WINDOW_WIDTH / 2 - imageWidth / 2,
-                WINDOW_HEIGHT/2 - 40f,
-                    imageWidth, imageHeight);
-        }
+                WINDOW_HEIGHT / 2 - 40f,
+                imageWidth, imageHeight);
 
         // Draw instruction text
         String[] instructions = {
@@ -130,13 +130,9 @@ public class L3Instructions implements Screen {
         };
 
         float textY = WINDOW_HEIGHT / (instructions.length * 4); // Position text below the title
-        for (int i = 0; i < instructions.length ; i++ ) {
-            batch.end();
-
-            instructionFont.fontDraw(batch, instructions[i], camera,
-                    new Vector2(WINDOW_WIDTH, (WINDOW_HEIGHT / 3) + 50f - textY * i)
-            );
-            batch.begin();
+        for (int i = 0; i < instructions.length; i++) {
+            instructionFont.getFont().draw(batch, instructions[i],
+                    WINDOW_WIDTH / 2 - 300, (WINDOW_HEIGHT / 3) + 50f - textY * i);
         }
 
         batch.end();
@@ -170,8 +166,7 @@ public class L3Instructions implements Screen {
         stage.dispose();
         titleFont.dispose();
         instructionFont.dispose();
-        for (Texture texture : instructionImages) {
-            texture.dispose();
-        }
+        instructionImage.dispose();
+        backgroundImage.dispose();
     }
 }
