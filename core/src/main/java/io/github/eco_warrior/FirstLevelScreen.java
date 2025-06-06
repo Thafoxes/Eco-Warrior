@@ -24,6 +24,7 @@ import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.enums.textEnum;
 import io.github.eco_warrior.screen.ResultScreen;
 import io.github.eco_warrior.sprite.*;
+import io.github.eco_warrior.sprite.UI.Hearts;
 
 import java.util.*;
 
@@ -60,6 +61,10 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     private int score = 0;
     private float timerSeconds = 30f;
     private boolean timerEnded = false;
+
+    //Hearts
+    private Hearts playerHearts;
+    private static final int MAX_HEARTS = 5;
 
     //Sprites
     private List<gameSprite> recyclables = new ArrayList<>();
@@ -123,12 +128,22 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         backgroundMusic.setLooping(true);
         backgroundMusic.play();
 
+        loadHearts();
         loadMap();
 
         loadingConveyorAnimation();
 
         initAllBins();
 
+    }
+
+    private void loadHearts() {
+        playerHearts = new Hearts(
+            new Vector2(WINDOW_WIDTH / 2 - 60, WINDOW_HEIGHT - 60), // Position in top left
+            MAX_HEARTS,  // Start with 5 hearts
+            1.5f,       // Scale
+            10f         // Spacing between hearts
+        );
     }
 
     private void initAllBins() {
@@ -171,6 +186,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     public void render(float delta) {
 
         timerCount(delta);
+        playerHearts.update(delta);
         draw();
         countdownTimer();
         input();
@@ -329,6 +345,12 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         bin.playWrongSound();
         if(score > 0) score--;
 
+        // Lose a heart and check if game over
+        playerHearts.loseHeartWithEffect(Gdx.graphics.getDeltaTime());
+        boolean gameOver = playerHearts.getCurrentHearts() <= 0;
+        if (gameOver) {
+            losingScreen();
+        }
     }
 
     private void playCorrectAction(WasteBin bin) {
@@ -409,11 +431,13 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
         batch.begin();
 
+        playerHearts.draw(batch);
 
 
         for(gameSprite bin: bins.values()){
             bin.draw(batch);
         }
+
 
         conveyorBelt.draw(batch);
 
@@ -492,6 +516,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         conveyorBelt.dispose();
         scoreFont.dispose();
         timerFont.dispose();
+        playerHearts.dispose();
         //disposing bins
         for(gameSprite bin: bins.values()){
             bin.dispose();
