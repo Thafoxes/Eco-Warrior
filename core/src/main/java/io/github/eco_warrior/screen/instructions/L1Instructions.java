@@ -63,7 +63,7 @@ public class L1Instructions implements Screen {
         instructionFont = new fontGenerator(24, Color.WHITE, Color.BLACK);
 
         // Load images
-        instructionImage = new Texture(Gdx.files.internal("ui/instructions/L3instructions.png"));
+        instructionImage = new Texture(Gdx.files.internal("ui/instructions/L1instructions.png"));
         backgroundImage = new Texture(Gdx.files.internal("Image/recycle_manager_base.png"));
 
         // Create acknowledge button
@@ -113,7 +113,7 @@ public class L1Instructions implements Screen {
 
 
         // Draw the instruction image centered
-        float scale = 0.6f; // Scale factor for image
+        float scale = 0.5f; // Scale factor for image
         float imageWidth = instructionImage.getWidth() * scale;
         float imageHeight = instructionImage.getHeight() * scale;
 
@@ -126,7 +126,7 @@ public class L1Instructions implements Screen {
         String[] instructions = {
             "1. Sort the recyclables into the correct bins",
             "2. Dispose waste into the red bins as general waste",
-            "3. Put wrong items will deduct your score",
+            "3. Put wrong items will deduct your score and hearts!",
         };
 
         float textY = WINDOW_HEIGHT / (instructions.length * 4); // Position text below the title

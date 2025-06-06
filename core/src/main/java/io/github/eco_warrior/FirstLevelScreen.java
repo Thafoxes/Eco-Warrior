@@ -3,9 +3,12 @@ package io.github.eco_warrior;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -24,6 +27,7 @@ import io.github.eco_warrior.sprite.*;
 
 import java.util.*;
 
+import static com.badlogic.gdx.Gdx.audio;
 import static com.badlogic.gdx.Gdx.gl;
 import static io.github.eco_warrior.constant.ConstantsVar.*;
 
@@ -89,6 +93,8 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     //debug method
     private ShapeRenderer shapeRenderer;
 
+    private Music backgroundMusic;
+
     @Override
     public void show() {
         //init setting
@@ -111,6 +117,11 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         currentTouchPos = new Vector2();
 
         shapeRenderer = new ShapeRenderer();
+
+        backgroundMusic = audio.newMusic(Gdx.files.internal("Background_Music/Recycle.mp3"));
+        backgroundMusic.setVolume(0.5f);
+        backgroundMusic.setLooping(true);
+        backgroundMusic.play();
 
         loadMap();
 
@@ -170,11 +181,27 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
     private void controller() {
         if(score >= winningScore || timerEnded) {
-            //show wins
-            conveyorBelt.stopAnimation();
-            game.setScreen(new ResultScreen(game, score));
+            winningScreen();
 
         }
+    }
+
+    private void winningScreen() {
+        //show wins
+        conveyorBelt.stopAnimation();
+        backgroundMusic.stop();
+        game.setScreen(new ResultScreen(game, score, false,
+            "You have successfully recycled all the items!",
+            new Texture(Gdx.files.internal("Image/recycle_manager_happy_v2.png"))));
+    }
+
+    private void losingScreen() {
+        //show wins
+        conveyorBelt.stopAnimation();
+        backgroundMusic.stop();
+        game.setScreen(new ResultScreen(game, score, true,
+            "You misplace too many wrong recyclables!",
+            new Texture(Gdx.files.internal("Image/recycle_manager_looks_sad.png"))));
     }
 
 
