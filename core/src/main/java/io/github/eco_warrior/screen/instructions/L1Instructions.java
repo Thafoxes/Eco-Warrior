@@ -64,7 +64,7 @@ public class L1Instructions implements Screen {
 
         // Load images
         instructionImage = new Texture(Gdx.files.internal("ui/instructions/L3instructions.png"));
-        backgroundImage = new Texture(Gdx.files.internal("Image/girl.png"));
+        backgroundImage = new Texture(Gdx.files.internal("Image/recycle_manager_base.png"));
 
         // Create acknowledge button
         buttonGen = new buttonGenerator();
@@ -124,11 +124,9 @@ public class L1Instructions implements Screen {
 
         // Draw instruction text
         String[] instructions = {
-            "1. Use the bucket to catch water drops",
-            "2. Use the spray to defeat spiders",
-            "3. Use the correct tools to fix pipe leaks",
-            "4. Use wrench to fix big leaks, duct tape for small leaks",
-            "5. Dump collected water to the water reservoir to empty the bucket!",
+            "1. Sort the recyclables into the correct bins",
+            "2. Dispose waste into the red bins as general waste",
+            "3. Put wrong items will deduct your score",
         };
 
         float textY = WINDOW_HEIGHT / (instructions.length * 4); // Position text below the title

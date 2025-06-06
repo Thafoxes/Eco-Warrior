@@ -17,6 +17,7 @@ import io.github.eco_warrior.FirstLevelScreen;
 import io.github.eco_warrior.LevelThreeScreen;
 import io.github.eco_warrior.LevelTwoScreen;
 import io.github.eco_warrior.Main;
+import io.github.eco_warrior.screen.instructions.L1Instructions;
 import io.github.eco_warrior.screen.instructions.L3Instructions;
 
 import java.util.ArrayList;
@@ -104,7 +105,7 @@ public class SelectionScreen implements Screen {
 
         // Create buttons for levels
         buttons = new ArrayList<>();
-        buttons.add(createLevelButton(buttonStyle, "Level 1", new FirstLevelScreen(game))); // Navigate to Level1Screen
+        buttons.add(createLevelButton(buttonStyle, "Level 1", new L1Instructions(game))); // Navigate to Level1Screen
         buttons.add(createLevelButton(buttonStyle, "Level 2", new LevelTwoScreen(game))); // Navigate to Level2Screen
         buttons.add(createLevelButton(buttonStyle, "Level 3", new L3Instructions(game))); // Navigate to L3Instructions
 
