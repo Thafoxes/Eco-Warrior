@@ -27,6 +27,7 @@ public class LevelTwoScreen implements Screen {
     private SpriteBatch uiBatch;
 
     private Texture test;
+    private Texture test2;
 
     //map
     private TiledMap map;
