@@ -40,6 +40,8 @@ Background_Music/Pipe.mp3
 Image/girl.png
 Image/plumber_girl_defeated.png
 Image/plumbergirl_cheerful.png
+Image/recycle_manager_base.png
+Image/recycle_manager_sad.png
 atlas/bucket/bucket_anim.atlas
 atlas/bucket/bucket_anim.png
 atlas/conveyor/conveyor.atlas
@@ -110,7 +112,6 @@ ui/font-subtitle.fnt
 ui/font-window.fnt
 ui/font.fnt
 ui/instructions/L3instructions.png
-ui/instructions/instruction_test.png
 ui/uiskin.atlas
 ui/uiskin.json
 ui/uiskin.png

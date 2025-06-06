@@ -8,12 +8,20 @@
         "."
     ],
     "fileStates": {
-        "D:/github_project/Eco-Warrior/assets/maps/water_map.tmx": {
-            "scale": 1.5318749999999999,
+        "D:/github_project/Eco-Warrior/assets/maps/recycle_center_map.tmx": {
+            "scale": 0.9262499999999999,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 297.34802121583033,
-                "y": 134.14932680538556
+                "x": 920.377867746289,
+                "y": 382.7260458839407
+            }
+        },
+        "D:/github_project/Eco-Warrior/assets/maps/water_map.tmx": {
+            "scale": 2,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 202.75,
+                "y": 91.75
             }
         },
         "D:/github_project/Eco-Warrior/assets/tilesets/Pipes.tsx": {
@@ -22,13 +30,33 @@
         "D:/github_project/Eco-Warrior/assets/tilesets/industrial_tiles.tsx": {
             "scaleInDock": 1
         },
+        "D:/github_project/Eco-Warrior/assets/tilesets/orange_wall.tsx": {
+            "scaleInDock": 1
+        },
+        "D:/github_project/Eco-Warrior/assets/tilesets/recycle_floor.tsx": {
+            "scaleInDock": 1
+        },
+        "garden_tile.tsx": {
+            "scaleInDock": 1
+        },
+        "level2 map.tmx": {
+            "scale": 0.6946874999999999,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 648.493027440396,
+                "y": 367.791273054431
+            }
+        },
         "level_2_map_v2.tmx": {
             "scale": 2.7787499999999996,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 162.84300494826812,
+                "x": 173.9991003148898,
                 "y": 95.90643274853801
             }
+        },
+        "soil.tsx": {
+            "scaleInDock": 1
         },
         "trees.tsx": {
             "scaleInDock": 1,
@@ -45,14 +73,20 @@
     "map.lastUsedFormat": "tmx",
     "map.width": 10,
     "openFiles": [
-        "D:/github_project/Eco-Warrior/assets/maps/water_map.tmx"
+        "D:/github_project/Eco-Warrior/assets/maps/water_map.tmx",
+        "level2 map.tmx",
+        "trees.tsx",
+        "D:/github_project/Eco-Warrior/assets/maps/recycle_center_map.tmx",
+        "level_2_map_v2.tmx"
     ],
     "project": "tree_background.tiled-project",
     "recentFiles": [
-        "D:/github_project/Eco-Warrior/assets/maps/water_map.tmx",
-        "water_and_island_tiles_v2.tsx",
+        "level_2_map_v2.tmx",
+        "D:/github_project/Eco-Warrior/assets/maps/recycle_center_map.tmx",
         "trees.tsx",
-        "level_2_map_v2.tmx"
+        "level2 map.tmx",
+        "D:/github_project/Eco-Warrior/assets/maps/water_map.tmx",
+        "water_and_island_tiles_v2.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.transparentColor": "#424242",

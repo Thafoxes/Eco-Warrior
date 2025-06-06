@@ -84,6 +84,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
     //all bins
     private Map<String, WasteBin> bins = new HashMap<>();
+    private Map<String, fontGenerator> binLabels = new HashMap<>();
 
     //debug method
     private ShapeRenderer shapeRenderer;
@@ -129,6 +130,11 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         bins.put("can" , new CanBin(new Vector2(spacing * 2 - binWidth , WINDOW_HEIGHT / 2)));
         bins.put("plastic" , new PlasticBin(new Vector2(spacing * 3 - binWidth, WINDOW_HEIGHT / 2)));
         bins.put("general waste", new WasteBin(new Vector2(spacing * 4 - binWidth , WINDOW_HEIGHT / 2)));
+
+        binLabels.put("paper", new fontGenerator());
+        binLabels.put("can", new fontGenerator());
+        binLabels.put("plastic", new fontGenerator());
+        binLabels.put("general waste", new fontGenerator());
     }
 
     private void loadingConveyorAnimation() {
@@ -349,11 +355,28 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
 
         batch.setProjectionMatrix(camera.combined);
+
+
         for(gameSprite bin: bins.values()){
             bin.update(stateTime);
         }
 
+        for(Map.Entry<String, WasteBin> entry : bins.entrySet()) {
+            String binType = entry.getKey();
+            WasteBin bin = entry.getValue();
 
+            // Calculate position for label (centered at bottom of bin)
+            float labelX = bin.getSprite().getX() + bin.getSprite().getWidth() / 2f; // Centered horizontally
+            float labelY = bin.getSprite().getY() - 20f; // 20 pixels below the bin
+
+            binLabels.get(binType).objFontDraw(
+                uiBatch,
+                binType.toUpperCase() + " BIN",
+                16,
+                camera,
+                new Vector2(labelX, labelY)
+            );
+        }
 
         conveyorBelt.update(stateTime);
 
@@ -382,7 +405,8 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         batch.end();
 
         //debugging draw green line
-//        debugSprite();
+        debugSprite();
+
 
         scoreFont.fontDraw(uiBatch, "Score: " + score , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.LEFT, textEnum.TOP);
         timerFont.fontDraw(uiBatch, displayTimer(timerSeconds) , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.RIGHT , textEnum.TOP);
@@ -403,6 +427,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         for(gameSprite bin: bins.values()){
             bin.drawDebug(shapeRenderer);
         }
+
 
 
         shapeRenderer.end();
@@ -446,6 +471,9 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         }
         for(gameSprite item: recyclables){
             item.dispose();
+        }
+        for(fontGenerator font: binLabels.values()){
+            font.dispose();
         }
     }
 
