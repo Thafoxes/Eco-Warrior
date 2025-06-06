@@ -142,7 +142,8 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
             new Vector2(WINDOW_WIDTH / 2 - 60, WINDOW_HEIGHT - 60), // Position in top left
             MAX_HEARTS,  // Start with 5 hearts
             1.5f,       // Scale
-            10f         // Spacing between hearts
+            10f,         // Spacing between hearts
+            camera
         );
     }
 

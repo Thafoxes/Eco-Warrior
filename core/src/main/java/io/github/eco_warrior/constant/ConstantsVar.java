@@ -14,8 +14,9 @@ public class ConstantsVar {
 
 
     public static final float WATER_DROP_MIN_SPAWN_INTERVAL = 2.0f;
-    public static final float WATER_DROP_MAX_SPAWN_INTERVAL = 4.0f;
+    public static final float WATER_DROP_MAX_SPAWN_INTERVAL = 6.0f;
 
-//    "Background_Image/SettingPage.png"
-//    "ui/uiskin.json"
+
+
+
 }

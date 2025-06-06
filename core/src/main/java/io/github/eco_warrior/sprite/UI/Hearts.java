@@ -1,9 +1,12 @@
 package io.github.eco_warrior.sprite.UI;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.animation.HeartEffect;
+import io.github.eco_warrior.controller.fontGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,12 +21,15 @@ public class Hearts {
     private float scale;
     private float spacing;
     private Vector2 position;
-    private List<HeartEffect> heartEffects ;
+    private List<HeartEffect> heartEffects;
+
+    private fontGenerator fontGenerator;
+    private OrthographicCamera camera;
 
     /***
      * Since there is no collision and is for presentation purposes only, no need to extend from the gameSprite class.
      */
-    public Hearts(Vector2 position, int maxHearts, float scale, float spacing) {
+    public Hearts(Vector2 position, int maxHearts, float scale, float spacing, OrthographicCamera camera) {
         this.atlas = new TextureAtlas("atlas/heart/hearts.atlas");
         this.heartRegion = atlas.findRegion("heart_pixel");
         this.maxHearts = maxHearts;
@@ -32,12 +38,22 @@ public class Hearts {
         this.spacing = spacing;
         this.position = position;
         this.heartEffects = new ArrayList<>();
+
+        this.fontGenerator = new fontGenerator(24, Color.WHITE, Color.BLACK);
+        this.camera = camera;
     }
 
     public void draw(SpriteBatch batch) {
         // Draw the remaining hearts
+
         float heartWidth = heartRegion.getRegionWidth() * scale;
         float heartHeight = heartRegion.getRegionHeight() * scale;
+
+        Vector2 labelPos = new Vector2(position.x , position.y + heartRegion.getRegionHeight() );
+
+        batch.end();
+        fontGenerator.fontDraw(batch , "Hearts: ", camera, labelPos);
+        batch.begin();
 
         for (int i = 0; i < currentHearts; i++) {
             float x = position.x + (i * (heartWidth + spacing));

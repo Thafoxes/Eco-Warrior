@@ -93,6 +93,8 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
     //crack instance
     private List<CrackSprite> crackSprites;
 
+
+
     //scoring section
     private int score = 0;
     private float levelTimerSec = 60f;
@@ -110,11 +112,13 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
     private WaterResevior waterResevior;
 
     //Water capacity thresholds
-    private int BuckethalfFullThreshold = 5;
+    private int BuckethalfFullThreshold = 10;
     private int bucketMaxCapacity = BuckethalfFullThreshold * 2;
 
     //meter drop volume size
     private float dropVolume = 1f;
+
+
 
     //Losing image image face
     private Texture losingImage;
@@ -297,7 +301,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
             if(explosion.isFinished()){
                 Object crackObj = explosion.getUserObject();
                 if(crackObj instanceof Vector2){
-                    System.out.println("Creating crack at: " + crackObj);
+
                     createCrack((Vector2) crackObj);
                 }
                 explosionIterator.remove();
@@ -355,6 +359,8 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
     }
 
     private void updateWaterInteractions(float delta) {
+
+
        List<WaterDrop> waterDrops = waterSystem.getActiveWaterDrops();
 
        Iterator<WaterDrop> waterDropIterator = waterDrops.iterator();
@@ -380,7 +386,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
                 // Reset bucket state after emptying
                 resetBucket();
 //                // Play sound effect for emptying
-//                waterResevior.playSound();
+                waterResevior.playSound();
             }
        }
     }
@@ -533,7 +539,6 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
                                increaseCrackFixScore();
                            }else{
                                // Wrong tool used
-                               System.out.println("Cannot fix this crack with " + toolKey);
                                //sound please?
                            }
                        }

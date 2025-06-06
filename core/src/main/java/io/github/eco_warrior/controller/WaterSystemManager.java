@@ -1,15 +1,14 @@
 package io.github.eco_warrior.controller;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.sprite.CrackSprite;
 import io.github.eco_warrior.sprite.PipeCrack;
 import io.github.eco_warrior.sprite.UI.WaterWasteBarUI;
 import io.github.eco_warrior.sprite.WaterDrop;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static io.github.eco_warrior.constant.ConstantsVar.WATER_DROP_MAX_SPAWN_INTERVAL;
 import static io.github.eco_warrior.constant.ConstantsVar.WATER_DROP_MIN_SPAWN_INTERVAL;
@@ -25,9 +24,12 @@ public class WaterSystemManager {
     private static final float DROP_VOLUME = 0.5f; // Amount each drop adds to meter
     private float dropVolume;
 
+    private Map<CrackSprite, Float> crackTimers = new HashMap<>();
+    private Map<CrackSprite, Float> crackIntervals = new HashMap<>();
+
+
     public WaterSystemManager(WaterWasteBarUI waterMeter) {
         activeWaterDrops = new ArrayList<>();
-        resetSpawnInterval();
         this.waterMeter = waterMeter;
         this.dropVolume = DROP_VOLUME;
 
@@ -35,31 +37,39 @@ public class WaterSystemManager {
 
     public WaterSystemManager(WaterWasteBarUI waterMeter, float dropVolume) {
         activeWaterDrops = new ArrayList<>();
-        resetSpawnInterval();
         this.waterMeter = waterMeter;
         this.dropVolume = dropVolume;
     }
 
     private void resetSpawnInterval() {
-        currentSpawnInterval = WATER_DROP_MIN_SPAWN_INTERVAL + (float) Math.random() * (WATER_DROP_MAX_SPAWN_INTERVAL - WATER_DROP_MIN_SPAWN_INTERVAL);
+        currentSpawnInterval =  (float) Math.random() * (WATER_DROP_MAX_SPAWN_INTERVAL - WATER_DROP_MIN_SPAWN_INTERVAL);
     }
 
     public void update(float delta, List<CrackSprite> cracks) {
-        dropSpawnTimer += delta;
 
-
-        // Spawn new drops
-        if (dropSpawnTimer >= currentSpawnInterval) {
-            for (CrackSprite crack : cracks) {
-                if (crack.isVisible()) {
-//                    System.out.println("WaterSystemManager: update called with delta = " + delta);
-                    spawnWaterDrop(crack.getWaterDropPosition());
+        for(CrackSprite crack: cracks){
+            if(crack.isVisible()){
+                if(!crackTimers.containsKey(crack)){
+                    crackTimers.put(crack, 0f);
+                    crackIntervals.put(crack, MathUtils.random(WATER_DROP_MIN_SPAWN_INTERVAL, WATER_DROP_MAX_SPAWN_INTERVAL));
                 }
+
+                float timer = crackTimers.get(crack);
+                timer += delta;
+
+                if(timer >= crackIntervals.get(crack)) {
+                   spawnWaterDrop(crack.getWaterDropPosition());
+                   timer = 0f;
+                   crackIntervals.put(crack, MathUtils.random(WATER_DROP_MIN_SPAWN_INTERVAL, WATER_DROP_MAX_SPAWN_INTERVAL));
+                }
+                crackTimers.put(crack, timer);
             }
-            dropSpawnTimer = 0;
-            resetSpawnInterval();
         }
 
+        updateExistingDrops(delta);
+    }
+
+    private void updateExistingDrops(float delta) {
         // Update existing drops
         Iterator<WaterDrop> iterator = activeWaterDrops.iterator();
         while (iterator.hasNext()) {
@@ -78,7 +88,13 @@ public class WaterSystemManager {
         }
     }
 
-    private void spawnWaterDrop(Vector2 waterDropPosition) {
+    // Clean up timers for removed cracks
+    public void cleanupRemovedCracks(List<CrackSprite> currentCracks) {
+        crackTimers.keySet().retainAll(currentCracks);
+        crackIntervals.keySet().retainAll(currentCracks);
+    }
+
+    public void spawnWaterDrop(Vector2 waterDropPosition) {
         WaterDrop waterDrop = new WaterDrop(waterDropPosition);
         activeWaterDrops.add(waterDrop);
     }
