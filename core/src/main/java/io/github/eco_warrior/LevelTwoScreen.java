@@ -4,7 +4,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -25,8 +24,6 @@ public class LevelTwoScreen implements Screen {
     private Viewport viewport;
     private SpriteBatch batch;
     private SpriteBatch uiBatch;
-
-    private Texture test;
 
     //map
     private TiledMap map;
