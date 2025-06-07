@@ -1,0 +1,5 @@
+lake_hitbox.png
+size:512,256
+repeat:none
+lake_hitbox
+bounds:2,2,400,160

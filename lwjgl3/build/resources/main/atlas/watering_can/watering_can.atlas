@@ -1,0 +1,9 @@
+watering_can.png
+size:1024,512
+repeat:none
+watering_can
+index:2
+bounds:2,2,256,256
+watering_can
+index:1
+bounds:260,2,256,256
