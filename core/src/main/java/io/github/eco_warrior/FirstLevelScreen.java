@@ -22,10 +22,7 @@ import io.github.eco_warrior.entity.LevelMaker;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.enums.textEnum;
 import io.github.eco_warrior.screen.ResultScreen;
-import io.github.eco_warrior.sprite.Bins.BlueBin;
-import io.github.eco_warrior.sprite.Bins.CanBin;
-import io.github.eco_warrior.sprite.Bins.PlasticBin;
-import io.github.eco_warrior.sprite.Bins.WasteBin;
+import io.github.eco_warrior.sprite.Bins.*;
 import io.github.eco_warrior.sprite.Recyables.*;
 import io.github.eco_warrior.sprite.UI.Hearts;
 
@@ -70,7 +67,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     private static final int MAX_HEARTS = 5;
 
     //Sprites
-    private List<gameSprite> recyclables = new ArrayList<>();
+    private final List<gameSprite> recyclables = new ArrayList<>();
     private final Class<? extends gameSprite>[] recyclableClasses = new Class[] {
         PlasticBottle.class,
         Newspaper.class,
@@ -95,7 +92,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     private static int winningScore = 20;
 
     //all bins
-    private Map<String, WasteBin> bins = new HashMap<>();
+    private Map<String, BinBase> bins = new HashMap<>();
     private Map<String, fontGenerator> binLabels = new HashMap<>();
 
     //debug method
@@ -154,12 +151,13 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         int totalBins = 4;
         float spacing = WINDOW_WIDTH / (totalBins + 1);
 
-        float binWidth = new BlueBin(new Vector2(0,0)).getMidX();
+        float binWidth = new PaperBin(new Vector2(0,0)).getMidX();
+        float yPos = WINDOW_HEIGHT / 2 - 30f;
 
-        bins.put("paper", new BlueBin(new Vector2(spacing - binWidth , WINDOW_HEIGHT / 2)));
-        bins.put("can" , new CanBin(new Vector2(spacing * 2 - binWidth , WINDOW_HEIGHT / 2)));
-        bins.put("plastic" , new PlasticBin(new Vector2(spacing * 3 - binWidth, WINDOW_HEIGHT / 2)));
-        bins.put("glass bottle", new WasteBin(new Vector2(spacing * 4 - binWidth , WINDOW_HEIGHT / 2)));
+        bins.put("paper", new PaperBin(new Vector2(spacing - binWidth , yPos)));
+        bins.put("can" , new CanBin(new Vector2(spacing * 2 - binWidth , yPos)));
+        bins.put("plastic" , new PlasticBin(new Vector2(spacing * 3 - binWidth, yPos)));
+        bins.put("glass bottle", new GlassBin(new Vector2(spacing * 4 - binWidth , yPos)));
 
         binLabels.put("paper", new fontGenerator());
         binLabels.put("can", new fontGenerator());
@@ -326,7 +324,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         isReturning = true;
         if(draggingItem != null){
             //if the sprite hits the bin
-            for(WasteBin bin: bins.values()){
+            for(BinBase bin: bins.values()){
                 if(draggingItem.getCollisionRect().overlaps(bin.getCollisionRect())){
                     //check if the draggingItem is place into the right bin
 //                    System.out.println(draggingItem.getCategoryPile());
@@ -346,7 +344,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         }
     }
 
-    private void playWrongAction(WasteBin bin) {
+    private void playWrongAction(BinBase bin) {
         bin.playWrongSound();
         if(score > 0) score--;
 
@@ -358,7 +356,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         }
     }
 
-    private void playCorrectAction(WasteBin bin) {
+    private void playCorrectAction(BinBase bin) {
         bin.playCorrectSound();
         score++;
     }
@@ -415,9 +413,9 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
             bin.update(stateTime);
         }
 
-        for(Map.Entry<String, WasteBin> entry : bins.entrySet()) {
+        for(Map.Entry<String, BinBase> entry : bins.entrySet()) {
             String binType = entry.getKey();
-            WasteBin bin = entry.getValue();
+            BinBase bin = entry.getValue();
 
             // Calculate position for label (centered at bottom of bin)
             float labelX = bin.getSprite().getX() + bin.getSprite().getWidth() / 2f; // Centered horizontally

@@ -47,6 +47,8 @@ Image/recycle_manager_looks_sad.png
 Image/recycle_manager_sad.png
 atlas/bins/bins.atlas
 atlas/bins/bins.png
+atlas/bins/recycling_bins.atlas
+atlas/bins/recycling_bins.png
 atlas/bucket/bucket_anim.atlas
 atlas/bucket/bucket_anim.png
 atlas/conveyor/conveyor.atlas

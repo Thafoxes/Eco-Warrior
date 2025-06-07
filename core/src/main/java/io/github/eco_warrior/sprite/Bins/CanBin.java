@@ -6,7 +6,7 @@ import io.github.eco_warrior.enums.ERecycleMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class CanBin extends WasteBin {
+public class CanBin extends BinBase {
 
 
     private ArrayList<ERecycleMap> acceptingMaterial = new ArrayList<>(
@@ -14,10 +14,8 @@ public class CanBin extends WasteBin {
     );
     public CanBin(Vector2 pos) {
         super(
-            "atlas/bins/bins.atlas",
-            "cans_bin",
+            "metal_bin",
             pos,
-            5f ,
             "sound_effects/correct.mp3",
             "sound_effects/wrong.mp3",
             "sound_effects/hitting_bin.mp3"

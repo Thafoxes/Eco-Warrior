@@ -3,15 +3,13 @@ package io.github.eco_warrior.sprite.Bins;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.enums.ERecycleMap;
 
-public class BlueBin extends WasteBin {
+public class PaperBin extends BinBase {
 
     private ERecycleMap acceptingMaterial = ERecycleMap.newspaper;
-    public BlueBin(Vector2 pos) {
+    public PaperBin(Vector2 pos) {
         super(
-            "atlas/bins/bins.atlas",
             "paper_bin",
             pos,
-            5f ,
             "sound_effects/correct.mp3",
             "sound_effects/wrong.mp3",
             "sound_effects/hitting_bin.mp3"

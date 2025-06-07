@@ -3,32 +3,26 @@ package io.github.eco_warrior.sprite.Bins;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.enums.ERecycleMap;
 
-public class WasteBin extends gameSprite {
+public class GlassBin extends BinBase {
     //animation
     private float animationTimer = 0f;
     private boolean isAnimating = false;
     private float animationDuration = 0.3f;
 
     private ERecycleMap acceptingMaterial = ERecycleMap.glass_bottle;
-    public WasteBin(Vector2 pos) {
+
+    public GlassBin(Vector2 pos) {
         super(
-            "atlas/bins/bins.atlas",
-            "waste_bin",
+            "glass_bin",
             pos,
-            5f ,
             "sound_effects/correct.mp3",
             "sound_effects/wrong.mp3",
             "sound_effects/hitting_bin.mp3"
             );
     }
 
-    public WasteBin(String atlasPath, String regionName, Vector2 pos, float scale,
-                    String correctSoundPath, String wrongSoundPath, String hittingSoundPath) {
-        super(atlasPath, regionName, pos, scale, correctSoundPath, wrongSoundPath, hittingSoundPath);
-    }
 
     @Override
     public void draw(SpriteBatch batch) {
