@@ -50,7 +50,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     //conveyor
     private ConveyorBelt conveyorBelt;
     private float stateTime;
-    private final int CONVEYOR_SCALE = 10;
+    private final float CONVEYOR_SCALE = 0.5f;
 
     //uiBatch
     private fontGenerator scoreFont;
@@ -166,11 +166,12 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     }
 
     private void loadingConveyorAnimation() {
-        conveyorBelt = new ConveyorBelt("atlas/conveyor/conveyor.atlas",
+        float conveyorYPos = -100f ;
+        conveyorBelt = new ConveyorBelt(
             CONVEYOR_SCALE,
-            viewport.getWorldHeight()/10f + 50f, //some calculation only
+            conveyorYPos, //some calculation only
             viewport
-            );
+        );
 
         stateTime = 0f;
     }
@@ -400,6 +401,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         camera.update();
         gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
 
+
         maprenderer.setView(camera);
         maprenderer.render();
 
@@ -431,6 +433,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         }
 
         conveyorBelt.update(stateTime);
+
 
         batch.begin();
 

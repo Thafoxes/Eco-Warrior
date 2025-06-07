@@ -53,6 +53,11 @@ atlas/bucket/bucket_anim.atlas
 atlas/bucket/bucket_anim.png
 atlas/conveyor/conveyor.atlas
 atlas/conveyor/conveyor.png
+atlas/conveyor/conveyor_belt.atlas
+atlas/conveyor/conveyor_belt.png
+atlas/conveyor/conveyor_belt2.png
+atlas/conveyor/conveyor_belt3.png
+atlas/conveyor/conveyor_belt4.png
 atlas/crack/crackx64.atlas
 atlas/crack/crackx64.png
 atlas/crack/crackx64v2.atlas

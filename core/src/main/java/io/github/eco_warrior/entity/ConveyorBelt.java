@@ -1,5 +1,6 @@
 package io.github.eco_warrior.entity;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -15,26 +16,40 @@ public class ConveyorBelt {
     private boolean isAnimating = true;
 
 
-    public ConveyorBelt(String atlasPath, float scale, float yOffset, Viewport viewport) {
+    public ConveyorBelt(String atlasPath, String region, float scale, float yOffset, Viewport viewport) {
         this.scale = scale; //place here just in case I need to use it
         this.y = yOffset;
         this.sprites = new ArrayList<>();
 
         atlas = new TextureAtlas(atlasPath);
-        animation = new Animation<>(0.1f, atlas.findRegions("image"), Animation.PlayMode.LOOP);
+        animation = new Animation<>(0.1f, atlas.findRegions(region), Animation.PlayMode.LOOP);
 
         TextureRegion firstFrame = animation.getKeyFrame(0);
         float scaledWidth = firstFrame.getRegionWidth() * scale;
 
-        for (float x = 0f; x < viewport.getWorldWidth() + scaledWidth; x += scaledWidth) {
+        expandConveyor(scale, viewport, scaledWidth, firstFrame);
+
+        stateTime = 0f;
+    }
+
+
+    public ConveyorBelt(float scale, float yOffset, Viewport viewport) {
+        this("atlas/conveyor/conveyor_belt.atlas",
+            "belt",
+            scale,
+            yOffset,
+            viewport);
+    }
+
+    private void expandConveyor(float scale, Viewport viewport, float scaledWidth, TextureRegion firstFrame) {
+        for (float x = viewport.getScreenX() - 300f; x < viewport.getWorldWidth() + scaledWidth; x += scaledWidth) {
             Sprite conveyor = new Sprite(firstFrame);
             conveyor.setScale(scale);
             conveyor.setPosition(x, y);
             sprites.add(conveyor);
         }
-
-        stateTime = 0f;
     }
+
 
     public void update(float delta) {
         if(isAnimating){
