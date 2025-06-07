@@ -1,29 +1,20 @@
-package io.github.eco_warrior.sprite;
+package io.github.eco_warrior.sprite.Recyables;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.enums.ERecycleMap;
 
-public class TrashPile extends gameSprite {
-    private ERecycleMap categoryPile = ERecycleMap.trash_pile;
+public class Recyclables extends gameSprite {
+    private ERecycleMap categoryPile = ERecycleMap.glass_bottle;
     private float speed = 150f;
 
-    public TrashPile(Vector2 position) {
-        super(
-            "sprite/recyclables/recyclables.atlas",
-            "trash_pile",
-            position,
-            3f
-            );
-    }
 
-    public TrashPile(Vector2 position, String regionName) {
+    public Recyclables(Vector2 position, String regionName) {
         super(
-            "sprite/recyclables/recyclables.atlas",
+            "atlas/recyclables/trash.atlas",
             regionName,
             position,
-            3f
+            0.5f
         );
     }
 

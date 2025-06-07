@@ -1,9 +1,6 @@
-package io.github.eco_warrior.sprite;
+package io.github.eco_warrior.sprite.Bins;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.enums.ERecycleMap;
 
 import java.util.ArrayList;
@@ -17,7 +14,7 @@ public class CanBin extends WasteBin {
     );
     public CanBin(Vector2 pos) {
         super(
-            "sprite/bins/bins.atlas",
+            "atlas/bins/bins.atlas",
             "cans_bin",
             pos,
             5f ,

@@ -1,4 +1,4 @@
-package io.github.eco_warrior.sprite;
+package io.github.eco_warrior.sprite.Bins;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,10 +12,10 @@ public class WasteBin extends gameSprite {
     private boolean isAnimating = false;
     private float animationDuration = 0.3f;
 
-    private ERecycleMap acceptingMaterial = ERecycleMap.trash_pile;
+    private ERecycleMap acceptingMaterial = ERecycleMap.glass_bottle;
     public WasteBin(Vector2 pos) {
         super(
-            "sprite/bins/bins.atlas",
+            "atlas/bins/bins.atlas",
             "waste_bin",
             pos,
             5f ,

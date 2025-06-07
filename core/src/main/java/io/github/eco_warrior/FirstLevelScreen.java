@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -23,7 +22,11 @@ import io.github.eco_warrior.entity.LevelMaker;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.enums.textEnum;
 import io.github.eco_warrior.screen.ResultScreen;
-import io.github.eco_warrior.sprite.*;
+import io.github.eco_warrior.sprite.Bins.BlueBin;
+import io.github.eco_warrior.sprite.Bins.CanBin;
+import io.github.eco_warrior.sprite.Bins.PlasticBin;
+import io.github.eco_warrior.sprite.Bins.WasteBin;
+import io.github.eco_warrior.sprite.Recyables.*;
 import io.github.eco_warrior.sprite.UI.Hearts;
 
 import java.util.*;
@@ -72,9 +75,9 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         PlasticBottle.class,
         Newspaper.class,
         TinCans.class,
-        TrashPile.class,
+        GlassBottle.class,
     };
-    private TrashPile draggingItem = null;
+    private Recyclables draggingItem = null;
 
     //recyclable spawn pos
     private float startX = WINDOW_WIDTH +  50f;
@@ -156,12 +159,12 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         bins.put("paper", new BlueBin(new Vector2(spacing - binWidth , WINDOW_HEIGHT / 2)));
         bins.put("can" , new CanBin(new Vector2(spacing * 2 - binWidth , WINDOW_HEIGHT / 2)));
         bins.put("plastic" , new PlasticBin(new Vector2(spacing * 3 - binWidth, WINDOW_HEIGHT / 2)));
-        bins.put("general waste", new WasteBin(new Vector2(spacing * 4 - binWidth , WINDOW_HEIGHT / 2)));
+        bins.put("glass bottle", new WasteBin(new Vector2(spacing * 4 - binWidth , WINDOW_HEIGHT / 2)));
 
         binLabels.put("paper", new fontGenerator());
         binLabels.put("can", new fontGenerator());
         binLabels.put("plastic", new fontGenerator());
-        binLabels.put("general waste", new fontGenerator());
+        binLabels.put("glass bottle", new fontGenerator());
     }
 
     private void loadingConveyorAnimation() {
@@ -187,16 +190,17 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     public void render(float delta) {
 
         timerCount(delta);
-        playerHearts.update(delta);
         draw();
         countdownTimer();
         input();
-        controller();
+        controller(delta);
 
 
     }
 
-    private void controller() {
+    private void controller(float delta) {
+        playerHearts.update(delta);
+
         if(score >= winningScore || timerEnded) {
             winningScreen();
 
@@ -263,7 +267,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
             if(Gdx.input.justTouched()){
                 for(gameSprite item : recyclables){
                     if(item.getCollisionRect().contains(currentTouchPos)){
-                        draggingItem = (TrashPile) item;
+                        draggingItem = (Recyclables) item;
                         isDragging = true;
                         lastTouchPos.set(currentTouchPos);
                         break;

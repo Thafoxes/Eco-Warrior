@@ -5,6 +5,6 @@ public enum ERecycleMap {
     newspaper,
     plastic_bottle,
     tin_cans,
-    trash_pile,
+    glass_bottle,
     monster
 }

@@ -1,0 +1,13 @@
+trash.png
+size:2048,512
+repeat:none
+aluminium_can
+bounds:776,2,256,256
+glass_bottle
+bounds:260,2,256,256
+metal_can
+bounds:518,2,256,256
+newspaper
+bounds:1034,2,256,256
+plastic_bottle
+bounds:2,2,256,256

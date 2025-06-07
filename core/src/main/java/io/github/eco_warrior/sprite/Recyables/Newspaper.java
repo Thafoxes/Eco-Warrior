@@ -1,10 +1,9 @@
-package io.github.eco_warrior.sprite;
+package io.github.eco_warrior.sprite.Recyables;
 
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.enums.ERecycleMap;
 
-public class Newspaper extends TrashPile {
+public class Newspaper extends Recyclables {
     private ERecycleMap categoryPile = ERecycleMap.newspaper;
     private float speed = -50f;
 
