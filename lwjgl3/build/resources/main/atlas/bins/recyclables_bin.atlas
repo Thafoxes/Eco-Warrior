@@ -1,0 +1,15 @@
+recyclables_bin.png
+size:2048,2048
+repeat:none
+glass_bin
+bounds:2,694,512,690
+offsets:0,127,512,1024
+metal_bin
+bounds:2,2,512,690
+offsets:0,127,512,1024
+paper_bin
+bounds:516,694,512,690
+offsets:0,127,512,1024
+plastic_bin
+bounds:516,2,512,690
+offsets:0,127,512,1024

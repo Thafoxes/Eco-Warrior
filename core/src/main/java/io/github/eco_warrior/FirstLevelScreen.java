@@ -421,12 +421,12 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
             // Calculate position for label (centered at bottom of bin)
             float labelX = bin.getSprite().getX() + bin.getSprite().getWidth() / 2f; // Centered horizontally
-            float labelY = bin.getSprite().getY() - 20f; // 20 pixels below the bin
+            float labelY = bin.getSprite().getY() - 10f; // 20 pixels below the bin
 
             binLabels.get(binType).objFontDraw(
                 uiBatch,
                 binType.toUpperCase() + " BIN",
-                16,
+                24,
                 camera,
                 new Vector2(labelX, labelY)
             );

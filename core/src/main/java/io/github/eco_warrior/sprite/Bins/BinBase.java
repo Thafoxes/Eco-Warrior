@@ -16,10 +16,10 @@ public class BinBase extends gameSprite {
 
     public BinBase(String regionName, Vector2 pos,
                    String correctSoundPath, String wrongSoundPath, String hittingSoundPath) {
-        super("atlas/bins/recycling_bins.atlas",
+        super("atlas/bins/recyclables_bin.atlas",
             regionName,
             pos,
-            0.35f,
+            0.4f,
             correctSoundPath,
             wrongSoundPath,
             hittingSoundPath);
