@@ -13,6 +13,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.sprite.WaterFountain;
 import io.github.eco_warrior.sprite.gardening_equipments.*;
+import io.github.eco_warrior.sprite.gardening_equipments.sapling_variant.BlazingSapling;
+import io.github.eco_warrior.sprite.gardening_equipments.sapling_variant.OrdinarySapling;
 import io.github.eco_warrior.sprite.tree_variant.*;
 
 import java.util.HashMap;
@@ -31,9 +33,6 @@ public class LevelTwoScreen implements Screen {
     private SpriteBatch batch;
     private SpriteBatch uiBatch;
 
-    //map
-//    private TiledMap map;
-//    private OrthogonalTiledMapRenderer maprenderer;
     private Texture backgroundTexture;
     private Sprite backgroundSprite;
 
@@ -52,7 +51,7 @@ public class LevelTwoScreen implements Screen {
     private Map<String, gameSprite> lake = new HashMap<>();
 
     //tree filler
-    private Map<String, gameSprite> tree = new HashMap<>();
+    private Map<String, gameSprite> ordinaryTree = new HashMap<>();
     private Map<String, gameSprite> blazingTree = new HashMap<>();
 
     //entity logics
@@ -61,7 +60,11 @@ public class LevelTwoScreen implements Screen {
     private OrdinaryTree ordinaryTreeLogic;
     private BlazingTree blazingTreeLogic;
     private Shovel shovelLogic;
-    private Sapling saplingLogic;
+    private OrdinarySapling ordinarySaplingLogic;
+    private BlazingSapling blazingSaplingLogic;
+
+    //boolean flags
+    private boolean isBlazingSaplingUsed = false;
 
     //input selection
     private Vector2 currentTouchPos;
@@ -97,16 +100,8 @@ public class LevelTwoScreen implements Screen {
 
         initializeTools();
 
-//        loadMap();
-    }
 
-//    private void loadMap(){
-//        TmxMapLoader.Parameters parameters = new TmxMapLoader.Parameters();
-//        parameters.generateMipMaps = false;
-//        map = new TmxMapLoader().load("maps/soil_map.tmx", parameters);
-//
-//        maprenderer = new OrthogonalTiledMapRenderer(map, 1f);
-//    }
+    }
 
     private void initializeTools() {
         int toolCount = 5;
@@ -125,16 +120,18 @@ public class LevelTwoScreen implements Screen {
         ordinaryTreeLogic = new OrdinaryTree(new Vector2(800, 250), treeScale);
         blazingTreeLogic = new BlazingTree(new Vector2(1000, 250), treeScale);
         shovelLogic = new Shovel(new Vector2(spacing * 3 - XMover, startY), toolScale);
-        saplingLogic = new Sapling(new Vector2(spacing * 5 - XMover, startY), toolScale);
+        ordinarySaplingLogic = new OrdinarySapling(new Vector2(spacing * 5 - XMover, startY), toolScale);
+        blazingSaplingLogic = new BlazingSapling(new Vector2(spacing * 5 - XMover, startY), toolScale);
 
         tools.put("shovel", shovelLogic);
         tools.put("watering_can", wateringCanLogic);
         tools.put("ray_gun", new RayGun(new Vector2(spacing * 1 - XMover, startY), toolScale));
         tools.put("fertilizer", new Fertilizer(new Vector2(spacing * 4 - XMover, startY), toolScale));
-        tools.put("sapling", saplingLogic);
+        tools.put("sapling", ordinarySaplingLogic);
+        tools.put("blazing_sapling", blazingSaplingLogic);
 
         lake.put("lake_hitbox", waterFountainLogic);
-        tree.put("tree", ordinaryTreeLogic);
+        ordinaryTree.put("tree", ordinaryTreeLogic);
         blazingTree.put("fire_tree", blazingTreeLogic);
     }
 
@@ -155,16 +152,37 @@ public class LevelTwoScreen implements Screen {
         batch.begin();
         backgroundSprite.draw(batch);
         for (gameSprite tool : tools.values()) {
-            tool.draw(batch);
+            if(tool != tools.get("blazing_sapling")) {
+                tool.draw(batch);
+            }
         }
 
-        tree.values().iterator().next().draw(batch);
+        ordinaryTree.values().iterator().next().draw(batch);
         blazingTree.values().iterator().next().draw(batch);
+
+        //remove sapling upon planting
+        if ((ordinaryTreeLogic.treeLevel == OrdinaryTree.TreeStage.HOLE.ordinal())
+            && ordinaryTreeLogic.getCollisionRect().overlaps(ordinarySaplingLogic.getCollisionRect())) {
+            tools.remove("sapling");
+        }
+
+        //draw blazing sapling when the ordinary tree reaches adult phase
+        if(!isBlazingSaplingUsed) {
+            if (ordinaryTreeLogic.treeLevel == OrdinaryTree.TreeStage.MATURE_TREE.ordinal()) {
+                tools.get("blazing_sapling").draw(batch);
+            }
+        }
+
+        //remove blazing sapling upon planting
+        if ((blazingTreeLogic.treeLevel == BlazingTree.TreeStage.HOLE.ordinal())
+            && blazingTreeLogic.getCollisionRect().overlaps(blazingSaplingLogic.getCollisionRect())) {
+            tools.remove("blazing_sapling");
+            isBlazingSaplingUsed = true; //set to true when blazing sapling is used
+        }
+
         batch.end();
 
         debugSprite();
-//        maprenderer.setView(camera);
-//        maprenderer.render();
     }
 
     private void input(){
@@ -176,12 +194,22 @@ public class LevelTwoScreen implements Screen {
             if (Gdx.input.justTouched()) {
                 for (gameSprite tool : tools.values()) {
                     //if is touched the tools
-                    if (tool.getCollisionRect().contains(currentTouchPos)) {
-                        draggingTool = tool;
-                        isDragging = true;
-                        lastTouchPos.set(currentTouchPos);
-                        break;
+                    if (tool == tools.get("blazing_sapling")) {
+                        if (tool.getCollisionRect().contains(currentTouchPos)
+                            && ordinaryTreeLogic.treeLevel == OrdinaryTree.TreeStage.MATURE_TREE.ordinal()) {
+                            draggingTool = tool;
+                            isDragging = true;
+                            lastTouchPos.set(currentTouchPos);
+                            break;
+                        }
+                    } else {
+                        if (tool.getCollisionRect().contains(currentTouchPos)) {
+                            draggingTool = tool;
+                            isDragging = true;
+                            lastTouchPos.set(currentTouchPos);
+                            break;
 
+                        }
                     }
                 }
             }
@@ -263,8 +291,8 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void updateTree() {
-        ordinaryTreeLogic.updateTreeStatus(shovelLogic, saplingLogic, wateringCanLogic);
-        blazingTreeLogic.updateBlazingTreeStatus(shovelLogic, saplingLogic, wateringCanLogic);
+        ordinaryTreeLogic.updateTreeStatus(shovelLogic, ordinarySaplingLogic, wateringCanLogic);
+        blazingTreeLogic.updateBlazingTreeStatus(shovelLogic, blazingSaplingLogic, wateringCanLogic);
     }
 
 
@@ -299,7 +327,7 @@ public class LevelTwoScreen implements Screen {
         }
 
         lake.values().iterator().next().drawDebug(shapeRenderer);
-        tree.values().iterator().next().drawDebug(shapeRenderer);
+        ordinaryTree.values().iterator().next().drawDebug(shapeRenderer);
         blazingTree.values().iterator().next().drawDebug(shapeRenderer);
 
 //        debugSpawnArea();
@@ -311,8 +339,6 @@ public class LevelTwoScreen implements Screen {
     public void dispose() {
         uiBatch.dispose();
         batch.dispose();
-//        maprenderer.dispose();
-//        map.dispose();
         backgroundTexture.dispose();
         backgroundSprite.getTexture().dispose();
 

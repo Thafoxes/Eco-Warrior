@@ -5,23 +5,25 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
+import com.badlogic.gdx.utils.Timer;
 
 public class OrdinaryTree extends gameSprite {
 
-    protected enum TreeStage {
+    public enum TreeStage {
         FLAG,
         HOLE,
         SAPLING,
         YOUNG_TREE,
         MATURE_TREE,
-    };
+    }
 
-    protected int treeLevel = TreeStage.FLAG.ordinal();
+    public int treeLevel = TreeStage.FLAG.ordinal();
+    private boolean isStageTransitionScheduled = false;
 
-    protected Sound digSound;
-    protected Sound boneMealSound;
-    protected Sound waterPourSound;
-    protected Sound saplingSound;
+    private Sound digSound;
+    private Sound boneMealSound;
+    private Sound waterPourSound;
+    private Sound saplingSound;
 
     public OrdinaryTree(Vector2 position, float scale) {
         super("atlas/tree_stages/tree_stages.atlas",
@@ -49,27 +51,29 @@ public class OrdinaryTree extends gameSprite {
 
             setFrame(treeLevel);
         }
-        if (treeLevel == TreeStage.SAPLING.ordinal()
+        if ((treeLevel == TreeStage.SAPLING.ordinal() || treeLevel == TreeStage.YOUNG_TREE.ordinal())
             && getCollisionRect().overlaps(wateringCan.getCollisionRect())
-            && wateringCan.waterLevel == WateringCan.WateringCanState.FILLED.ordinal()) {
-            boneMealSound.play(1.5f);
-//            waterPourSound.play(1f);
-            wateringCan.waterLevel = WateringCan.WateringCanState.EMPTY.ordinal();
-            treeLevel = TreeStage.YOUNG_TREE.ordinal();
+            && wateringCan.waterLevel == WateringCan.WateringCanState.FILLED.ordinal()
+            && !isStageTransitionScheduled) {
 
-            wateringCan.setFrame(wateringCan.waterLevel);
-            setFrame(treeLevel);
-        }
-        if (treeLevel == TreeStage.YOUNG_TREE.ordinal()
-            && getCollisionRect().overlaps(wateringCan.getCollisionRect())
-            && wateringCan.waterLevel == WateringCan.WateringCanState.FILLED.ordinal()) {
-            boneMealSound.play(1.5f);
-//            waterPourSound.play(1f);
             wateringCan.waterLevel = WateringCan.WateringCanState.EMPTY.ordinal();
-            treeLevel = TreeStage.MATURE_TREE.ordinal();
-
             wateringCan.setFrame(wateringCan.waterLevel);
-            setFrame(treeLevel);
+            isStageTransitionScheduled = true;
+            waterPourSound.play(1f);
+
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    if (treeLevel == TreeStage.SAPLING.ordinal()) {
+                        treeLevel = TreeStage.YOUNG_TREE.ordinal();
+                    } else if (treeLevel == TreeStage.YOUNG_TREE.ordinal()) {
+                        treeLevel = TreeStage.MATURE_TREE.ordinal();
+                    }
+                    boneMealSound.play(1.5f);
+                    setFrame(treeLevel);
+                    isStageTransitionScheduled = false;
+                }
+            }, 3); // 3 seconds delay
         }
     }
 }
