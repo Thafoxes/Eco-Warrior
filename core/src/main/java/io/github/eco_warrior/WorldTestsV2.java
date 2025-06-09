@@ -28,7 +28,11 @@ import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_WIDTH;
 public class WorldTestsV2 implements Screen {
 
     private MapLoader map;
+
+    //camera
     private OrthographicCamera camera;
+    private float viewportWidth = 10 * 16;  // Show 10 tiles horizontally
+    private float viewportHeight = 10 * 16; // Show 10 tiles vertically
     private Game game;
 
     private SpriteBatch batch;
@@ -101,7 +105,7 @@ public class WorldTestsV2 implements Screen {
             spawnPosition,
             tileWidth,
             tileHeight,
-            (TiledMapTileLayer) map.getMap().getLayers().get("main_space")
+            (TiledMapTileLayer) map.getMap().getLayers().get("water background")
         );
 
         // Set the goblin's initial position based on the rectangle
@@ -126,7 +130,7 @@ public class WorldTestsV2 implements Screen {
     private void setupCamera() {
         //Create and setup camera
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, WINDOW_WIDTH, WINDOW_HEIGHT);
+        camera.setToOrtho(false, viewportWidth, viewportHeight);
         camera.zoom = CAMERA_ZOOM;
         camera.update();
     }
@@ -186,8 +190,10 @@ public class WorldTestsV2 implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        camera.viewportWidth = width;
-        camera.viewportHeight = height;
+        float aspectRatio = (float)width / (float)height;
+        viewportWidth = 10 * 16 * aspectRatio;
+        camera.viewportWidth = viewportWidth;
+        camera.viewportHeight = viewportHeight;
         camera.update();
     }
 

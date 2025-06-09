@@ -235,7 +235,7 @@ public class Goblin extends Sprite {
     }
 
     private boolean isTileBlocked(int tileX, int tileY) {
-        if(true) return false; //debug debug
+//        if(true) return false; //debug debug
         if(tileX < 0 || tileY < 0 ||
             tileX >= collisionLayer.getWidth() ||
             tileY >= collisionLayer.getHeight()) {
@@ -248,11 +248,13 @@ public class Goblin extends Sprite {
         // Check if the cell exists and has a tile
         if (cell != null && cell.getTile() != null) {
             // Check for a "blocked" property in the tile
-            Object blocked = cell.getTile().getProperties().get("blocked");
+            Object blocked = cell.getTile().getObjects();
             if (blocked != null) {
-                return Boolean.parseBoolean(blocked.toString());
+//                return Boolean.parseBoolean(blocked.toString());
+                return true;
             }
-            return true; // By default, assume solid tiles block movement
+            // this one is causing issue
+            return false; // By default, assume solid tiles block movement
         }
 
         // If there's no cell, allow movement
