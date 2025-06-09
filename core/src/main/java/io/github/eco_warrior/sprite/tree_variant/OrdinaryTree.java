@@ -3,11 +3,12 @@ package io.github.eco_warrior.sprite.tree_variant;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
+import io.github.eco_warrior.entity.Trees;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
-import com.badlogic.gdx.utils.Timer;
 
-public class OrdinaryTree extends gameSprite {
+public class OrdinaryTree extends Trees {
 
     public enum TreeStage {
         FLAG,
@@ -26,8 +27,8 @@ public class OrdinaryTree extends gameSprite {
     private Sound saplingSound;
 
     public OrdinaryTree(Vector2 position, float scale) {
-        super("atlas/tree_stages/tree_stages.atlas",
-            "tree",
+        super("atlas/tree_variant_stages/ordinary_tree_stages.atlas",
+            "ordinary_tree",
             5,
             position,
             scale);
@@ -73,7 +74,7 @@ public class OrdinaryTree extends gameSprite {
                     setFrame(treeLevel);
                     isStageTransitionScheduled = false;
                 }
-            }, 3); // 3 seconds delay
+            }, 2); // 3 seconds delay
         }
     }
 }

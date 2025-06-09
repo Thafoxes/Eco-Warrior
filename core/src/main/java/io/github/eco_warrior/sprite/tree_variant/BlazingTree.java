@@ -4,53 +4,61 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
+import io.github.eco_warrior.entity.Trees;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
 
-public class BlazingTree extends gameSprite {
+public class BlazingTree extends Trees {
 
     public enum TreeStage {
         FLAG,
         HOLE,
         SAPLING,
         YOUNG_TREE,
-        MATURE_TREE,
+        ANIMATED_MATURE_TREE_1,
+        ANIMATED_MATURE_TREE_2,
+        ANIMATED_MATURE_TREE_3,
+        ANIMATED_MATURE_TREE_4,
+        ANIMATED_MATURE_TREE_5
     }
+
 
     public int treeLevel = TreeStage.FLAG.ordinal();
     private boolean isStageTransitionScheduled = false;
 
     private Sound digSound;
-    private Sound boneMealSound;
+    private Sound adultGrowthSound;
     private Sound waterPourSound;
     private Sound saplingSound;
 
     public BlazingTree(Vector2 position, float scale) {
-        super("atlas/fire_tree_stages/fire_tree_stages.atlas",
-            "fire_tree",
-            5,
+        super("atlas/tree_variant_stages/blazing_tree_stages.atlas",
+            "blazing_tree",
+            9,
             position,
             scale);
 
         digSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/Gravel_dig1.mp3"));
-        boneMealSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/Bonemeal1.mp3"));
+        adultGrowthSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/fireball.mp3"));
         waterPourSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/pour_watering_can.mp3"));
         saplingSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/sapling_placement.mp3"));
     }
 
-    public void updateBlazingTreeStatus(gameSprite shovel, gameSprite sapling, WateringCan wateringCan) {
+    public void updateTreeStatus(gameSprite shovel, gameSprite sapling, WateringCan wateringCan) {
         if (treeLevel == TreeStage.FLAG.ordinal() && getCollisionRect().overlaps(shovel.getCollisionRect())) {
             digSound.play();
             treeLevel = TreeStage.HOLE.ordinal();
 
             setFrame(treeLevel);
         }
+
         if (treeLevel == TreeStage.HOLE.ordinal() && getCollisionRect().overlaps(sapling.getCollisionRect())) {
             saplingSound.play(1.5f);
             treeLevel = TreeStage.SAPLING.ordinal();
 
             setFrame(treeLevel);
         }
+
         if ((treeLevel == TreeStage.SAPLING.ordinal() || treeLevel == TreeStage.YOUNG_TREE.ordinal())
             && getCollisionRect().overlaps(wateringCan.getCollisionRect())
             && wateringCan.waterLevel == WateringCan.WateringCanState.FILLED.ordinal()
@@ -67,13 +75,31 @@ public class BlazingTree extends gameSprite {
                     if (treeLevel == TreeStage.SAPLING.ordinal()) {
                         treeLevel = TreeStage.YOUNG_TREE.ordinal();
                     } else if (treeLevel == TreeStage.YOUNG_TREE.ordinal()) {
-                        treeLevel = TreeStage.MATURE_TREE.ordinal();
+                        treeLevel = TreeStage.ANIMATED_MATURE_TREE_1.ordinal();
                     }
-                    boneMealSound.play(1.5f);
+                    adultGrowthSound.play(.3f);
                     setFrame(treeLevel);
                     isStageTransitionScheduled = false;
                 }
-            }, 3); // 3 seconds delay
+            }, 2); // 3 seconds delay
+        }
+
+        if (treeLevel >= TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+            && treeLevel <= TreeStage.ANIMATED_MATURE_TREE_5.ordinal()
+            && !isStageTransitionScheduled) {
+            isStageTransitionScheduled = true;
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    int nextFrame = treeLevel + 1;
+                    if (nextFrame > TreeStage.ANIMATED_MATURE_TREE_5.ordinal()) {
+                        nextFrame = TreeStage.ANIMATED_MATURE_TREE_1.ordinal();
+                    }
+                    setFrame(nextFrame);
+                    treeLevel = nextFrame;
+                    isStageTransitionScheduled = false;
+                }
+            }, 0.3f); // 0.3 seconds delay
         }
     }
 }

@@ -3,12 +3,12 @@ package io.github.eco_warrior.sprite.gardening_equipments.sapling_variant;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.entity.tool;
 
-public class OrdinarySapling extends tool {
+public class BreezingSapling extends tool {
 
-    public OrdinarySapling(Vector2 position, float scale) {
+    public BreezingSapling(Vector2 position, float scale) {
         super(
             "atlas/saplings/saplings.atlas",
-            "ordinary_sapling",
+            "breezing_sapling",
             position,
             scale,
             null);

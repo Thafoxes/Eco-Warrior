@@ -1,7 +1,13 @@
 saplings.png
-size:1024,512
+size:2048,512
 repeat:none
 blazing_sapling
-bounds:260,2,256,256
-sapling
+bounds:1034,2,256,256
+ice_sapling
+bounds:518,2,256,256
+ordinary_sapling
 bounds:2,2,256,256
+voltaic_sapling
+bounds:260,2,256,256
+breezing_sapling
+bounds:776,2,256,256

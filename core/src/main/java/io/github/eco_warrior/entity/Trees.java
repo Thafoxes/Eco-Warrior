@@ -1,74 +1,13 @@
 package io.github.eco_warrior.entity;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
 
 public class Trees extends gameSprite {
 
-    protected enum TreeStage {
-        FLAG,
-        HOLE,
-        SAPLING,
-        YOUNG_TREE,
-        MATURE_TREE,
-    };
-
-    protected int treeLevel = TreeStage.FLAG.ordinal();
-
-    protected Sound digSound;
-    protected Sound boneMealSound;
-    protected Sound waterPourSound;
-    protected Sound saplingSound;
-
-    public Trees(Vector2 position, float scale) {
-        super("atlas/tree_stages/tree_stages.atlas",
-            "tree",
-            5,
+    public Trees(String atlasPath, String regionBaseName, int frameCount, Vector2 position, float scale) {
+        super(atlasPath,
+            regionBaseName,
+            frameCount,
             position,
             scale);
-
-        digSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/Gravel_dig1.mp3"));
-        boneMealSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/Bonemeal1.mp3"));
-        waterPourSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/pour_watering_can.mp3"));
-        saplingSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/sapling_placement.mp3"));
-    }
-
-    public void updateTreeStatus(gameSprite shovel, gameSprite sapling, WateringCan wateringCan) {
-        if (treeLevel == TreeStage.FLAG.ordinal() && getCollisionRect().overlaps(shovel.getCollisionRect())) {
-            digSound.play();
-            treeLevel = TreeStage.HOLE.ordinal();
-
-            setFrame(treeLevel);
-        }
-        if (treeLevel == TreeStage.HOLE.ordinal() && getCollisionRect().overlaps(sapling.getCollisionRect())) {
-            saplingSound.play(1.5f);
-            treeLevel = TreeStage.SAPLING.ordinal();
-
-            setFrame(treeLevel);
-        }
-        if (treeLevel == TreeStage.SAPLING.ordinal()
-            && getCollisionRect().overlaps(wateringCan.getCollisionRect())
-            && wateringCan.waterLevel == WateringCan.WateringCanState.FILLED.ordinal()) {
-            boneMealSound.play(1.5f);
-//            waterPourSound.play(1f);
-            wateringCan.waterLevel = WateringCan.WateringCanState.EMPTY.ordinal();
-            treeLevel = TreeStage.YOUNG_TREE.ordinal();
-
-            wateringCan.setFrame(wateringCan.waterLevel);
-            setFrame(treeLevel);
-        }
-        if (treeLevel == TreeStage.YOUNG_TREE.ordinal()
-            && getCollisionRect().overlaps(wateringCan.getCollisionRect())
-            && wateringCan.waterLevel == WateringCan.WateringCanState.FILLED.ordinal()) {
-            boneMealSound.play(1.5f);
-//            waterPourSound.play(1f);
-            wateringCan.waterLevel = WateringCan.WateringCanState.EMPTY.ordinal();
-            treeLevel = TreeStage.MATURE_TREE.ordinal();
-
-            wateringCan.setFrame(wateringCan.waterLevel);
-            setFrame(treeLevel);
-        }
     }
 }
