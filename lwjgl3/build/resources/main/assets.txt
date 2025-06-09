@@ -44,7 +44,6 @@ Image/plumbergirl_cheerful.png
 Image/recycle_manager_base.png
 Image/recycle_manager_happy_v2.png
 Image/recycle_manager_looks_sad.png
-Image/recycle_manager_sad.png
 atlas/bins/bins.atlas
 atlas/bins/bins.png
 atlas/bins/recyclables_bin.atlas
@@ -76,6 +75,9 @@ atlas/water_resevior_funnel/water drop.png
 atlas/water_resevior_funnel/water_drop.atlas
 atlas/water_resevior_funnel/water_resevoir.atlas
 atlas/water_resevior_funnel/water_resevoir.png
+character/goblins/Globlins.atlas
+character/goblins/Globlins.png
+character/goblins/goblins.tpproj
 effects/blue_explosion.atlas
 effects/blue_explosion.png
 effects/blue_explosion2.png
@@ -92,9 +94,18 @@ fonts/DigitalDisco.ttf
 fonts/Square One.ttf
 fonts/TT Octosquares Trial Medium.ttf
 fonts/cubic.ttf
+maps/Gladesv2.tmx
 maps/recycle_center_map.tmx
 maps/soil_map.tmx
 maps/water_map.tmx
+maps/world_map/Details.png
+maps/world_map/Glades.tmx
+maps/world_map/Trees_rocks.png
+maps/world_map/Water_coasts.png
+maps/world_map/Water_detilazation2.tsx
+maps/world_map/ground_grasss.png
+maps/world_map/water_detilazation.png
+maps/world_map/water_detilazation_v2.png
 sound_effects/Button_Click.mp3
 sound_effects/Game_over_sfx.mp3
 sound_effects/cartoon_splat.mp3

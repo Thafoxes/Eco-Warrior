@@ -1,6 +1,7 @@
 package io.github.eco_warrior;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.physics.box2d.World;
 import io.github.eco_warrior.controller.buttonGenerator;
 import io.github.eco_warrior.mainmenu.MainMenuScreen;
 import io.github.eco_warrior.screen.instructions.L1Instructions;
@@ -12,7 +13,7 @@ public class Main extends Game {
     @Override
     public void create() {
         buttonGenerator = new buttonGenerator();
-        setScreen(new FirstLevelScreen(this));
+        setScreen(new WorldTestsV2(this));
     }
 
     public buttonGenerator getButtonFactory() {
