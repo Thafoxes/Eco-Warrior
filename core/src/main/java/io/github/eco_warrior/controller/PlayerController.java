@@ -108,8 +108,10 @@ public class PlayerController implements InputProcessor {
 
         // Move goblin if there's movement input
         if (dx != 0 && dy != 0) {
-            dx *= 0.707f; // 1/√2
-            dy *= 0.707f;
+            //normalize diagonal movement
+            float length = (float)Math.sqrt(dx * dx + dy * dy);
+            dx /= length;
+            dy /= length;
         }
 
         // Always call move to update velocity

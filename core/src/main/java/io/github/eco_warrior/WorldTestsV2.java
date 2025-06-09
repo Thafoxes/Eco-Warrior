@@ -22,8 +22,7 @@ import io.github.eco_warrior.MapLoader.MapLoader;
 import io.github.eco_warrior.controller.PlayerController;
 import io.github.eco_warrior.sprite.Characters.Goblin;
 
-import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_HEIGHT;
-import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_WIDTH;
+import static io.github.eco_warrior.constant.ConstantsVar.*;
 
 public class WorldTestsV2 implements Screen {
 
@@ -31,8 +30,8 @@ public class WorldTestsV2 implements Screen {
 
     //camera
     private OrthographicCamera camera;
-    private float viewportWidth = 10 * 16;  // Show 10 tiles horizontally
-    private float viewportHeight = 10 * 16; // Show 10 tiles vertically
+    private float viewportWidth = TILES_TO_SHOW * WORLD_MAP_PIXEL_SIZE;  // Show 10 tiles horizontally
+    private float viewportHeight = TILES_TO_SHOW * WORLD_MAP_PIXEL_SIZE; // Show 10 tiles vertically
     private Game game;
 
     private SpriteBatch batch;
@@ -191,7 +190,7 @@ public class WorldTestsV2 implements Screen {
     @Override
     public void resize(int width, int height) {
         float aspectRatio = (float)width / (float)height;
-        viewportWidth = 10 * 16 * aspectRatio;
+        viewportWidth = TILES_TO_SHOW * WORLD_MAP_PIXEL_SIZE * aspectRatio;
         camera.viewportWidth = viewportWidth;
         camera.viewportHeight = viewportHeight;
         camera.update();

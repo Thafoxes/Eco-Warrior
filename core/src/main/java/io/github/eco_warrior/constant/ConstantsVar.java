@@ -16,6 +16,10 @@ public class ConstantsVar {
     public static final float WATER_DROP_MIN_SPAWN_INTERVAL = 2.0f;
     public static final float WATER_DROP_MAX_SPAWN_INTERVAL = 6.0f;
 
+    public static final int WORLD_MAP_PIXEL_SIZE = 16;
+    public static final int TILES_TO_SHOW = 10;
+
+
 
 
 
