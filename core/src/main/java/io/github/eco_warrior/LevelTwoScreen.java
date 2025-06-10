@@ -11,13 +11,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.entity.gameSprite;
-import io.github.eco_warrior.sprite.WaterFountain;
+import io.github.eco_warrior.sprite.*;
 import io.github.eco_warrior.sprite.gardening_equipments.*;
 import io.github.eco_warrior.sprite.gardening_equipments.sapling_variant.*;
 import io.github.eco_warrior.sprite.tree_variant.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_HEIGHT;
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_WIDTH;
@@ -38,35 +37,27 @@ public class LevelTwoScreen implements Screen {
     //debug method
     private ShapeRenderer shapeRenderer;
 
-    //delta time
-    private float stateTime;
-
     //tools
     private Map<String, gameSprite> tools = new HashMap<>();
     private float startY;
     private float XMover;
 
-    //lake filler
-    private Map<String, gameSprite> lake = new HashMap<>();
+    //lake
+    private Map<String, gameSprite> waterFountain = new HashMap<>();
 
-    //tree filler
-    private Map<String, gameSprite> ordinaryTree = new HashMap<>();
-    private Map<String, gameSprite> blazingTree = new HashMap<>();
-    private Map<String, gameSprite> breezingTree = new HashMap<>();
-    private Map<String, gameSprite> iceTree = new HashMap<>();
-    private Map<String, gameSprite> voltaicTree = new HashMap<>();
+    //trees
+    private Map<String, gameSprite> trees = new HashMap<>();
 
     //entity logics
     private WateringCan wateringCanLogic;
     private WaterFountain waterFountainLogic;
+    private Shovel shovelLogic;
 
     private OrdinaryTree ordinaryTreeLogic;
     private BlazingTree blazingTreeLogic;
     private BreezingTree breezingTreeLogic;
     private IceTree iceTreeLogic;
     private VoltaicTree voltaicTreeLogic;
-
-    private Shovel shovelLogic;
 
     private OrdinarySapling ordinarySaplingLogic;
     private BlazingSapling blazingSaplingLogic;
@@ -112,12 +103,10 @@ public class LevelTwoScreen implements Screen {
         camera.position.set(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0);
         camera.update();
 
-        initializeTools();
-
-
+        initializeEntities();
     }
 
-    private void initializeTools() {
+    private void initializeEntities() {
         int toolCount = 5;
         float spacing = WINDOW_WIDTH / (toolCount + 4);
         float toolScale = 0.35f;
@@ -130,13 +119,13 @@ public class LevelTwoScreen implements Screen {
 
         wateringCanLogic = new WateringCan(new Vector2(spacing * 2 - XMover, startY), toolScale);
         waterFountainLogic = new WaterFountain(new Vector2(1, 180), lakeScale);
+        shovelLogic = new Shovel(new Vector2(spacing * 3 - XMover, startY), toolScale);
+
         ordinaryTreeLogic = new OrdinaryTree(new Vector2(763, 92), treeScale);
         blazingTreeLogic = new BlazingTree(new Vector2(1048, 256), treeScale);
         breezingTreeLogic = new BreezingTree(new Vector2(920, 183), treeScale);
         iceTreeLogic = new IceTree(new Vector2(1023, 25), treeScale);
         voltaicTreeLogic = new VoltaicTree(new Vector2(781, 299), treeScale);
-
-        shovelLogic = new Shovel(new Vector2(spacing * 3 - XMover, startY), toolScale);
 
         ordinarySaplingLogic = new OrdinarySapling(new Vector2(spacing * 5 - XMover, startY), toolScale);
         blazingSaplingLogic = new BlazingSapling(new Vector2(spacing * 5 - XMover, startY), toolScale);
@@ -144,6 +133,7 @@ public class LevelTwoScreen implements Screen {
         iceSaplingLogic = new IceSapling(new Vector2(spacing * 5 - XMover, startY), toolScale);
         voltaicSaplingLogic = new VoltaicSapling(new Vector2(spacing * 5 - XMover, startY), toolScale);
 
+        waterFountain.put("water_fountain_hitbox", waterFountainLogic);
 
         tools.put("shovel", shovelLogic);
         tools.put("watering_can", wateringCanLogic);
@@ -156,13 +146,11 @@ public class LevelTwoScreen implements Screen {
         tools.put("breezing_sapling", breezingSaplingLogic);
         tools.put("voltaic_sapling", voltaicSaplingLogic);
 
-        lake.put("lake_hitbox", waterFountainLogic);
-
-        ordinaryTree.put("ordinary_tree", ordinaryTreeLogic);
-        blazingTree.put("blazing_tree", blazingTreeLogic);
-        breezingTree.put("breezing_tree", breezingTreeLogic);
-        iceTree.put("ice_tree", iceTreeLogic);
-        voltaicTree.put("voltaic_tree", voltaicTreeLogic);
+        trees.put("ordinary_tree", ordinaryTreeLogic);
+        trees.put("blazing_tree", blazingTreeLogic);
+        trees.put("breezing_tree", breezingTreeLogic);
+        trees.put("ice_tree", iceTreeLogic);
+        trees.put("voltaic_tree", voltaicTreeLogic);
     }
 
     @Override
@@ -190,11 +178,9 @@ public class LevelTwoScreen implements Screen {
             }
         }
 
-        blazingTree.values().iterator().next().draw(batch);
-        breezingTree.values().iterator().next().draw(batch);
-        iceTree.values().iterator().next().draw(batch);
-        voltaicTree.values().iterator().next().draw(batch);
-        ordinaryTree.values().iterator().next().draw(batch);
+        for (gameSprite tree : trees.values()) {
+            tree.draw(batch);
+        }
 
         //remove sapling upon planting
         if ((ordinaryTreeLogic.treeLevel == OrdinaryTree.TreeStage.HOLE.ordinal())
@@ -268,7 +254,7 @@ public class LevelTwoScreen implements Screen {
 
         batch.end();
 
-//        debugSprite();
+        debugSprite();
     }
 
     private void input(){
@@ -450,12 +436,11 @@ public class LevelTwoScreen implements Screen {
             tool.drawDebug(shapeRenderer);
         }
 
-        lake.values().iterator().next().drawDebug(shapeRenderer);
-        ordinaryTree.values().iterator().next().drawDebug(shapeRenderer);
-        blazingTree.values().iterator().next().drawDebug(shapeRenderer);
-        breezingTree.values().iterator().next().drawDebug(shapeRenderer);
-        iceTree.values().iterator().next().drawDebug(shapeRenderer);
-        voltaicTree.values().iterator().next().drawDebug(shapeRenderer);
+        for(gameSprite tree: trees.values()){
+            tree.drawDebug(shapeRenderer);
+        }
+
+        waterFountain.get("water_fountain_hitbox").drawDebug(shapeRenderer);
 
 //        debugSpawnArea();
 
@@ -467,7 +452,16 @@ public class LevelTwoScreen implements Screen {
         uiBatch.dispose();
         batch.dispose();
         backgroundTexture.dispose();
-        backgroundSprite.getTexture().dispose();
+        shapeRenderer.dispose();
 
+        for (gameSprite tool : tools.values()) {
+            tool.dispose();
+        }
+
+        for (gameSprite tree : trees.values()) {
+            tree.dispose();
+        }
+
+        waterFountain.get("water_fountain_hitbox").dispose();
     }
 }

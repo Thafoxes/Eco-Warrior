@@ -54,6 +54,9 @@ atlas/gardening_equipments/equipments.atlas
 atlas/gardening_equipments/equipments.png
 atlas/lake_hitbox/lake_hitbox.atlas
 atlas/lake_hitbox/lake_hitbox.png
+atlas/mobs/worm.atlas
+atlas/mobs/worm.png
+atlas/mobs/worm2.png
 atlas/saplings/saplings.atlas
 atlas/saplings/saplings.png
 atlas/tools/tools.atlas

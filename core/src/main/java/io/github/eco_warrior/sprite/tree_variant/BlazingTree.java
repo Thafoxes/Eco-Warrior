@@ -26,10 +26,10 @@ public class BlazingTree extends Trees {
     public int treeLevel = TreeStage.FLAG.ordinal();
     private boolean isStageTransitionScheduled = false;
 
-    private Sound digSound;
-    private Sound adultGrowthSound;
-    private Sound waterPourSound;
-    private Sound saplingSound;
+    private final Sound digSound;
+    private final Sound growthSound;
+    private final Sound waterPourSound;
+    private final Sound saplingSound;
 
     public BlazingTree(Vector2 position, float scale) {
         super("atlas/tree_variant_stages/blazing_tree_stages.atlas",
@@ -39,7 +39,7 @@ public class BlazingTree extends Trees {
             scale);
 
         digSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/Gravel_dig1.mp3"));
-        adultGrowthSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/fireball.mp3"));
+        growthSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/fireball.mp3"));
         waterPourSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/pour_watering_can.mp3"));
         saplingSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/sapling_placement.mp3"));
     }
@@ -77,7 +77,7 @@ public class BlazingTree extends Trees {
                     } else if (treeLevel == TreeStage.YOUNG_TREE.ordinal()) {
                         treeLevel = TreeStage.ANIMATED_MATURE_TREE_1.ordinal();
                     }
-                    adultGrowthSound.play(.3f);
+                    growthSound.play(.3f);
                     setFrame(treeLevel);
                     isStageTransitionScheduled = false;
                 }
