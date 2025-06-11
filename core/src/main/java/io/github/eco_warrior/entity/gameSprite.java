@@ -120,9 +120,30 @@ public class gameSprite extends spriteGenerator {
         this(atlasPath, regionName, position, scale, correctSoundPath, null, null);
     }
 
+    /***
+     * default green colour collision rectangle
+     * @param shapeRenderer
+     */
     public void drawDebug(ShapeRenderer shapeRenderer) {
         if (collisionRect != null) {
             shapeRenderer.setColor(Color.GREEN);
+            shapeRenderer.rect(
+                collisionRect.x,
+                collisionRect.y,
+                collisionRect.width,
+                collisionRect.height
+            );
+        }
+    }
+
+    /**
+     * draw debug with custom color
+     * @param shapeRenderer
+     * @param debugColor
+     */
+    public void drawDebug(ShapeRenderer shapeRenderer, Color debugColor) {
+        if (collisionRect != null) {
+            shapeRenderer.setColor(debugColor);
             shapeRenderer.rect(
                 collisionRect.x,
                 collisionRect.y,
@@ -148,6 +169,14 @@ public class gameSprite extends spriteGenerator {
      */
     public void resetFrame(){
         currentFrameIndex = 0;
+        sprite.setRegion(frames[currentFrameIndex]);
+    }
+
+    /**
+     * reset the frame back to a custom frame
+     */
+    public void resetFrame(int frameCount){
+        currentFrameIndex = frameCount;
         sprite.setRegion(frames[currentFrameIndex]);
     }
 
