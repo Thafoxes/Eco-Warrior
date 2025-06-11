@@ -13,7 +13,7 @@ public class Main extends Game {
     @Override
     public void create() {
         buttonGenerator = new buttonGenerator();
-        setScreen(new WorldTestsV2(this));
+        setScreen(new FirstLevelScreen(this));
     }
 
     public buttonGenerator getButtonFactory() {
