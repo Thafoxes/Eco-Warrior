@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="43" height="29" tilewidth="16" tileheight="16" infinite="0" nextlayerid="139" nextobjectid="14">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="43" height="29" tilewidth="16" tileheight="16" infinite="0" nextlayerid="140" nextobjectid="86">
  <tileset firstgid="1" name="Ground_grass" tilewidth="16" tileheight="16" tilecount="742" columns="53">
   <image source="world_map/ground_grasss.png" width="848" height="224"/>
  </tileset>
@@ -2916,7 +2916,7 @@
   <image source="world_map/Details.png" width="192" height="224"/>
  </tileset>
  <tileset firstgid="6057" source="world_map/Water_detilazation2.tsx"/>
- <layer id="107" name="water background" width="43" height="29">
+ <layer id="107" name="water background" width="43" height="29" locked="1">
   <data encoding="csv">
 0,6322,6322,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 6322,0,6322,6322,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -3081,10 +3081,10 @@
 56,56,56,56,56,57,60,56,56,56,56,56,56,56,57,60,56,56,56,56,56,56,56,56,56,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="137" name="spawn_layer">
+ <objectgroup id="137" name="spawn_layer" locked="1">
   <object id="4" name="spawn_point" x="32" y="272"/>
  </objectgroup>
- <layer id="96" name="ground shadow" width="43" height="29">
+ <layer id="96" name="ground shadow" width="43" height="29" locked="1">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,465,0,0,0,0,
@@ -3117,7 +3117,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="95" name="grass shadow" width="43" height="29">
+ <layer id="95" name="grass shadow" width="43" height="29" locked="1">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -3150,7 +3150,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="91" name="elevated_space" width="43" height="29">
+ <layer id="91" name="elevated_space" width="43" height="29" locked="1">
   <data encoding="csv">
 56,56,56,56,56,56,56,56,56,56,56,56,56,56,56,56,56,56,56,56,57,55,56,56,56,56,56,56,56,56,56,56,56,56,56,56,56,56,56,56,56,56,56,
 79,79,79,79,79,79,79,79,79,79,56,56,56,79,79,79,79,79,79,79,57,55,79,79,79,79,79,79,56,56,56,79,79,79,79,79,79,79,388,559,560,454,79,
@@ -3183,7 +3183,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="136" name="objects_under_columns" width="43" height="29">
+ <layer id="136" name="objects_under_columns" width="43" height="29" locked="1">
   <data encoding="csv">
 0,5365,5366,5367,5368,5435,5436,5437,0,5448,5449,5450,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,5381,5382,5383,5384,5451,5452,5453,0,5464,5465,5466,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -3216,7 +3216,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="83" name="columns" width="43" height="29">
+ <layer id="83" name="columns" width="43" height="29" locked="1">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 28,29,26,28,29,26,27,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,25,28,27,0,0,0,0,0,0,0,
@@ -3249,7 +3249,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="88" name="details" width="43" height="29">
+ <layer id="88" name="details" width="43" height="29" locked="1">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,6009,0,6045,0,0,0,0,0,0,6048,0,0,0,0,6008,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -3282,7 +3282,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="114" name="objects1" width="43" height="29">
+ <layer id="114" name="objects1" width="43" height="29" locked="1">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2147489204,2147489203,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5512,5513,0,0,0,0,0,
 0,0,0,0,0,0,0,0,5479,5480,5481,0,0,0,0,2147489220,2147489219,0,0,0,0,0,0,0,0,0,0,0,5479,5480,5481,0,5575,0,0,0,5528,5529,0,0,0,0,0,
@@ -3315,7 +3315,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="115" name="objects2" width="43" height="29">
+ <layer id="115" name="objects2" width="43" height="29" locked="1">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -3348,7 +3348,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="135" name="objects3" width="43" height="29">
+ <layer id="135" name="objects3" width="43" height="29" locked="1">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5561,5562,5563,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,5782,5783,5784,5785,0,0,0,5577,5578,5579,0,0,5739,5740,5741,5742,5743,5744,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -3381,4 +3381,178 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5621,5622,5623,5624,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup id="139" name="Collision">
+  <object id="17" x="1.5" y="347.75" width="78.25" height="9.25">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="18" x="109.5" y="350.25" width="115" height="4.25">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="20" x="209.75" y="332.75" width="14.25" height="15">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="23" x="196.25" y="347.25">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+   <polygon points="0,0 12,0 12.5,-15"/>
+  </object>
+  <object id="24" x="254.917" y="336" width="193.417" height="19">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="32" x="404" y="359" width="44" height="13">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="33" x="324.333" y="326" rotation="18.7498">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="34" x="446.5" y="196.5" width="2.5" height="130.5">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="37" x="480.5" y="199" width="4.5" height="170.167">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="38" x="229" y="128.167" width="39.5" height="47.5">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+   <ellipse/>
+  </object>
+  <object id="39" x="222.083" y="140.25" width="49.3333" height="24.5">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+   <ellipse/>
+  </object>
+  <object id="40" x="475.5" y="411.833" width="9.5" height="10.1667">
+   <ellipse/>
+  </object>
+  <object id="41" x="526.833" y="434.833" width="14.8333" height="13.6667">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+   <ellipse/>
+  </object>
+  <object id="42" x="646" y="419" width="36.5" height="42.6667">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+   <ellipse/>
+  </object>
+  <object id="49" x="318.825" y="296.128" width="47.1862" height="26.5" rotation="341.7">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+   <ellipse/>
+  </object>
+  <object id="50" x="364" y="240.833" width="59.5" height="58.5">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+   <ellipse/>
+  </object>
+  <object id="61" x="586.562" y="287.52" width="22.1624" height="25.8602" rotation="289.324">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+   <ellipse/>
+  </object>
+  <object id="69" x="551.43" y="243.03" width="40.8107" height="22.9754" rotation="18.7498">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="70" x="504.333" y="222.333" rotation="38.795">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="71" x="438.495" y="226.153" width="10.3236" height="27.1855" rotation="50.7475">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="72" x="626.595" y="272.512" width="28.796" height="22.9754" rotation="18.7498">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="73" x="641.271" y="356.813" width="25.8439" height="20.4775" rotation="87.6497">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="74" x="525.539" y="230.877" width="20.443" height="22.9754" rotation="35.9075">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="75" x="501.779" y="349.512" width="20.443" height="22.9754" rotation="35.9075">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="77" x="565.674" y="355.005" width="25.4637" height="22.835" rotation="81.9303">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="78" x="591.456" y="350.288" width="20.443" height="21.5446" rotation="82.0531">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="79" x="284.757" y="348.041" width="83.9438" height="17.3753" rotation="26.3399">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="80" x="359.205" y="379.714" width="40.7939" height="11.3464" rotation="358.766">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="81" x="505.583" y="387.667" width="14.8333" height="13.6667">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+   <ellipse/>
+  </object>
+  <object id="82" x="542.268" y="358.582" width="25.4637" height="22.835" rotation="81.9303">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="83" x="614.268" y="342.082" width="25.4637" height="22.835" rotation="81.9303">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="84" x="640.042" y="330.137" width="25.8439" height="19.9369" rotation="87.6497">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="85" x="638.604" y="302.134" width="25.8439" height="19.9984" rotation="87.6497">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+ </objectgroup>
 </map>
