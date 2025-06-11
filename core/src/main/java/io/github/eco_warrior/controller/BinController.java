@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.sun.tools.javac.code.Attribute;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.sprite.Bins.BinBase;
 import io.github.eco_warrior.sprite.Characters.Racoon;
@@ -33,6 +32,9 @@ public class BinController {
     private Racoon tempRacoon;
     //fontGenerator
     private Map<BinBase, fontGenerator> binLabels;
+
+    //track raccoon spawn locations
+    private Map<Integer, Racoon> binToRaccoon = new HashMap<>();
 
     public BinController() {
         backgroundBins = new Array<>();
@@ -97,6 +99,13 @@ public class BinController {
             raccoon.update(delta);
 
             if(raccoon.shouldRemove()){
+                //remove the key here
+                for(Map.Entry<Integer, Racoon> entry : binToRaccoon.entrySet()) {
+                    if(entry.getValue() == raccoon) {
+                        binToRaccoon.remove(entry.getKey());
+                        break;
+                    }
+                }
                 raccoons.removeIndex(i);
             }
         }
@@ -107,15 +116,24 @@ public class BinController {
             return; // No bins to spawn from
         }
 
-        Array<Integer> availableIndexes = new Array<>();
-
-
-        int binIndex = MathUtils.random(backgroundBins.size - 1);
-        if(availableIndexes.contains(binIndex, true)){
-            System.out.println("Raccoon already spawned at bin: " + binIndex);
-            return; // Already spawned a raccoon at this bin
+        // First, create a list of bins that don't already have raccoons on them
+        Array<Integer> availableBinIndices = new Array<>();
+        for(int i = 0; i < backgroundBins.size; i++) {
+            if(!binToRaccoon.containsKey(i) || binToRaccoon.get(i).shouldRemove()) {
+                availableBinIndices.add(i);
+            }
         }
+
+        // If no bins are available, just return without spawning
+        if(availableBinIndices.size == 0) {
+            return;
+        }
+
+        // Choose a random bin from available bins
+        int randomIndex = MathUtils.random(availableBinIndices.size - 1);
+        int binIndex = availableBinIndices.get(randomIndex);
         gameSprite bin = backgroundBins.get(binIndex);
+
         System.out.println("Spawning raccoon at bin: " + binIndex);
         System.out.println("Bin x: " + bin.getCollisionRect().getX() + ", width: " + bin.getCollisionRect().getWidth());
         // Calculate spawn position (center of the bin)
@@ -129,11 +147,10 @@ public class BinController {
             Racoon raccoon = new Racoon(spawnPos, 0.20f); // Scale down the raccoon a bit
             raccoon.resetFrame(); // Start from first frame
             raccoons.add(raccoon);
-            availableIndexes.add(binIndex);
+            binToRaccoon.put(binIndex, raccoon);
 
         }catch (Exception e) {
             e.printStackTrace();
-            return; // Skip spawning if there's an error
         }
 
     }
@@ -196,20 +213,6 @@ public class BinController {
 
         for (Racoon raccoon : raccoons) {
             raccoon.drawDebug(shapeRenderer, Color.RED);
-        }
-
-        // For raccoons
-        for (Racoon raccoon : raccoons) {
-            Gdx.gl.glLineWidth(3.0f);
-            float x = raccoon.getSprite().getX();
-            float width = raccoon.getSprite().getWidth();
-//            System.out.println("Raccoon position: " + x + ", width: " + width);
-
-            // Draw marker at raccoon position
-            shapeRenderer.setColor(Color.MAGENTA);
-            shapeRenderer.line(x, 0, x, 30);
-            shapeRenderer.line(x + width, 0, x + width, 30);
-            Gdx.gl.glLineWidth(1.0f);
         }
 
         for (BinBase bin : foregroundBins) {
