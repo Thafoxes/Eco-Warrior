@@ -36,6 +36,7 @@ public abstract class BinBase extends gameSprite {
 
             Vector2 originalPosition = new Vector2(getSprite().getX(), getSprite().getY());
 
+            //vibration of clicked bin
             if (animationTimer < animationDuration) {
                 float shakeIntensity = 3f; // pixels to shake
                 float offsetX = (float)(Math.sin(animationTimer * 60) * shakeIntensity);
@@ -54,12 +55,19 @@ public abstract class BinBase extends gameSprite {
         super.draw(batch);
     }
 
+    /***
+     * Check if the bin is pressed by the cursor position.
+     * If pressed, play the hitting sound and start the animation.
+     *
+     * @param cursorPosition The position of the cursor.
+     * @return true if the bin is pressed, false otherwise.
+     */
     @Override
     public boolean isPressed(Vector2 cursorPosition){
         if(getCollisionRect().contains(cursorPosition)){
             getHittingSFX().play();
 
-            // Start the animation
+            // Start the animation (vibration effect)
             isAnimating = true;
             animationTimer = 0f;
 

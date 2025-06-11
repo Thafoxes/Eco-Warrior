@@ -134,8 +134,6 @@ public class BinController {
         int binIndex = availableBinIndices.get(randomIndex);
         gameSprite bin = backgroundBins.get(binIndex);
 
-        System.out.println("Spawning raccoon at bin: " + binIndex);
-        System.out.println("Bin x: " + bin.getCollisionRect().getX() + ", width: " + bin.getCollisionRect().getWidth());
         // Calculate spawn position (center of the bin)
         Vector2 spawnPos = new Vector2(
             bin.getCollisionRect().getX() + 40f, // Adjust x position as needed
@@ -161,6 +159,12 @@ public class BinController {
                 && !raccoon.isDying()
                 && raccoon.getCollisionRect().contains(touchPosition)) {
                 raccoon.setHit();
+
+                try{
+                    raccoon.setHit();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
                 return true; // Hit detected
             }
         }
@@ -204,6 +208,50 @@ public class BinController {
             bin.draw(batch);
         }
 
+        // Draw explosion effects last so they appear on top of everything
+        for(Racoon raccoon : raccoons){
+            if (raccoon.getExplosionEffect() != null && !raccoon.getExplosionEffect().isFinished()) {
+                raccoon.getExplosionEffect().draw(batch);
+            }
+        }
+
+    }
+
+    /**
+     * Checks if any raccoon is currently active (idle or spawning).
+     * @return true if any raccoon is active, false otherwise.
+     */
+    public boolean hasBinRaccoon(BinBase bin) {
+        int binIndex = -1;
+
+        // Find the bin index
+        for (int i = 0; i < backgroundBins.size; i++) {
+            if (backgroundBins.get(i) == bin) {
+                binIndex = i;
+                break;
+            }
+        }
+
+        // Check if this bin has a raccoon
+        if (binIndex != -1) {
+            Racoon raccoon = binToRaccoon.get(binIndex);
+            return raccoon != null && !raccoon.shouldRemove() && raccoon.isIdleOrSpawning();
+        }
+
+        return false;
+    }
+
+    /***
+     * Check if any raccoon is currently active (idle or spawning)
+     * @return true if any raccoon is active, false otherwise
+     */
+    public boolean isAnyRaccoonActive() {
+        for (Racoon raccoon : raccoons) {
+            if (raccoon.isIdleOrSpawning()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void drawDebug(ShapeRenderer shapeRenderer) {

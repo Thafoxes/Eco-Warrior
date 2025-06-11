@@ -9,9 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.sprite.Recyables.*;
 
-import java.util.Random;
-
-public class RecyclablesController {
+public class recyclablesController {
     private Array<gameSprite> recyclables;
     private Recyclables draggingItem;
 
@@ -33,7 +31,7 @@ public class RecyclablesController {
         GlassBottle.class,
     };
 
-    public RecyclablesController(float screenWidth, float screenHeight) {
+    public recyclablesController(float screenWidth, float screenHeight) {
         recyclables = new Array<>();
         startX = screenWidth + 50f;
         startY = screenHeight / 8;

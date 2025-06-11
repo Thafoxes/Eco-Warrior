@@ -17,7 +17,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.controller.BinController;
-import io.github.eco_warrior.controller.RecyclablesController;
+import io.github.eco_warrior.controller.recyclablesController;
 import io.github.eco_warrior.controller.fontGenerator;
 import io.github.eco_warrior.entity.ConveyorBelt;
 import io.github.eco_warrior.entity.LevelMaker;
@@ -66,7 +66,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     private static final int MAX_HEARTS = 5;
 
     //Sprites
-    private RecyclablesController recyclablesController;
+    private recyclablesController recyclablesController;
 
     private Recyclables draggingItem = null;
 
@@ -116,7 +116,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         backgroundMusic.setLooping(true);
         backgroundMusic.play();
 
-        recyclablesController = new RecyclablesController(WINDOW_WIDTH, WINDOW_HEIGHT);
+        recyclablesController = new recyclablesController(WINDOW_WIDTH, WINDOW_HEIGHT);
         loadHearts();
         loadMap();
         loadingConveyorAnimation();
@@ -182,7 +182,6 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     @Override
     public void render(float delta) {
 
-        //timerCount(delta);
         draw();
         countdownTimer();
         input();
@@ -241,10 +240,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
                 if(binController.checkRacoonHit(currentTouchPos)){
                     score += 1;
                 }
-                //just play sound
-                for(BinBase bin: binController.getForegroundBins()){
-                    bin.isPressed(new Vector2(currentTouchPos.x, currentTouchPos.y));
-                }
+                playBinAnimation();
             }
 
         }
@@ -278,10 +274,24 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
     }
 
+    private void playBinAnimation() {
+        //just play sound
+        for(BinBase bin: binController.getForegroundBins()){
+            bin.isPressed(new Vector2(currentTouchPos.x, currentTouchPos.y));
+        }
+    }
+
     private void checkItemPlacement(Recyclables releasedItem) {
+
+
         // if the sprite hits a bin
         for(BinBase bin: binController.getForegroundBins()) {
             if(releasedItem.getCollisionRect().overlaps(bin.getCollisionRect())) {
+
+                if(binController.hasBinRaccoon(bin)){
+                    releasedItem.playWrongSound();
+                    return;
+                }
                 if(bin.isCorrectCategory(releasedItem.getCategoryPile())) {
                     playCorrectAction(bin);
                 } else {
