@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.sprite.*;
+import io.github.eco_warrior.sprite.Enemy.Worm;
 import io.github.eco_warrior.sprite.gardening_equipments.*;
 import io.github.eco_warrior.sprite.gardening_equipments.sapling_variant.*;
 import io.github.eco_warrior.sprite.tree_variant.*;
@@ -39,33 +40,33 @@ public class LevelTwoScreen implements Screen {
 
     //tools
     private Map<String, gameSprite> tools = new HashMap<>();
+    private float manipulatorX;
     private float startY;
-    private float XMover;
 
-    //lake
-    private Map<String, gameSprite> waterFountain = new HashMap<>();
+    //water fountain
+    private Map<String, gameSprite> liquids = new HashMap<>();
 
     //trees
     private Map<String, gameSprite> trees = new HashMap<>();
 
-    //entity logics
-    private WateringCan wateringCanLogic;
-    private WaterFountain waterFountainLogic;
-    private Shovel shovelLogic;
+    //entities declaration
+    private WateringCan wateringCan;
+    private WaterFountain waterFountain;
+    private Shovel shovel;
 
-    private OrdinaryTree ordinaryTreeLogic;
-    private BlazingTree blazingTreeLogic;
-    private BreezingTree breezingTreeLogic;
-    private IceTree iceTreeLogic;
-    private VoltaicTree voltaicTreeLogic;
+    private OrdinaryTree ordinaryTree;
+    private BlazingTree blazingTree;
+    private BreezingTree breezingTree;
+    private IceTree iceTree;
+    private VoltaicTree voltaicTree;
 
-    private OrdinarySapling ordinarySaplingLogic;
-    private BlazingSapling blazingSaplingLogic;
-    private BreezingSapling breezingSaplingLogic;
-    private IceSapling iceSaplingLogic;
-    private VoltaicSapling voltaicSaplingLogic;
+    private OrdinarySapling ordinarySapling;
+    private BlazingSapling blazingSapling;
+    private BreezingSapling breezingSapling;
+    private IceSapling iceSapling;
+    private VoltaicSapling voltaicSapling;
 
-    //boolean flags
+    //boolean flags to check if saplings are used
     private boolean isVoltaicSaplingUsed = false;
     private boolean isBreezingSaplingUsed = false;
     private boolean isIceSaplingUsed = false;
@@ -77,6 +78,14 @@ public class LevelTwoScreen implements Screen {
     private boolean isDragging = false;
     private boolean isReturning = false;
     private gameSprite draggingTool;
+
+    //enemies
+    private List<gameSprite> worms = new ArrayList<>(); //check this later
+    private float wormStartX = 1150f; //check this later
+    private float wormStartY = 100f; //check this later
+    private float wormSpawnTimer; //check this later
+    private float wormScale = 0.2f; //check this later
+    private float stateTime; //check this later
 
 
     public LevelTwoScreen(Main main) {
@@ -115,42 +124,42 @@ public class LevelTwoScreen implements Screen {
 
         float toolWidth = 200f;
         startY = WINDOW_HEIGHT/30f;
-        XMover = toolWidth/2f;
+        manipulatorX = toolWidth/2f;
 
-        wateringCanLogic = new WateringCan(new Vector2(spacing * 2 - XMover, startY), toolScale);
-        waterFountainLogic = new WaterFountain(new Vector2(1, 180), lakeScale);
-        shovelLogic = new Shovel(new Vector2(spacing * 3 - XMover, startY), toolScale);
+        wateringCan = new WateringCan(new Vector2(spacing * 2 - manipulatorX, startY), toolScale);
+        waterFountain = new WaterFountain(new Vector2(1, 180), lakeScale);
+        shovel = new Shovel(new Vector2(spacing * 3 - manipulatorX, startY), toolScale);
 
-        ordinaryTreeLogic = new OrdinaryTree(new Vector2(763, 92), treeScale);
-        blazingTreeLogic = new BlazingTree(new Vector2(1048, 256), treeScale);
-        breezingTreeLogic = new BreezingTree(new Vector2(920, 183), treeScale);
-        iceTreeLogic = new IceTree(new Vector2(1023, 25), treeScale);
-        voltaicTreeLogic = new VoltaicTree(new Vector2(781, 299), treeScale);
+        ordinaryTree = new OrdinaryTree(new Vector2(763, 92), treeScale);
+        blazingTree = new BlazingTree(new Vector2(1048, 256), treeScale);
+        breezingTree = new BreezingTree(new Vector2(920, 183), treeScale);
+        iceTree = new IceTree(new Vector2(1023, 25), treeScale);
+        voltaicTree = new VoltaicTree(new Vector2(781, 299), treeScale);
 
-        ordinarySaplingLogic = new OrdinarySapling(new Vector2(spacing * 5 - XMover, startY), toolScale);
-        blazingSaplingLogic = new BlazingSapling(new Vector2(spacing * 5 - XMover, startY), toolScale);
-        breezingSaplingLogic = new BreezingSapling(new Vector2(spacing * 5 - XMover, startY), toolScale);
-        iceSaplingLogic = new IceSapling(new Vector2(spacing * 5 - XMover, startY), toolScale);
-        voltaicSaplingLogic = new VoltaicSapling(new Vector2(spacing * 5 - XMover, startY), toolScale);
+        ordinarySapling = new OrdinarySapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
+        blazingSapling = new BlazingSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
+        breezingSapling = new BreezingSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
+        iceSapling = new IceSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
+        voltaicSapling = new VoltaicSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
 
-        waterFountain.put("water_fountain_hitbox", waterFountainLogic);
+        liquids.put("water_fountain_hitbox", waterFountain);
 
-        tools.put("shovel", shovelLogic);
-        tools.put("watering_can", wateringCanLogic);
-        tools.put("ray_gun", new RayGun(new Vector2(spacing * 1 - XMover, startY), toolScale));
-        tools.put("fertilizer", new Fertilizer(new Vector2(spacing * 4 - XMover, startY), toolScale));
+        tools.put("shovel", shovel);
+        tools.put("watering_can", wateringCan);
+        tools.put("ray_gun", new RayGun(new Vector2(spacing * 1 - manipulatorX, startY), toolScale));
+        tools.put("fertilizer", new Fertilizer(new Vector2(spacing * 4 - manipulatorX, startY), toolScale));
 
-        tools.put("ordinary_sapling", ordinarySaplingLogic);
-        tools.put("blazing_sapling", blazingSaplingLogic);
-        tools.put("ice_sapling", iceSaplingLogic);
-        tools.put("breezing_sapling", breezingSaplingLogic);
-        tools.put("voltaic_sapling", voltaicSaplingLogic);
+        tools.put("ordinary_sapling", ordinarySapling);
+        tools.put("blazing_sapling", blazingSapling);
+        tools.put("ice_sapling", iceSapling);
+        tools.put("breezing_sapling", breezingSapling);
+        tools.put("voltaic_sapling", voltaicSapling);
 
-        trees.put("ordinary_tree", ordinaryTreeLogic);
-        trees.put("blazing_tree", blazingTreeLogic);
-        trees.put("breezing_tree", breezingTreeLogic);
-        trees.put("ice_tree", iceTreeLogic);
-        trees.put("voltaic_tree", voltaicTreeLogic);
+        trees.put("ordinary_tree", ordinaryTree);
+        trees.put("blazing_tree", blazingTree);
+        trees.put("breezing_tree", breezingTree);
+        trees.put("ice_tree", iceTree);
+        trees.put("voltaic_tree", voltaicTree);
     }
 
     @Override
@@ -158,7 +167,17 @@ public class LevelTwoScreen implements Screen {
         input();
         draw();
         updateWateringCan();
-        updateTree();
+        updateTrees();
+
+        for (gameSprite worm : worms) {
+            worm.update(delta); // move the worm from left to right
+        } //check this later
+
+        wormSpawnTimer += delta; // Adds the current delta to the timer
+        if (wormSpawnTimer > 3f) { // Check if it has been more than a second
+            wormSpawnTimer = 0; // Reset the timer
+            spawnWorms(); // Create the worms
+        } //check this later
     }
 
     private void draw() {
@@ -167,8 +186,12 @@ public class LevelTwoScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.setProjectionMatrix(camera.combined);
+        stateTime = Gdx.graphics.getDeltaTime(); //check this later
+
         batch.begin();
         backgroundSprite.draw(batch);
+
+        //draw tools that are not saplings to be unlocked
         for (gameSprite tool : tools.values()) {
             if(!(tool == tools.get("blazing_sapling")
                 || tool == tools.get("ice_sapling")
@@ -182,75 +205,89 @@ public class LevelTwoScreen implements Screen {
             tree.draw(batch);
         }
 
-        //remove sapling upon planting
-        if ((ordinaryTreeLogic.treeLevel == OrdinaryTree.TreeStage.HOLE.ordinal())
-            && ordinaryTreeLogic.getCollisionRect().overlaps(ordinarySaplingLogic.getCollisionRect())) {
+        //remove ordinary sapling upon planting
+        if ((ordinaryTree.treeLevel == OrdinaryTree.TreeStage.HOLE.ordinal())
+            && ordinaryTree.getCollisionRect().overlaps(ordinarySapling.getCollisionRect())) {
             tools.remove("ordinary_sapling");
         }
 
         //draw voltaic sapling when the ordinary tree reaches adult phase
         if(!isVoltaicSaplingUsed) {
-            if (ordinaryTreeLogic.treeLevel == OrdinaryTree.TreeStage.MATURE_TREE.ordinal()) {
+            if (ordinaryTree.treeLevel == OrdinaryTree.TreeStage.MATURE_TREE.ordinal()) {
                 tools.get("voltaic_sapling").draw(batch);
             }
         }
 
         //remove voltaic sapling upon planting
-        if ((voltaicTreeLogic.treeLevel == VoltaicTree.TreeStage.HOLE.ordinal())
-            && voltaicTreeLogic.getCollisionRect().overlaps(voltaicSaplingLogic.getCollisionRect())) {
+        if ((voltaicTree.treeLevel == VoltaicTree.TreeStage.HOLE.ordinal())
+            && voltaicTree.getCollisionRect().overlaps(voltaicSapling.getCollisionRect())) {
             tools.remove("voltaic_sapling");
             isVoltaicSaplingUsed = true; //set to true when voltaic sapling is used
         }
 
         //draw breezing sapling when the voltaic tree reaches adult phase
         if(!isBreezingSaplingUsed) {
-            if (voltaicTreeLogic.treeLevel == VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
-                || voltaicTreeLogic.treeLevel == VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_2.ordinal()
-                || voltaicTreeLogic.treeLevel == VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal()
-                || voltaicTreeLogic.treeLevel == VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()) {
+            if (voltaicTree.treeLevel == VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+                || voltaicTree.treeLevel == VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_2.ordinal()
+                || voltaicTree.treeLevel == VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal()
+                || voltaicTree.treeLevel == VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()) {
                 tools.get("breezing_sapling").draw(batch);
             }
         }
 
-        //remove voltaic sapling upon planting
-        if ((breezingTreeLogic.treeLevel == BreezingTree.TreeStage.HOLE.ordinal())
-            && breezingTreeLogic.getCollisionRect().overlaps(breezingSaplingLogic.getCollisionRect())) {
+        //remove breezing sapling upon planting
+        if ((breezingTree.treeLevel == BreezingTree.TreeStage.HOLE.ordinal())
+            && breezingTree.getCollisionRect().overlaps(breezingSapling.getCollisionRect())) {
             tools.remove("breezing_sapling");
             isBreezingSaplingUsed = true; //set to true when breezing sapling is used
         }
 
         //draw ice sapling when the breezing tree reaches adult phase
         if(!isIceSaplingUsed) {
-            if (breezingTreeLogic.treeLevel == BreezingTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
-                || breezingTreeLogic.treeLevel == BreezingTree.TreeStage.ANIMATED_MATURE_TREE_2.ordinal()
-                || breezingTreeLogic.treeLevel == BreezingTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal()) {
+            if (breezingTree.treeLevel == BreezingTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+                || breezingTree.treeLevel == BreezingTree.TreeStage.ANIMATED_MATURE_TREE_2.ordinal()
+                || breezingTree.treeLevel == BreezingTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal()) {
                 tools.get("ice_sapling").draw(batch);
             }
         }
 
         //remove ice sapling upon planting
-        if ((iceTreeLogic.treeLevel == IceTree.TreeStage.HOLE.ordinal())
-            && iceTreeLogic.getCollisionRect().overlaps(iceSaplingLogic.getCollisionRect())) {
+        if ((iceTree.treeLevel == IceTree.TreeStage.HOLE.ordinal())
+            && iceTree.getCollisionRect().overlaps(iceSapling.getCollisionRect())) {
             tools.remove("ice_sapling");
             isIceSaplingUsed = true; //set to true when ice sapling is used
         }
 
-        //draw blazing sapling when the breezing tree reaches adult phase
+        //draw blazing sapling when the ice tree reaches adult phase
         if(!isBlazingSaplingUsed) {
-            if (iceTreeLogic.treeLevel == IceTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
-                || iceTreeLogic.treeLevel == IceTree.TreeStage.ANIMATED_MATURE_TREE_2.ordinal()
-                || iceTreeLogic.treeLevel == IceTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal()
-                || iceTreeLogic.treeLevel == IceTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()) {
+            if (iceTree.treeLevel == IceTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+                || iceTree.treeLevel == IceTree.TreeStage.ANIMATED_MATURE_TREE_2.ordinal()
+                || iceTree.treeLevel == IceTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal()
+                || iceTree.treeLevel == IceTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()) {
                 tools.get("blazing_sapling").draw(batch);
             }
         }
 
         //remove blazing sapling upon planting
-        if ((blazingTreeLogic.treeLevel == BlazingTree.TreeStage.HOLE.ordinal())
-            && blazingTreeLogic.getCollisionRect().overlaps(blazingSaplingLogic.getCollisionRect())) {
+        if ((blazingTree.treeLevel == BlazingTree.TreeStage.HOLE.ordinal())
+            && blazingTree.getCollisionRect().overlaps(blazingSapling.getCollisionRect())) {
             tools.remove("blazing_sapling");
             isBlazingSaplingUsed = true; //set to true when blazing sapling is used
         }
+
+        // draw each worm
+        for (gameSprite worm : worms) {
+            worm.draw(batch);
+        } //check this later
+
+        for(gameSprite worm: worms){
+            worm.update(stateTime);
+            worm.draw(batch);
+            if(worm.isOffScreen()) {
+                worms.remove(worm);
+                break;
+            }
+        } //check this later
 
         batch.end();
 
@@ -267,8 +304,9 @@ public class LevelTwoScreen implements Screen {
                 for (gameSprite tool : tools.values()) {
                     //if is touched the tools
                     if (tool == tools.get("voltaic_sapling")) {
+                        //voltaic sapling can only be dragged when ordinary tree is mature
                         if (tool.getCollisionRect().contains(currentTouchPos)
-                            && ordinaryTreeLogic.treeLevel == OrdinaryTree.TreeStage.MATURE_TREE.ordinal()) {
+                            && ordinaryTree.treeLevel == OrdinaryTree.TreeStage.MATURE_TREE.ordinal()) {
                             draggingTool = tool;
                             isDragging = true;
                             lastTouchPos.set(currentTouchPos);
@@ -276,11 +314,12 @@ public class LevelTwoScreen implements Screen {
                         }
                     }
                     else if (tool == tools.get("breezing_sapling")) {
+                        //breezing sapling can only be dragged when voltaic tree is mature
                         if (tool.getCollisionRect().contains(currentTouchPos)
-                            && (voltaicTreeLogic.treeLevel == VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
-                            || voltaicTreeLogic.treeLevel == VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_2.ordinal()
-                            || voltaicTreeLogic.treeLevel == VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal()
-                            || voltaicTreeLogic.treeLevel == VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal())) {
+                            && (voltaicTree.treeLevel == VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+                            || voltaicTree.treeLevel == VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_2.ordinal()
+                            || voltaicTree.treeLevel == VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal()
+                            || voltaicTree.treeLevel == VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal())) {
                             draggingTool = tool;
                             isDragging = true;
                             lastTouchPos.set(currentTouchPos);
@@ -288,10 +327,11 @@ public class LevelTwoScreen implements Screen {
                         }
                     }
                     else if (tool == tools.get("ice_sapling")) {
+                        //ice sapling can only be dragged when breezing tree is mature
                         if (tool.getCollisionRect().contains(currentTouchPos)
-                            && (breezingTreeLogic.treeLevel == BreezingTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
-                            || breezingTreeLogic.treeLevel == BreezingTree.TreeStage.ANIMATED_MATURE_TREE_2.ordinal()
-                            || breezingTreeLogic.treeLevel == BreezingTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal())) {
+                            && (breezingTree.treeLevel == BreezingTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+                            || breezingTree.treeLevel == BreezingTree.TreeStage.ANIMATED_MATURE_TREE_2.ordinal()
+                            || breezingTree.treeLevel == BreezingTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal())) {
                             draggingTool = tool;
                             isDragging = true;
                             lastTouchPos.set(currentTouchPos);
@@ -299,11 +339,12 @@ public class LevelTwoScreen implements Screen {
                         }
                     }
                     else if (tool == tools.get("blazing_sapling")) {
+                        //blazing sapling can only be dragged when ice tree is mature
                         if (tool.getCollisionRect().contains(currentTouchPos)
-                            && (iceTreeLogic.treeLevel == IceTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal())
-                            || iceTreeLogic.treeLevel == IceTree.TreeStage.ANIMATED_MATURE_TREE_2.ordinal()
-                            || iceTreeLogic.treeLevel == IceTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal()
-                            || iceTreeLogic.treeLevel == IceTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()) {
+                            && (iceTree.treeLevel == IceTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal())
+                            || iceTree.treeLevel == IceTree.TreeStage.ANIMATED_MATURE_TREE_2.ordinal()
+                            || iceTree.treeLevel == IceTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal()
+                            || iceTree.treeLevel == IceTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()) {
                             draggingTool = tool;
                             isDragging = true;
                             lastTouchPos.set(currentTouchPos);
@@ -394,16 +435,28 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void updateWateringCan() {
-        wateringCanLogic.updateWateringCanStatus(waterFountainLogic);
+        wateringCan.updateWateringCan(waterFountain);
     }
 
-    private void updateTree() {
-        ordinaryTreeLogic.updateTreeStatus(shovelLogic, ordinarySaplingLogic, wateringCanLogic);
-        blazingTreeLogic.updateTreeStatus(shovelLogic, blazingSaplingLogic, wateringCanLogic);
-        breezingTreeLogic.updateTreeStatus(shovelLogic, breezingSaplingLogic, wateringCanLogic);
-        iceTreeLogic.updateTreeStatus(shovelLogic, iceSaplingLogic, wateringCanLogic);
-        voltaicTreeLogic.updateTreeStatus(shovelLogic, voltaicSaplingLogic, wateringCanLogic);
+    private void updateTrees() {
+        ordinaryTree.updateTree(shovel, ordinarySapling, wateringCan);
+        blazingTree.updateTree(shovel, blazingSapling, wateringCan);
+        breezingTree.updateTree(shovel, breezingSapling, wateringCan);
+        iceTree.updateTree(shovel, iceSapling, wateringCan);
+        voltaicTree.updateTree(shovel, voltaicSapling, wateringCan);
     }
+
+    private void spawnWorms() {
+        gameSprite newItem = null;
+        try {
+            newItem = new Worm(new Vector2(wormStartX, wormStartY), wormScale);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (newItem != null) {
+            worms.add(newItem);
+        }
+    } //check this later
 
 
     @Override
@@ -440,7 +493,11 @@ public class LevelTwoScreen implements Screen {
             tree.drawDebug(shapeRenderer);
         }
 
-        waterFountain.get("water_fountain_hitbox").drawDebug(shapeRenderer);
+        for (gameSprite worm : worms) {
+            worm.drawDebug(shapeRenderer);
+        } //check this later
+
+        liquids.get("water_fountain_hitbox").drawDebug(shapeRenderer);
 
 //        debugSpawnArea();
 
@@ -462,6 +519,6 @@ public class LevelTwoScreen implements Screen {
             tree.dispose();
         }
 
-        waterFountain.get("water_fountain_hitbox").dispose();
+        liquids.get("water_fountain_hitbox").dispose();
     }
 }

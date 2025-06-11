@@ -18,4 +18,13 @@ public class Worm extends gameSprite {
             position,
             scale);
     }
+
+    //move from right to left
+    @Override
+    public void update(float delta){
+        getSprite().setX(getSprite().getX() - speed * delta);
+        getCollisionRect().setX(getSprite().getX());
+
+
+    }
 }

@@ -12,8 +12,8 @@ public class WateringCan extends gameSprite {
         FILLED
     }
 
-    private Sound fillSound1;
-    private Sound fillSound2;
+    private final Sound fillSound1;
+    private final Sound fillSound2;
 
     public int waterLevel = WateringCanState.EMPTY.ordinal();
 
@@ -29,7 +29,8 @@ public class WateringCan extends gameSprite {
         fillSound2 = Gdx.audio.newSound(Gdx.files.internal("sound_effects/fill_watering_can2.mp3"));
     }
 
-    public void updateWateringCanStatus(gameSprite waterFountain) {
+    //update the watering can state when it interacts with a water fountain
+    public void updateWateringCan(gameSprite waterFountain) {
         if (waterLevel == WateringCanState.EMPTY.ordinal() && getCollisionRect().overlaps(waterFountain.getCollisionRect())) {
             if (Math.random() < 0.5) {
                 fillSound1.play(1f);

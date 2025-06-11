@@ -44,7 +44,8 @@ public class BlazingTree extends Trees {
         saplingSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/sapling_placement.mp3"));
     }
 
-    public void updateTreeStatus(gameSprite shovel, gameSprite sapling, WateringCan wateringCan) {
+    public void updateTree(gameSprite shovel, gameSprite sapling, WateringCan wateringCan) {
+        // Check for interactions with the shovel, sapling, and watering can
         if (treeLevel == TreeStage.FLAG.ordinal() && getCollisionRect().overlaps(shovel.getCollisionRect())) {
             digSound.play();
             treeLevel = TreeStage.HOLE.ordinal();
@@ -81,9 +82,10 @@ public class BlazingTree extends Trees {
                     setFrame(treeLevel);
                     isStageTransitionScheduled = false;
                 }
-            }, 2); // 3 seconds delay
+            }, 2); // 2 seconds delay
         }
 
+        // Handle the animated mature tree stages
         if (treeLevel >= TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
             && treeLevel <= TreeStage.ANIMATED_MATURE_TREE_5.ordinal()
             && !isStageTransitionScheduled) {
