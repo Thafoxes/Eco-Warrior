@@ -18,6 +18,11 @@ public class PlasticBin extends BinBase {
     }
 
     @Override
+    public String getBinType() {
+        return "Plastic";
+    }
+
+    @Override
     public boolean isCorrectCategory(ERecycleMap categoryPile){
         if(acceptingMaterial.equals(categoryPile)){
             return true;

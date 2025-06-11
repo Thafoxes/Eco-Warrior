@@ -16,6 +16,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import io.github.eco_warrior.controller.BinController;
 import io.github.eco_warrior.controller.fontGenerator;
 import io.github.eco_warrior.entity.ConveyorBelt;
 import io.github.eco_warrior.entity.LevelMaker;
@@ -92,9 +93,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     private static int winningScore = 20;
 
     //all bins
-    private Map<String, BinBase> bins = new HashMap<>();
-    private Map<String, fontGenerator> binLabels = new HashMap<>();
-
+   private BinController binController;
     //debug method
     private ShapeRenderer shapeRenderer;
 
@@ -154,15 +153,22 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         float binWidth = new PaperBin(new Vector2(0,0)).getMidX();
         float yPos = WINDOW_HEIGHT / 2 - 30f;
 
-        bins.put("paper", new PaperBin(new Vector2(spacing - binWidth , yPos)));
-        bins.put("can" , new CanBin(new Vector2(spacing * 2 - binWidth , yPos)));
-        bins.put("plastic" , new PlasticBin(new Vector2(spacing * 3 - binWidth, yPos)));
-        bins.put("glass bottle", new GlassBin(new Vector2(spacing * 4 - binWidth , yPos)));
 
-        binLabels.put("paper", new fontGenerator());
-        binLabels.put("can", new fontGenerator());
-        binLabels.put("plastic", new fontGenerator());
-        binLabels.put("glass bottle", new fontGenerator());
+        binController = new BinController();
+
+
+        // Create bins for both background and foreground layers
+        BinBase paperBin = new PaperBin(new Vector2(spacing - binWidth, yPos));
+        BinBase canBin = new CanBin(new Vector2(spacing * 2 - binWidth, yPos));
+        BinBase plasticBin = new PlasticBin(new Vector2(spacing * 3 - binWidth, yPos));
+        BinBase glassBin = new GlassBin(new Vector2(spacing * 4 - binWidth, yPos));
+
+        // Add bins to background layer
+        binController.addBin(paperBin);
+        binController.addBin(canBin);
+        binController.addBin(plasticBin);
+        binController.addBin(glassBin);
+
     }
 
     private void loadingConveyorAnimation() {
@@ -199,6 +205,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
     private void controller(float delta) {
         playerHearts.update(delta);
+        binController.update(delta);
 
         if(score >= winningScore || timerEnded) {
             winningScreen();
@@ -272,8 +279,14 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
                         break;
                     }
                 }
+
+                // Check for raccoon hits
+                // Award points for hitting raccoons
+                if(binController.checkRacoonHit(currentTouchPos)){
+                    score += 1;
+                }
                 //just play sound
-                for(gameSprite bin: bins.values()){
+                for(BinBase bin: binController.getForegroundBins()){
                     bin.isPressed(new Vector2(currentTouchPos.x, currentTouchPos.y));
                 }
             }
@@ -325,7 +338,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         isReturning = true;
         if(draggingItem != null){
             //if the sprite hits the bin
-            for(BinBase bin: bins.values()){
+            for(BinBase bin: binController.getForegroundBins()){
                 if(draggingItem.getCollisionRect().overlaps(bin.getCollisionRect())){
                     //check if the draggingItem is place into the right bin
 //                    System.out.println(draggingItem.getCategoryPile());
@@ -410,41 +423,12 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
         batch.setProjectionMatrix(camera.combined);
 
-
-        for(gameSprite bin: bins.values()){
-            bin.update(stateTime);
-        }
-
-        for(Map.Entry<String, BinBase> entry : bins.entrySet()) {
-            String binType = entry.getKey();
-            BinBase bin = entry.getValue();
-
-            // Calculate position for label (centered at bottom of bin)
-            float labelX = bin.getSprite().getX() + bin.getSprite().getWidth() / 2f; // Centered horizontally
-            float labelY = bin.getSprite().getY() - 10f; // 20 pixels below the bin
-
-            binLabels.get(binType).objFontDraw(
-                uiBatch,
-                binType.toUpperCase() + " BIN",
-                24,
-                camera,
-                new Vector2(labelX, labelY)
-            );
-        }
-
         conveyorBelt.update(stateTime);
-
 
         batch.begin();
 
         playerHearts.draw(batch);
-
-
-        for(gameSprite bin: bins.values()){
-            bin.draw(batch);
-        }
-
-
+        binController.draw(batch);
         conveyorBelt.draw(batch);
 
         //draw recyclables loop
@@ -455,12 +439,11 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
                 recyclables.remove(item);
                 break;
             }
-
         }
 
 
         batch.end();
-
+        binController.drawLabels(batch, camera);
         //debugging draw green line
         debugSprite();
 
@@ -479,13 +462,6 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         for (gameSprite item : recyclables) {
             item.drawDebug(shapeRenderer);
         }
-
-        //check if the overlapping occurs
-        for(gameSprite bin: bins.values()){
-            bin.drawDebug(shapeRenderer);
-        }
-
-
 
         shapeRenderer.end();
     }
@@ -524,14 +500,9 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         timerFont.dispose();
         playerHearts.dispose();
         //disposing bins
-        for(gameSprite bin: bins.values()){
-            bin.dispose();
-        }
+        binController.dispose();
         for(gameSprite item: recyclables){
             item.dispose();
-        }
-        for(fontGenerator font: binLabels.values()){
-            font.dispose();
         }
     }
 

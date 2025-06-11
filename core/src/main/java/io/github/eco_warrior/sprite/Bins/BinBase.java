@@ -6,13 +6,16 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.enums.ERecycleMap;
 
-public class BinBase extends gameSprite {
+public abstract class BinBase extends gameSprite {
     //animation
     private float animationTimer = 0f;
     private boolean isAnimating = false;
     private float animationDuration = 0.3f;
 
     private ERecycleMap acceptingMaterial = ERecycleMap.glass_bottle;
+
+    // Add method to return bin type
+    public abstract String getBinType();
 
     public BinBase(String regionName, Vector2 pos,
                    String correctSoundPath, String wrongSoundPath, String hittingSoundPath) {

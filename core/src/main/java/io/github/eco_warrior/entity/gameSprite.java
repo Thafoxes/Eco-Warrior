@@ -29,7 +29,9 @@ public class gameSprite extends spriteGenerator {
     //for manual frame
     private int frameCount;
 
-
+    /**
+     * No frame to worried about, just a single sprite.
+     */
     public gameSprite(String atlasPath, String regionName, Vector2 position, float scale , String correctSoundPath, String wrongSoundPath, String hittingSoundPath) {
         this.atlasPath = atlasPath;
         TextureAtlas atlas = new TextureAtlas(Gdx.files.internal(this.atlasPath));

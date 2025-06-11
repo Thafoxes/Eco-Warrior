@@ -9,6 +9,11 @@ public class Racoon extends gameSprite {
     private boolean isDying;
     private boolean shouldRemove;
 
+    // Add frame animation timing control
+    private float frameTimer = 0.0f;
+    private final float FRAME_DURATION = 0.1f;
+    private final int IDLE_FRAME = 8;
+
     public enum state {
         HIDDEN, SPAWN, IDLE, HIT, DYING
     }
@@ -17,7 +22,7 @@ public class Racoon extends gameSprite {
 
     public Racoon(Vector2 position, float scale)
     {
-        super("character/raccoon/raccoon.atlas", "raccoon", position, scale);
+        super("character/raccoon/raccoon.atlas", "raccoon", 15, position, scale);
         isFreeze = false;
         isHit = false;
         isDying = false;
@@ -33,8 +38,10 @@ public class Racoon extends gameSprite {
 
     @Override
     public void update(float delta) {
+        frameTimer += delta;
+
         if (!isFreeze) {
-            if(currentState == state.HIT && getCurrentFrame() == 9){
+            if(currentState == state.HIT && getCurrentFrame() == IDLE_FRAME){
                 currentState = state.DYING;
             }
         }
@@ -42,12 +49,29 @@ public class Racoon extends gameSprite {
         if(currentState == state.DYING && getCurrentFrame() == getFrameCount() - 1){
             //remove itself
             shouldRemove = true;
-        }else{
-            nextFrame();
+        }else if(getCurrentFrame() == IDLE_FRAME && currentState == state.SPAWN){
+            currentState = state.IDLE;
+
         }
+        else{
+            if(getCurrentFrame() < IDLE_FRAME && frameTimer >= FRAME_DURATION){
+                nextFrame();
+                frameTimer = 0f; //Reset frame timer
+
+            }
+        }
+
+
 
         // Call parent update to update position
         super.update(delta);
+    }
+
+    // Override nextFrame to also reset the timer
+    @Override
+    public void nextFrame() {
+        super.nextFrame();
+        frameTimer = 0f;
     }
 
     public void setFreeze(){
@@ -67,7 +91,8 @@ public class Racoon extends gameSprite {
             isHit = true;
             currentState = state.HIT;
             unfreeze();
-            resetFrame(9);
+            resetFrame(IDLE_FRAME);
+            frameTimer = 0f;
         }
     }
 

@@ -1,6 +1,7 @@
 package io.github.eco_warrior.controller;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
@@ -9,6 +10,9 @@ import com.badlogic.gdx.utils.Array;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.sprite.Bins.BinBase;
 import io.github.eco_warrior.sprite.Characters.Racoon;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class BinController {
 
@@ -23,10 +27,14 @@ public class BinController {
     private float minSpawnInterval = 2f;
     private float maxSpawnInterval = 5f;
 
+    //fontGenerator
+    private Map<BinBase, fontGenerator> binLabels;
+
     public BinController() {
         backgroundBins = new Array<>();
         foregroundBins = new Array<>();
         raccoons = new Array<>();
+        binLabels = new HashMap<>();
 
         // Initialize with random spawn interval
         resetSpawnTimer();
@@ -39,6 +47,12 @@ public class BinController {
         return bins;
     }
 
+    public Array<BinBase> getForegroundBins(){
+        Array<BinBase> bins = new Array<>();
+        bins.addAll(foregroundBins);
+        return bins;
+    }
+
     private void resetSpawnTimer() {
         spawnInterval = MathUtils.random(minSpawnInterval, maxSpawnInterval);
         spawnTimer = spawnInterval;
@@ -47,6 +61,9 @@ public class BinController {
     public void addBin(BinBase bin) {
         backgroundBins.add(bin);
         foregroundBins.add(bin);
+
+        // Create font generator for the bin label
+        binLabels.put(bin, new fontGenerator());
     }
 
     public void update(float delta){
@@ -95,10 +112,16 @@ public class BinController {
         );
 
         // Create raccoon
-        Racoon raccoon = new Racoon(spawnPos, 1f); // Scale down the raccoon a bit
-        raccoon.resetFrame(); // Start from first frame
+        try {
+            Racoon raccoon = new Racoon(spawnPos, 0.5f); // Scale down the raccoon a bit
+            raccoon.resetFrame(); // Start from first frame
+            raccoons.add(raccoon);
 
-        raccoons.add(raccoon);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return; // Skip spawning if there's an error
+        }
+
     }
 
     public boolean checkRacoonHit(Vector2 touchPosition) {
@@ -113,7 +136,29 @@ public class BinController {
         return false; // No hit detected
     }
 
+    public void drawLabels(SpriteBatch batch, OrthographicCamera camera) {
 
+        for(BinBase bin: foregroundBins){
+            String binType = bin.getBinType();
+
+            // Calculate position for label (centered at bottom of bin)
+            float labelX = bin.getSprite().getX() + bin.getSprite().getWidth() / 2f; // Centered horizontally
+            float labelY = bin.getSprite().getY() - 10f; // 20 pixels below the bin
+
+            // Use the bin as the key, not binType
+            fontGenerator font = binLabels.get(bin);
+            if (font != null) {
+                font.objFontDraw(
+                    batch,
+                    binType.toUpperCase() + " BIN",
+                    24,
+                    camera,
+                    new Vector2(labelX, labelY)
+                );
+            }
+
+        }
+    }
     public void draw(SpriteBatch batch) {
         // Draw in layers: background bins, raccoons, foreground bins
         for (gameSprite bin : backgroundBins) {
@@ -127,6 +172,7 @@ public class BinController {
         for (gameSprite bin : foregroundBins) {
             bin.draw(batch);
         }
+
     }
 
     public void drawDebug(ShapeRenderer shapeRenderer) {
@@ -156,9 +202,13 @@ public class BinController {
             raccoon.dispose();
         }
 
+        for(fontGenerator label : binLabels.values()) {
+            label.dispose();
+        }
         backgroundBins.clear();
         foregroundBins.clear();
         raccoons.clear();
+        binLabels.clear();
     }
 
 }
