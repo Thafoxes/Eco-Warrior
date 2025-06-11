@@ -151,7 +151,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         float spacing = WINDOW_WIDTH / (totalBins + 1);
 
         float binWidth = new PaperBin(new Vector2(0,0)).getMidX();
-        float yPos = WINDOW_HEIGHT / 2 - 30f;
+        float yPos = WINDOW_HEIGHT / 2 - 60f;
 
 
         binController = new BinController();
@@ -462,6 +462,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         for (gameSprite item : recyclables) {
             item.drawDebug(shapeRenderer);
         }
+        binController.drawDebug(shapeRenderer);
 
         shapeRenderer.end();
     }

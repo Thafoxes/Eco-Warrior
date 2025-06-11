@@ -1,5 +1,6 @@
 package io.github.eco_warrior.controller;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -7,6 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.sun.tools.javac.code.Attribute;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.sprite.Bins.BinBase;
 import io.github.eco_warrior.sprite.Characters.Racoon;
@@ -27,6 +29,8 @@ public class BinController {
     private float minSpawnInterval = 2f;
     private float maxSpawnInterval = 5f;
 
+    //temp raccoon
+    private Racoon tempRacoon;
     //fontGenerator
     private Map<BinBase, fontGenerator> binLabels;
 
@@ -35,6 +39,7 @@ public class BinController {
         foregroundBins = new Array<>();
         raccoons = new Array<>();
         binLabels = new HashMap<>();
+        tempRacoon = new Racoon(new Vector2(0,0));
 
         // Initialize with random spawn interval
         resetSpawnTimer();
@@ -102,20 +107,29 @@ public class BinController {
             return; // No bins to spawn from
         }
 
-        int binIndex = MathUtils.random(backgroundBins.size - 1);
-        gameSprite bin = backgroundBins.get(binIndex);
+        Array<Integer> availableIndexes = new Array<>();
 
+
+        int binIndex = MathUtils.random(backgroundBins.size - 1);
+        if(availableIndexes.contains(binIndex, true)){
+            System.out.println("Raccoon already spawned at bin: " + binIndex);
+            return; // Already spawned a raccoon at this bin
+        }
+        gameSprite bin = backgroundBins.get(binIndex);
+        System.out.println("Spawning raccoon at bin: " + binIndex);
+        System.out.println("Bin x: " + bin.getCollisionRect().getX() + ", width: " + bin.getCollisionRect().getWidth());
         // Calculate spawn position (center of the bin)
         Vector2 spawnPos = new Vector2(
-            bin.getCollisionRect().x + bin.getCollisionRect().width / 2 - bin.getMidX(),
-            bin.getCollisionRect().y + bin.getCollisionRect().height - 20 // Adjust height as needed
+            bin.getCollisionRect().getX() + 40f, // Adjust x position as needed
+            bin.getCollisionRect().y + bin.getCollisionRect().height - 25 // Adjust height as needed
         );
 
         // Create raccoon
         try {
-            Racoon raccoon = new Racoon(spawnPos, 0.5f); // Scale down the raccoon a bit
+            Racoon raccoon = new Racoon(spawnPos, 0.20f); // Scale down the raccoon a bit
             raccoon.resetFrame(); // Start from first frame
             raccoons.add(raccoon);
+            availableIndexes.add(binIndex);
 
         }catch (Exception e) {
             e.printStackTrace();
@@ -142,7 +156,7 @@ public class BinController {
             String binType = bin.getBinType();
 
             // Calculate position for label (centered at bottom of bin)
-            float labelX = bin.getSprite().getX() + bin.getSprite().getWidth() / 2f; // Centered horizontally
+            float labelX = bin.getSprite().getX() + (bin.getSprite().getWidth() / 2f) ; // Centered horizontally
             float labelY = bin.getSprite().getY() - 10f; // 20 pixels below the bin
 
             // Use the bin as the key, not binType
@@ -182,6 +196,20 @@ public class BinController {
 
         for (Racoon raccoon : raccoons) {
             raccoon.drawDebug(shapeRenderer, Color.RED);
+        }
+
+        // For raccoons
+        for (Racoon raccoon : raccoons) {
+            Gdx.gl.glLineWidth(3.0f);
+            float x = raccoon.getSprite().getX();
+            float width = raccoon.getSprite().getWidth();
+//            System.out.println("Raccoon position: " + x + ", width: " + width);
+
+            // Draw marker at raccoon position
+            shapeRenderer.setColor(Color.MAGENTA);
+            shapeRenderer.line(x, 0, x, 30);
+            shapeRenderer.line(x + width, 0, x + width, 30);
+            Gdx.gl.glLineWidth(1.0f);
         }
 
         for (BinBase bin : foregroundBins) {
