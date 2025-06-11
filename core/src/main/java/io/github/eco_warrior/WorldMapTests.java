@@ -1,15 +1,9 @@
 package io.github.eco_warrior;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
@@ -23,8 +17,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import io.github.eco_warrior.constant.ConstantsVar.*;
-import io.github.eco_warrior.enums.PlayerDirection;
 import io.github.eco_warrior.sprite.Characters.Goblin;
 
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_HEIGHT;
@@ -89,13 +81,12 @@ public class WorldMapTests implements Screen {
         };
         Gdx.input.setInputProcessor(inputProcessor);
 
-        //load map with error handling
-        try{
+        // load map with error handling
+        try {
             loadMap();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private void loadMap() throws Exception {
@@ -113,12 +104,10 @@ public class WorldMapTests implements Screen {
         int mapWidth = mapTileWidth * tileWidth;
         int mapHeight = mapTileHeight * tileHeight;
 
-        //todo
-        // Need to do more layers for objects and collision
         // Get collision layer (name water background in Tiled)
         collisionLayer = (TiledMapTileLayer) tiledMap.getLayers().get("water background");
 
-        if(collisionLayer == null) {
+        if (collisionLayer == null) {
             // Use the first layer as collision if no specific collision layer exists
             collisionLayer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
             System.out.println("No collision layer found. Using first layer for collisions.");
@@ -136,10 +125,9 @@ public class WorldMapTests implements Screen {
         float goblinX = WINDOW_WIDTH / 2;
         float goblinY = WINDOW_HEIGHT / 2;
 
-
         // Try to find spawn point from object layer named "spawn_point"
         MapLayer objectLayer = tiledMap.getLayers().get("spawn_point");
-        if(objectLayer != null) {
+        if (objectLayer != null) {
             for (MapObject object : objectLayer.getObjects()) {
                 if (object instanceof RectangleMapObject && "spawn_point".equals(object.getName())) {
                     Rectangle rect = ((RectangleMapObject) object).getRectangle();
@@ -151,8 +139,10 @@ public class WorldMapTests implements Screen {
             }
         }
 
+        // Get the collision object layer (object layer with shapes and collidable=true)
+        MapLayer collisionObjectLayer = tiledMap.getLayers().get("Collision");
 
-        initializeGoblin(goblinX, goblinY);
+        initializeGoblin(goblinX, goblinY, collisionObjectLayer);
 
         // Initialize dead zone for camera
         deadZone = new Rectangle(
@@ -165,10 +155,14 @@ public class WorldMapTests implements Screen {
         camera.update();
     }
 
-    private void initializeGoblin(float goblinX, float goblinY) {
-        // Initialize goblin character
-        goblin = new Goblin(new Vector2(goblinX, goblinY), tileWidth, tileHeight, collisionLayer);
-
+    private void initializeGoblin(float goblinX, float goblinY, MapLayer collisionObjectLayer) {
+        goblin = new Goblin(
+            new Vector2(goblinX, goblinY),
+            tileWidth,
+            tileHeight,
+            collisionLayer,
+            collisionObjectLayer != null ? collisionObjectLayer.getObjects() : null
+        );
     }
 
     @Override
@@ -181,7 +175,6 @@ public class WorldMapTests implements Screen {
         handleInput();
         goblin.update(delta, tiledMap); // Add this line to update goblin position
 
-
         // Update camera based on character position
         updateCamera();
 
@@ -192,7 +185,6 @@ public class WorldMapTests implements Screen {
         // Render the character
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-
         goblin.draw(batch);
         batch.end();
     }
@@ -224,9 +216,6 @@ public class WorldMapTests implements Screen {
         // Set the velocity on the goblin
         goblin.setVelocity(velocity.x, velocity.y);
     }
-
-
-
 
     @Override
     public void resize(int width, int height) {
@@ -284,10 +273,9 @@ public class WorldMapTests implements Screen {
     public void dispose() {
         // Dispose of resources to prevent memory leaks
         if (tiledMap != null) tiledMap.dispose();
-        if(goblin != null) goblin.dispose();
+        if (goblin != null) goblin.dispose();
         if (batch != null) batch.dispose();
     }
-
 
     /**
      * Updates camera position based on character position.
@@ -339,7 +327,6 @@ public class WorldMapTests implements Screen {
             // Apply smoothed camera movement with increased smoothing factor
             cameraPosition.x = MathUtils.lerp(cameraPosition.x, targetX, (CAMERA_SPEED * 0.8f) * Gdx.graphics.getDeltaTime());
             cameraPosition.y = MathUtils.lerp(cameraPosition.y, targetY, (CAMERA_SPEED * 0.8f) * Gdx.graphics.getDeltaTime());
-
         }
 
         // Apply map boundaries to the camera
@@ -354,7 +341,7 @@ public class WorldMapTests implements Screen {
             float effectiveViewportHeight = camera.viewportHeight * camera.zoom;
 
             // Calculate the camera boundaries (half width/height to account for camera center)
-            float cameraHalfWidth = effectiveViewportWidth/2f;
+            float cameraHalfWidth = effectiveViewportWidth / 2f;
             float cameraHalfHeight = effectiveViewportHeight / 2f;
 
             float mapPixelWidth = mapWidth * tileWidth;
@@ -363,12 +350,10 @@ public class WorldMapTests implements Screen {
             float offsetX = 32f; // from Tiled
             float offsetY = 32f; // from Tiled
 
-
             // Clamp camera position within map boundaries
             camera.position.x = MathUtils.clamp(camera.position.x, cameraHalfWidth + offsetX, mapPixelWidth - cameraHalfWidth + offsetX);
             camera.position.y = MathUtils.clamp(camera.position.y, cameraHalfHeight + offsetY, mapPixelHeight - cameraHalfHeight + offsetY);
         }
-
 
         // Add this to round camera position to prevent sub-pixel rendering issues
         camera.position.x = Math.round(camera.position.x);

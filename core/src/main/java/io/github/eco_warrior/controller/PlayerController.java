@@ -97,7 +97,7 @@ public class PlayerController implements InputProcessor {
         return false;
     }
 
-    public void update() {
+    public void update(float delta) {
         float speed = 1f;
        float dx = 0, dy = 0;
 

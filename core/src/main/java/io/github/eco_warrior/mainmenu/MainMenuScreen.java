@@ -92,7 +92,6 @@ public class MainMenuScreen implements Screen {
         startButton.addListener(new ClickListener() {
             @Override
             public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
-                MusicManager.getInstance().stopMusic();
                 clickSound.play(SettingsManager.getInstance().getClickSoundVolume()); // Play click sound with saved volume
                 ((com.badlogic.gdx.Game) Gdx.app.getApplicationListener()).setScreen(new SelectionScreen(main));
             }
