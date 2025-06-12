@@ -339,8 +339,11 @@ public class LevelTwoScreen implements Screen {
                     gameSpriteType type = entry.getKey();
                     gameSprite tool = entry.getValue();
 
+                    if(!tool.getCollisionRect().contains(currentTouchPos)){
+                        continue; //skip if the tool is not touched
+                    }
                     //if is touched the tools
-                    if (tool == tools.get(gameSpriteType.VOLTAIC_SAPLING)) {
+                    if (type == gameSpriteType.VOLTAIC_SAPLING) {
                         //voltaic sapling can only be dragged when ordinary tree is mature
                         if (tool.getCollisionRect().contains(currentTouchPos)
                             && ordinaryTree.treeLevel == OrdinaryTree.TreeStage.MATURE_TREE.ordinal()) {
@@ -350,7 +353,7 @@ public class LevelTwoScreen implements Screen {
                             break;
                         }
                     }
-                    else if (tool == tools.get(gameSpriteType.BREEZING_SAPLING)) {
+                    else if (type == gameSpriteType.BREEZING_SAPLING) {
                         //breezing sapling can only be dragged when voltaic tree is mature
                         if (tool.getCollisionRect().contains(currentTouchPos)
                             && (voltaicTree.treeLevel >= VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal())) {
@@ -360,7 +363,7 @@ public class LevelTwoScreen implements Screen {
                             break;
                         }
                     }
-                    else if (tool == tools.get(gameSpriteType.ICE_SAPLING)) {
+                    else if (type == gameSpriteType.ICE_SAPLING) {
                         //ice sapling can only be dragged when breezing tree is mature
                         if (tool.getCollisionRect().contains(currentTouchPos)
                             && (breezingTree.treeLevel >= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal())) {
@@ -370,7 +373,7 @@ public class LevelTwoScreen implements Screen {
                             break;
                         }
                     }
-                    else if (tool == tools.get(gameSpriteType.BLAZING_SAPLING)) {
+                    else if (type == gameSpriteType.BLAZING_SAPLING) {
                         //blazing sapling can only be dragged when ice tree is mature
                         if (tool.getCollisionRect().contains(currentTouchPos)
                             && (iceTree.treeLevel >= IceTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal())) {
@@ -381,6 +384,7 @@ public class LevelTwoScreen implements Screen {
                         }
                     }
                     else {
+                        //other tools can be dragged anytime
                         if (tool.getCollisionRect().contains(currentTouchPos)) {
                             draggingTool = tool;
                             isDragging = true;
