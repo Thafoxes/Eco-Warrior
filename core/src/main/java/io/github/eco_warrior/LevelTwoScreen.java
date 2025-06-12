@@ -81,8 +81,8 @@ public class LevelTwoScreen implements Screen {
 
     //enemies
     private List<gameSprite> worms = new ArrayList<>(); //check this later
-    private float wormStartX = 1150f; //check this later
-    private float wormStartY = 100f; //check this later
+    private static float wormStartX = 1150f; //check this later
+    private static float wormStartY = 100f; //check this later
     private float wormSpawnTimer; //check this later
     private float wormScale = 0.2f; //check this later
     private float stateTime; //check this later
@@ -168,10 +168,6 @@ public class LevelTwoScreen implements Screen {
         draw();
         updateWateringCan();
         updateTrees();
-
-        for (gameSprite worm : worms) {
-            worm.update(delta); // move the worm from left to right
-        } //check this later
 
         wormSpawnTimer += delta; // Adds the current delta to the timer
         if (wormSpawnTimer > 3f) { // Check if it has been more than a second
@@ -275,13 +271,9 @@ public class LevelTwoScreen implements Screen {
             isBlazingSaplingUsed = true; //set to true when blazing sapling is used
         }
 
-        // draw each worm
-        for (gameSprite worm : worms) {
-            worm.draw(batch);
-        } //check this later
 
         for(gameSprite worm: worms){
-            worm.update(stateTime);
+            //worm.update(stateTime); //this causing issue with worm movement
             worm.draw(batch);
             if(worm.isOffScreen()) {
                 worms.remove(worm);
@@ -384,7 +376,6 @@ public class LevelTwoScreen implements Screen {
             if(draggingTool != null){
                 try{
                     onMouseRelease();
-//                        returnOriginalPosition();
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -517,6 +508,10 @@ public class LevelTwoScreen implements Screen {
 
         for (gameSprite tree : trees.values()) {
             tree.dispose();
+        }
+
+        for(gameSprite worm: worms){
+            worm.dispose();
         }
 
         liquids.get("water_fountain_hitbox").dispose();

@@ -107,6 +107,10 @@ public class gameSprite extends spriteGenerator {
         this(atlasPath, regionName, position, scale, correctSoundPath, null, null);
     }
 
+    /**
+     * Green collision hitbox, Red sprite hitbox
+     * @param shapeRenderer
+     */
     public void drawDebug(ShapeRenderer shapeRenderer) {
         if (collisionRect != null) {
             shapeRenderer.setColor(Color.GREEN);
@@ -117,6 +121,14 @@ public class gameSprite extends spriteGenerator {
                 collisionRect.height
             );
         }
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.rect(
+            getSprite().getX(),
+            getSprite().getY(),
+            getSprite().getWidth() + 2,
+            getSprite().getHeight()+ 2
+        );
+
     }
 
     /**
