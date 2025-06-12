@@ -3,15 +3,11 @@ package io.github.eco_warrior.sprite.gardening_equipments.sapling_variant;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.entity.tool;
 
-public class VoltaicSapling extends tool {
+public class VoltaicSapling extends BaseSapling {
 
     public VoltaicSapling(Vector2 position, float scale) {
         super(
-            "atlas/saplings/saplings.atlas",
-            "voltaic_sapling",
-            position,
-            scale,
-            null);
+            position, "voltaic_sapling", scale);
     }
 
 }
