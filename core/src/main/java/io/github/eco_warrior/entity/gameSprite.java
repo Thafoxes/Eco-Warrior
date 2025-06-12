@@ -121,13 +121,6 @@ public class gameSprite extends spriteGenerator {
                 collisionRect.height
             );
         }
-        shapeRenderer.setColor(Color.RED);
-        shapeRenderer.rect(
-            getSprite().getX(),
-            getSprite().getY(),
-            getSprite().getWidth() + 2,
-            getSprite().getHeight()+ 2
-        );
 
     }
 

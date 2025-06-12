@@ -22,3 +22,5 @@ assets/Background_Image/Scary2.jpg
 /core/build/tmp
 *.bin
 /external data and info/PixelArt package
+core/build/libs/core-1.0.0.jar
+core/build/tmp/compileJava/previous-compilation-data.bin
