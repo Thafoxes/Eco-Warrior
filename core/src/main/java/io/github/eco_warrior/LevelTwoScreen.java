@@ -252,64 +252,64 @@ public class LevelTwoScreen implements Screen {
             tools.remove(gameSpriteType.ORDINARY_SAPLING);
         }
 
-        //draw voltaic sapling when the ordinary tree reaches adult phase
-        if(!isVoltaicSaplingUsed) {
-            if (ordinaryTree.treeLevel == OrdinaryTree.TreeStage.MATURE_TREE.ordinal()) {
-                tools.get(gameSpriteType.VOLTAIC_SAPLING).draw(batch);
-            }
-        }
-
-        //remove voltaic sapling upon planting
-        if ((voltaicTree.treeLevel == VoltaicTree.TreeStage.HOLE.ordinal())
-            && voltaicTree.getCollisionRect().overlaps(voltaicSapling.getCollisionRect())) {
-            tools.remove(gameSpriteType.VOLTAIC_SAPLING);
-            isVoltaicSaplingUsed = true; //set to true when voltaic sapling is used
-        }
-
-        //draw breezing sapling when the voltaic tree reaches adult phase
-        if(!isBreezingSaplingUsed) {
-            //VoltaicTree.TreeStage.YOUNG_TREE.ordinal() means after the sapling stage
-            if (voltaicTree.treeLevel > VoltaicTree.TreeStage.YOUNG_TREE.ordinal()) {
-                tools.get(gameSpriteType.BREEZING_SAPLING).draw(batch);
-            }
-        }
-
-        //remove breezing sapling upon planting
-        if ((breezingTree.treeLevel == BreezingTree.TreeStage.HOLE.ordinal())
-            && breezingTree.getCollisionRect().overlaps(breezingSapling.getCollisionRect())) {
-            tools.remove(gameSpriteType.BREEZING_SAPLING);
-            isBreezingSaplingUsed = true; //set to true when breezing sapling is used
-        }
-
-        //draw ice sapling when the breezing tree reaches adult phase
-        if(!isIceSaplingUsed) {
-            //included ANIMATED_MATURE_TREE_1 - 3
-            if (breezingTree.treeLevel >= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()) {
-                tools.get(gameSpriteType.ICE_SAPLING).draw(batch);
-            }
-        }
-
-        //remove ice sapling upon planting
-        if ((iceTree.treeLevel == IceTree.TreeStage.HOLE.ordinal())
-            && iceTree.getCollisionRect().overlaps(iceSapling.getCollisionRect())) {
-            tools.remove(gameSpriteType.ICE_SAPLING);
-            isIceSaplingUsed = true; //set to true when ice sapling is used
-        }
-
-        //draw blazing sapling when the ice tree reaches adult phase
-        if(!isBlazingSaplingUsed) {
-            //included ANIMATED_MATURE_TREE_1 - 4
-            if (iceTree.treeLevel >= IceTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()) {
-                tools.get(gameSpriteType.BLAZING_SAPLING).draw(batch);
-            }
-        }
-
-        //remove blazing sapling upon planting
-        if ((blazingTree.treeLevel == BlazingTree.TreeStage.HOLE.ordinal())
-            && blazingTree.getCollisionRect().overlaps(blazingSapling.getCollisionRect())) {
-            tools.remove(gameSpriteType.BLAZING_SAPLING);
-            isBlazingSaplingUsed = true; //set to true when blazing sapling is used
-        }
+//        //draw voltaic sapling when the ordinary tree reaches adult phase
+//        if(!isVoltaicSaplingUsed) {
+//            if (ordinaryTree.treeLevel == OrdinaryTree.TreeStage.MATURE_TREE.ordinal()) {
+//                tools.get(gameSpriteType.VOLTAIC_SAPLING).draw(batch);
+//            }
+//        }
+//
+//        //remove voltaic sapling upon planting
+//        if ((voltaicTree.treeLevel == VoltaicTree.TreeStage.HOLE.ordinal())
+//            && voltaicTree.getCollisionRect().overlaps(voltaicSapling.getCollisionRect())) {
+//            tools.remove(gameSpriteType.VOLTAIC_SAPLING);
+//            isVoltaicSaplingUsed = true; //set to true when voltaic sapling is used
+//        }
+//
+//        //draw breezing sapling when the voltaic tree reaches adult phase
+//        if(!isBreezingSaplingUsed) {
+//            //VoltaicTree.TreeStage.YOUNG_TREE.ordinal() means after the sapling stage
+//            if (voltaicTree.treeLevel >= VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()) {
+//                tools.get(gameSpriteType.BREEZING_SAPLING).draw(batch);
+//            }
+//        }
+//
+//        //remove breezing sapling upon planting
+//        if ((breezingTree.treeLevel == BreezingTree.TreeStage.HOLE.ordinal())
+//            && breezingTree.getCollisionRect().overlaps(breezingSapling.getCollisionRect())) {
+//            tools.remove(gameSpriteType.BREEZING_SAPLING);
+//            isBreezingSaplingUsed = true; //set to true when breezing sapling is used
+//        }
+//
+//        //draw ice sapling when the breezing tree reaches adult phase
+//        if(!isIceSaplingUsed) {
+//            //included ANIMATED_MATURE_TREE_1 - 3
+//            if (breezingTree.treeLevel >= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()) {
+//                tools.get(gameSpriteType.ICE_SAPLING).draw(batch);
+//            }
+//        }
+//
+//        //remove ice sapling upon planting
+//        if ((iceTree.treeLevel == IceTree.TreeStage.HOLE.ordinal())
+//            && iceTree.getCollisionRect().overlaps(iceSapling.getCollisionRect())) {
+//            tools.remove(gameSpriteType.ICE_SAPLING);
+//            isIceSaplingUsed = true; //set to true when ice sapling is used
+//        }
+//
+//        //draw blazing sapling when the ice tree reaches adult phase
+//        if(!isBlazingSaplingUsed) {
+//            //included ANIMATED_MATURE_TREE_1 - 4
+//            if (iceTree.treeLevel >= IceTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()) {
+//                tools.get(gameSpriteType.BLAZING_SAPLING).draw(batch);
+//            }
+//        }
+//
+//        //remove blazing sapling upon planting
+//        if ((blazingTree.treeLevel == BlazingTree.TreeStage.HOLE.ordinal())
+//            && blazingTree.getCollisionRect().overlaps(blazingSapling.getCollisionRect())) {
+//            tools.remove(gameSpriteType.BLAZING_SAPLING);
+//            isBlazingSaplingUsed = true; //set to true when blazing sapling is used
+//        }
 
         Iterator<Worm> iterator = worms.iterator();
         while(iterator.hasNext()) {
@@ -376,7 +376,8 @@ public class LevelTwoScreen implements Screen {
                             lastTouchPos.set(currentTouchPos);
                             break;
                         }
-                    } else {
+                    }
+                    else {
                         if (tool.getCollisionRect().contains(currentTouchPos)) {
                             draggingTool = tool;
                             isDragging = true;
