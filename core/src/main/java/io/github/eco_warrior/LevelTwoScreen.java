@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.entity.gameSprite;
@@ -44,10 +45,10 @@ public class LevelTwoScreen implements Screen {
     private float startY;
 
     //water fountain
-    private Map<String, gameSprite> liquids = new HashMap<>();
+    private Map<String, gameSprite> liquids;
 
     //trees
-    private Map<String, gameSprite> trees = new HashMap<>();
+    private Map<String, gameSprite> trees;
 
     //entities declaration
     private WateringCan wateringCan;
@@ -80,12 +81,14 @@ public class LevelTwoScreen implements Screen {
     private gameSprite draggingTool;
 
     //enemies
-    private List<gameSprite> worms = new ArrayList<>(); //check this later
-    private static float wormStartX = 1150f; //check this later
+    private Array<Worm> worms; //check this later
+    private Array<Worm> wormPool; //check this later
+    private static float wormStartX = WINDOW_WIDTH + 50f; //check this later
     private static float wormStartY = 100f; //check this later
     private float wormSpawnTimer; //check this later
     private float wormScale = 0.2f; //check this later
     private float stateTime; //check this later
+    private static final int WORM_BUFFER_CAPACITY = 20;
 
 
     public LevelTwoScreen(Main main) {
@@ -111,6 +114,11 @@ public class LevelTwoScreen implements Screen {
         //setup camera to middle
         camera.position.set(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0);
         camera.update();
+
+        worms = new Array<>();
+        liquids = new HashMap<>();
+        trees = new HashMap<>();
+
 
         initializeEntities();
     }
@@ -160,6 +168,11 @@ public class LevelTwoScreen implements Screen {
         trees.put("breezing_tree", breezingTree);
         trees.put("ice_tree", iceTree);
         trees.put("voltaic_tree", voltaicTree);
+
+        wormPool = new Array<>(WORM_BUFFER_CAPACITY);
+        for (int i = 0; i < WORM_BUFFER_CAPACITY; i++) {
+            wormPool.add(new Worm(new Vector2(wormStartX, wormStartY)));
+        }
     }
 
     @Override
@@ -168,12 +181,26 @@ public class LevelTwoScreen implements Screen {
         draw();
         updateWateringCan();
         updateTrees();
+        spawnWorm(delta);
+    }
 
+    private void spawnWorm(float delta) {
         wormSpawnTimer += delta; // Adds the current delta to the timer
-        if (wormSpawnTimer > 3f) { // Check if it has been more than a second
+        if (wormSpawnTimer > 3f) { // Check if it has been more than a second\
+            Worm worm;
+            long startTime = System.nanoTime();
+
+            if(wormPool.size > 0) {
+                worm = wormPool.pop();
+                worm.getSprite().setPosition(wormStartX, wormStartY);
+            }else {
+                worm = new Worm(new Vector2(wormStartX, wormStartY));
+            }
+            worms.add(worm);
             wormSpawnTimer = 0; // Reset the timer
-            spawnWorms(); // Create the worms
-        } //check this later
+            long endTime = System.nanoTime();
+            //System.out.println("Worm creation time: " + (endTime - startTime) / 1000000.0 + " ms");
+        }
     }
 
     private void draw() {
@@ -271,12 +298,14 @@ public class LevelTwoScreen implements Screen {
             isBlazingSaplingUsed = true; //set to true when blazing sapling is used
         }
 
-
-        for(gameSprite worm: worms){
-            //worm.update(stateTime); //this causing issue with worm movement
+        Iterator<Worm> iterator = worms.iterator();
+        while(iterator.hasNext()) {
+            Worm worm = iterator.next();
+            worm.update(stateTime);
             worm.draw(batch);
             if(worm.isOffScreen()) {
-                worms.remove(worm);
+                worm.reset();
+                iterator.remove();
                 break;
             }
         } //check this later
@@ -437,18 +466,6 @@ public class LevelTwoScreen implements Screen {
         voltaicTree.updateTree(shovel, voltaicSapling, wateringCan);
     }
 
-    private void spawnWorms() {
-        gameSprite newItem = null;
-        try {
-            newItem = new Worm(new Vector2(wormStartX, wormStartY), wormScale);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (newItem != null) {
-            worms.add(newItem);
-        }
-    } //check this later
-
 
     @Override
     public void resize(int width, int height) {
@@ -513,6 +530,9 @@ public class LevelTwoScreen implements Screen {
         for(gameSprite worm: worms){
             worm.dispose();
         }
+        wateringCan.dispose();
+        waterFountain.dispose();
+        shovel.dispose();
 
         liquids.get("water_fountain_hitbox").dispose();
     }

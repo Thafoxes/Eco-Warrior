@@ -192,6 +192,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         Class<?> selectedClass = recyclableClasses[index];
 
         gameSprite newItem = null;
+        long startTime = System.nanoTime();
 
         //create constructor for selected class
         try{
@@ -203,6 +204,8 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
         if(newItem != null) {
             recyclables.add(newItem);
+            long endTime = System.nanoTime();
+            System.out.println("Worm creation time: " + (endTime - startTime) / 1000000.0 + " ms");
         }
 
     }
