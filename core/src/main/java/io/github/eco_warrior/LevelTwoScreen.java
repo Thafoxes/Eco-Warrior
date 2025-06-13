@@ -219,7 +219,8 @@ public class LevelTwoScreen implements Screen {
             worms.add(worm);
             wormSpawnTimer = 0; // Reset the timer
             long endTime = System.nanoTime();
-            //System.out.println("Worm creation time: " + (endTime - startTime) / 1000000.0 + " ms");
+            System.out.println("Worm creation time: " + (endTime - startTime) / 1000000.0 + " ms");
+            System.out.println("Worms in pool: " + wormPool.size + ", Worms in game: " + worms.size);
         }
     }
 
@@ -318,6 +319,7 @@ public class LevelTwoScreen implements Screen {
             worm.draw(batch);
             if(worm.isOffScreen()) {
                 worm.reset();
+                wormPool.add(worm); //push back into pull
                 iterator.remove();
                 break;
             }
