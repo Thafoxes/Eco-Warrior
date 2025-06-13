@@ -32,7 +32,7 @@ public class Worm extends gameSprite {
 
     private WormPath path;
 
-    private final float speed = 150f; // Speed of the worm
+    private final float speed = 100f; // Speed of the worm
     private int wormLevel = WormAnimation.MOVE_1.ordinal(); // Current level of the worm
     private boolean isMoveTransitionScheduled = false;
 
@@ -88,7 +88,7 @@ public class Worm extends gameSprite {
                     wormLevel = nextFrame;
                     isMoveTransitionScheduled = false;
                 }
-            }, .1f); // 0.2 seconds delay
+            }, .3f); // 0.3 seconds delay
         }
     }
 }

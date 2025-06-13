@@ -114,11 +114,11 @@ public class LevelTwoScreen implements Screen {
 
         public Vector2 getWormStartPosition() {
             switch (this) {
-                case PATH_1: return new Vector2(1150, 100);
-                case PATH_2: return new Vector2(1150, 200);
-                case PATH_3: return new Vector2(1150, 300);
-                case PATH_4: return new Vector2(1150, 400);
-                case PATH_5: return new Vector2(1150, 500);
+                case PATH_1: return new Vector2(wormStartX, 100);
+                case PATH_2: return new Vector2(wormStartX, 200);
+                case PATH_3: return new Vector2(wormStartX, 300);
+                case PATH_4: return new Vector2(wormStartX, 400);
+                case PATH_5: return new Vector2(wormStartX, 500);
                 default: return new Vector2(0, 0); // Default case, should not happen
             }
         }
@@ -247,7 +247,7 @@ public class LevelTwoScreen implements Screen {
             if(wormPool.size > 0) {
                 worm = wormPool.pop();
                 worm.getSprite().setPosition(startWormPosition.x, startWormPosition.y);
-                worm = new Worm(startWormPosition); // Reset the worm with the new position and scale
+                worm.getCollisionRect().setPosition(startWormPosition); // Reset the worm with the new position and scale
             }else {
                 worm = new Worm(startWormPosition);
             }
