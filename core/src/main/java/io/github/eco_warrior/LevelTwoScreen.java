@@ -89,7 +89,7 @@ public class LevelTwoScreen implements Screen {
     private static final float wormStartY = 100f; //check this later
     private float wormSpawnTimer; //check this later
     private float stateTime; //check this later
-    private static final int WORM_BUFFER_CAPACITY = 20;
+    private static final int WORM_BUFFER_CAPACITY = 10;
 
 
     public LevelTwoScreen(Main main) {
