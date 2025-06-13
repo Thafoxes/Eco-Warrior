@@ -10,8 +10,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Align;
 
+import java.util.List;
+
 public class DialogBox {
-    private String[] dialogLines;
+    private List<String> dialogLines;
     private String speaker;
     private int currentLine;
     private boolean visible;
@@ -42,8 +44,8 @@ public class DialogBox {
         updateBoxRect();
     }
 
-    public void startDialog(String speaker, String[] lines) {
-        if (lines == null || lines.length == 0) return;
+    public void startDialog(String speaker, List<String> lines) {
+        if (lines.isEmpty()) return;
         this.speaker = speaker;
         this.dialogLines = lines;
         this.currentLine = 0;
@@ -55,7 +57,7 @@ public class DialogBox {
         if (!visible) return;
         if (Gdx.input.isKeyJustPressed(advanceKey)) {
             currentLine++;
-            if (currentLine >= dialogLines.length) {
+            if (currentLine >= dialogLines.size()) {
                 visible = false;
             } else {
                 updateBoxRect();
@@ -65,7 +67,7 @@ public class DialogBox {
 
     public void updateBoxRect() {
         if (!visible) return;
-        String text = dialogLines[currentLine];
+        String text = dialogLines.get(currentLine);
         float maxTextWidth = Gdx.graphics.getWidth() * 0.7f; // wrap text if too long
 
         // Measure dialog text
@@ -76,7 +78,7 @@ public class DialogBox {
         // Measure prompt text (only if it will show)
         float promptWidth = 0f;
         float promptHeight = 0f;
-        if (currentLine < dialogLines.length - 1 && advancePrompt != null && !advancePrompt.isEmpty()) {
+        if (currentLine < dialogLines.size() - 1 && advancePrompt != null && !advancePrompt.isEmpty()) {
             GlyphLayout promptLayout = new GlyphLayout(font, advancePrompt);
             promptWidth = promptLayout.width;
             promptHeight = promptLayout.height;
@@ -118,12 +120,12 @@ public class DialogBox {
 
         // Draw dialog text
         font.setColor(Color.WHITE);
-        font.draw(batch, dialogLines[currentLine],
+        font.draw(batch, dialogLines.get(currentLine),
             boxRect.x + padding, boxRect.y + boxRect.height - speakerFont.getCapHeight() - padding,
             boxRect.width - 2 * padding, Align.left, true);
 
         // Draw prompt
-        if (currentLine < dialogLines.length - 1 && advancePrompt != null && !advancePrompt.isEmpty()) {
+        if (currentLine < dialogLines.size() - 1 && advancePrompt != null && !advancePrompt.isEmpty()) {
             GlyphLayout promptLayout = new GlyphLayout(font, advancePrompt);
             float rightMargin = padding;
             float bottomMargin = padding / 2f;

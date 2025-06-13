@@ -26,6 +26,9 @@ import io.github.eco_warrior.controller.FontGenerator;
 import io.github.eco_warrior.sprite.Characters.Goblin;
 import io.github.eco_warrior.controller.DialogBox;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static io.github.eco_warrior.constant.ConstantsVar.*;
 
 public class WorldTestsV2 implements Screen {
@@ -141,11 +144,11 @@ public class WorldTestsV2 implements Screen {
     public void render(float delta) {
         // For demo: trigger dialog with D key
         if (!dialogBox.isVisible() && Gdx.input.isKeyJustPressed(Input.Keys.O)) {
-            dialogBox.startDialog("Rival", new String[]{
+            dialogBox.startDialog("Rival", Arrays.asList(
                 "Hi!",
                 "This is a longer sentence to demonstrate the auto-sizing of the dialog box.",
                 "Done."
-            });
+            ));
         }
 
         dialogBox.update();
