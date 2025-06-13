@@ -18,7 +18,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.animation.WaterExplosion;
 import io.github.eco_warrior.controller.WaterSystemManager;
-import io.github.eco_warrior.controller.fontGenerator;
+import io.github.eco_warrior.controller.FontGenerator;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.enums.BucketState;
 import io.github.eco_warrior.enums.textEnum;
@@ -98,8 +98,8 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
     //scoring section
     private int score = 0;
     private float levelTimerSec = 60f;
-    private fontGenerator scoreFont;
-    private fontGenerator timerFont;
+    private FontGenerator scoreFont;
+    private FontGenerator timerFont;
 
     //water drop UI
     private WaterSystemManager waterSystem;
@@ -140,8 +140,8 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
         currentTouchPos = new Vector2();
 
         //initialize font
-        scoreFont = new fontGenerator(24, Color.WHITE, Color.BLACK);
-        timerFont = new fontGenerator(24, Color.WHITE, Color.BLACK);
+        scoreFont = new FontGenerator(24, Color.WHITE, Color.BLACK);
+        timerFont = new FontGenerator(24, Color.WHITE, Color.BLACK);
 
         //spider
         activeSpiders = new ArrayList<>();

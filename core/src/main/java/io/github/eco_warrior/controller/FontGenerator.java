@@ -7,14 +7,13 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.enums.textEnum;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class fontGenerator {
+public class FontGenerator {
     private BitmapFont font;
     private FreeTypeFontGenerator generator;
     private FreeTypeFontGenerator.FreeTypeFontParameter parameter;
@@ -25,7 +24,7 @@ public class fontGenerator {
 
     private SpriteBatch uiBatch;
 
-    public fontGenerator(Integer size,Color fontColor, Color borderColor, String fontPath) {
+    public FontGenerator(Integer size, Color fontColor, Color borderColor, String fontPath) {
         if(fontColor != null){
             this.fontColor = fontColor;
         }
@@ -50,7 +49,7 @@ public class fontGenerator {
 
     }
 
-    public fontGenerator(Integer size,Color fontColor, Color borderColor) {
+    public FontGenerator(Integer size, Color fontColor, Color borderColor) {
         if(fontColor != null){
             this.fontColor = fontColor;
         }
@@ -75,7 +74,7 @@ public class fontGenerator {
 
     }
 
-    public fontGenerator() {
+    public FontGenerator() {
         int size = 32;
         generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/TT Octosquares Trial Medium.ttf"));
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();

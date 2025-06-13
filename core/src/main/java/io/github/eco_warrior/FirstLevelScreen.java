@@ -16,11 +16,10 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import io.github.eco_warrior.animation.SmoothMovement;
 import io.github.eco_warrior.controller.BinController;
 import io.github.eco_warrior.controller.FlipFlopController;
 import io.github.eco_warrior.controller.recyclablesController;
-import io.github.eco_warrior.controller.fontGenerator;
+import io.github.eco_warrior.controller.FontGenerator;
 import io.github.eco_warrior.entity.ConveyorBelt;
 import io.github.eco_warrior.entity.LevelMaker;
 import io.github.eco_warrior.enums.textEnum;
@@ -28,7 +27,6 @@ import io.github.eco_warrior.screen.ResultScreen;
 import io.github.eco_warrior.sprite.Bins.*;
 import io.github.eco_warrior.sprite.Recyables.*;
 import io.github.eco_warrior.sprite.UI.Hearts;
-import io.github.eco_warrior.sprite.tools.FlipFlop;
 
 import static com.badlogic.gdx.Gdx.audio;
 import static com.badlogic.gdx.Gdx.gl;
@@ -55,8 +53,8 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     private final float CONVEYOR_SCALE = 0.5f;
 
     //uiBatch
-    private fontGenerator scoreFont;
-    private fontGenerator timerFont;
+    private FontGenerator scoreFont;
+    private FontGenerator timerFont;
     private SpriteBatch uiBatch;
 
     //score
@@ -108,8 +106,8 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         camera.update();
 
 
-        scoreFont = new fontGenerator();
-        timerFont = new fontGenerator();
+        scoreFont = new FontGenerator();
+        timerFont = new FontGenerator();
 
         lastTouchPos = new Vector2();
         currentTouchPos = new Vector2();

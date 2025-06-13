@@ -1,6 +1,5 @@
 package io.github.eco_warrior.controller;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -32,7 +31,7 @@ public class BinController {
     //temp raccoon
     private Racoon tempRacoon;
     //fontGenerator
-    private Map<BinBase, fontGenerator> binLabels;
+    private Map<BinBase, FontGenerator> binLabels;
 
 
     //track raccoon spawn locations
@@ -72,7 +71,7 @@ public class BinController {
         foregroundBins.add(bin);
 
         // Create font generator for the bin label
-        binLabels.put(bin, new fontGenerator());
+        binLabels.put(bin, new FontGenerator());
     }
 
     public void update(float delta){
@@ -177,7 +176,7 @@ public class BinController {
             float labelY = bin.getSprite().getY() - 10f; // 20 pixels below the bin
 
             // Use the bin as the key, not binType
-            fontGenerator font = binLabels.get(bin);
+            FontGenerator font = binLabels.get(bin);
             if (font != null) {
                 font.objFontDraw(
                     batch,
@@ -277,7 +276,7 @@ public class BinController {
             raccoon.dispose();
         }
 
-        for(fontGenerator label : binLabels.values()) {
+        for(FontGenerator label : binLabels.values()) {
             label.dispose();
         }
         backgroundBins.clear();

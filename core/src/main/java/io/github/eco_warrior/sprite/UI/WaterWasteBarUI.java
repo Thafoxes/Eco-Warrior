@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.controller.fontGenerator;
+import io.github.eco_warrior.controller.FontGenerator;
 import io.github.eco_warrior.enums.textEnum;
 
 public class WaterWasteBarUI {
@@ -23,7 +23,7 @@ public class WaterWasteBarUI {
     private Vector2 position;
 
     //font show
-    private fontGenerator uiFont;
+    private FontGenerator uiFont;
     private String labelText = "Water Waste Meter: ";
 
 
@@ -39,7 +39,7 @@ public class WaterWasteBarUI {
         meterSprite.setPosition(x, y);
         meterSprite.setScale(scale);
 
-        uiFont = new fontGenerator(20, Color.WHITE, Color.BLACK);
+        uiFont = new FontGenerator(20, Color.WHITE, Color.BLACK);
     }
 
     private void updateMeterSprite() {

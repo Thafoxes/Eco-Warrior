@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.Main;
 import io.github.eco_warrior.controller.buttonGenerator;
-import io.github.eco_warrior.controller.fontGenerator;
+import io.github.eco_warrior.controller.FontGenerator;
 import io.github.eco_warrior.enums.textEnum;
 import io.github.eco_warrior.mainmenu.MainMenuScreen;
 
@@ -28,7 +28,7 @@ public class ResultScreen implements Screen {
     private int score;
 
     private SpriteBatch batch;
-    private fontGenerator uiFont;
+    private FontGenerator uiFont;
     private SpriteBatch uiBatch;
 
     private Viewport viewport;
@@ -107,7 +107,7 @@ public class ResultScreen implements Screen {
     @Override
     public void show() {
         batch = new SpriteBatch();
-        uiFont = new fontGenerator();
+        uiFont = new FontGenerator();
         camera = new OrthographicCamera();
         viewport = new FitViewport(WINDOW_WIDTH, WINDOW_HEIGHT, camera);
         uiBatch = new SpriteBatch();

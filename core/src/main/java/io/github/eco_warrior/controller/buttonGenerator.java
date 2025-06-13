@@ -17,11 +17,11 @@ public class buttonGenerator {
 
     private Stage stage;
     private Skin skin;
-    private fontGenerator fontGen;
+    private FontGenerator fontGen;
     private float horizontalPadding = 20f;
 
     public buttonGenerator() {
-        fontGen = new fontGenerator();
+        fontGen = new FontGenerator();
         skin = new Skin();
         //get font from font Generator
         skin.add("default-font", fontGen.getFont());

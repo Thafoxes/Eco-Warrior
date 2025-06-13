@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.animation.HeartEffect;
-import io.github.eco_warrior.controller.fontGenerator;
+import io.github.eco_warrior.controller.FontGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ public class Hearts {
     private Vector2 position;
     private List<HeartEffect> heartEffects;
 
-    private fontGenerator fontGenerator;
+    private FontGenerator fontGenerator;
     private OrthographicCamera camera;
 
     /***
@@ -39,7 +39,7 @@ public class Hearts {
         this.position = position;
         this.heartEffects = new ArrayList<>();
 
-        this.fontGenerator = new fontGenerator(24, Color.WHITE, Color.BLACK);
+        this.fontGenerator = new FontGenerator(24, Color.WHITE, Color.BLACK);
         this.camera = camera;
     }
 

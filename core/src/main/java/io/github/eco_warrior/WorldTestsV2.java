@@ -7,7 +7,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
@@ -23,6 +22,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Matrix4;
 import io.github.eco_warrior.MapLoader.MapLoader;
 import io.github.eco_warrior.controller.PlayerController;
+import io.github.eco_warrior.controller.FontGenerator;
 import io.github.eco_warrior.sprite.Characters.Goblin;
 import io.github.eco_warrior.controller.DialogBox;
 
@@ -44,6 +44,7 @@ public class WorldTestsV2 implements Screen {
 
     // Dialog Box
     private DialogBox dialogBox;
+    private FontGenerator dialogFont, speakerFont;
 
     private static final float CAMERA_ZOOM = 1f; // 1f = no zoom
 
@@ -59,8 +60,9 @@ public class WorldTestsV2 implements Screen {
         Gdx.input.setInputProcessor(playerController);
 
         // --- Dialog Box Setup (auto-sizing) ---
-        BitmapFont font = new BitmapFont(); // Default font for testing
-        dialogBox = new DialogBox(font, font);
+        dialogFont = new FontGenerator(16, Color.WHITE, Color.BLACK);
+        speakerFont = new FontGenerator(20, Color.YELLOW, Color.BLACK);
+        dialogBox = new DialogBox(dialogFont.getFont(), speakerFont.getFont());
     }
 
     private void createCharacter() {
@@ -252,5 +254,7 @@ public class WorldTestsV2 implements Screen {
         goblin.dispose();
         shapeRenderer.dispose();
         dialogBox.dispose();
+        dialogFont.dispose();
+        speakerFont.dispose();
     }
 }
