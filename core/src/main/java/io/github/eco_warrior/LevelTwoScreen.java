@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.entity.Trees;
 import io.github.eco_warrior.entity.gameSprite;
-import io.github.eco_warrior.entity.tool;
+import java.util.Random;
 import io.github.eco_warrior.sprite.*;
 import io.github.eco_warrior.sprite.Enemy.Worm;
 import io.github.eco_warrior.sprite.gardening_equipments.*;
@@ -83,14 +83,46 @@ public class LevelTwoScreen implements Screen {
     private gameSprite draggingTool;
 
     //enemies
-    private Array<Worm> worms; //check this later
-    private Array<Worm> wormPool; //check this later
-    private static final float wormStartX = WINDOW_WIDTH + 50f; //check this later
-    private static final float wormStartY = 100f; //check this later
-    private float wormSpawnTimer; //check this later
-    private float stateTime; //check this later
+    private Array<Worm> worms;
+    private Array<Worm> wormPool;
+    private static final float wormStartX = WINDOW_WIDTH + 50f;
+    private static final float wormStartY = 100f; //default value, will be set based on random path
+    private Vector2 startWormPosition = new Vector2(wormStartX, wormStartY);
+    private float wormSpawnTimer;
+    private float stateTime;
     private static final int WORM_BUFFER_CAPACITY = 10;
 
+    //enemy path
+    private final Random rand = new Random();
+    public enum WormPath {
+        PATH_1(1),
+        PATH_2(2),
+        PATH_3(3),
+        PATH_4(4),
+        PATH_5(5),
+        ;
+
+        private final int number;
+
+        WormPath(int number) {
+            this.number = number;
+        }
+
+        public int getNumber() {
+            return number;
+        }
+
+        public Vector2 getWormStartPosition() {
+            switch (this) {
+                case PATH_1: return new Vector2(1150, 100);
+                case PATH_2: return new Vector2(1150, 200);
+                case PATH_3: return new Vector2(1150, 300);
+                case PATH_4: return new Vector2(1150, 400);
+                case PATH_5: return new Vector2(1150, 500);
+                default: return new Vector2(0, 0); // Default case, should not happen
+            }
+        }
+    }
 
     public LevelTwoScreen(Main main) {
         this.game = main;
@@ -171,7 +203,7 @@ public class LevelTwoScreen implements Screen {
 
         wormPool = new Array<>(WORM_BUFFER_CAPACITY);
         for (int i = 0; i < WORM_BUFFER_CAPACITY; i++) {
-            wormPool.add(new Worm(new Vector2(wormStartX, wormStartY)));
+            wormPool.add(new Worm(startWormPosition));
         }
     }
 
@@ -202,20 +234,24 @@ public class LevelTwoScreen implements Screen {
         updateWateringCan();
         updateTrees();
         spawnWorm(delta);
+        updateEnemyAnimationMovement();
     }
 
     private void spawnWorm(float delta) {
         wormSpawnTimer += delta; // Adds the current delta to the timer
-        if (wormSpawnTimer > 3f) { // Check if it has been more than a second\
+        if (wormSpawnTimer > 3f) { // Check if it has been more than 3 second\
             Worm worm;
+            WormPath path = WormPath.values()[rand.nextInt(WormPath.values().length)];
+            startWormPosition = path.getWormStartPosition();
             long startTime = System.nanoTime();
 
             if(wormPool.size > 0) {
                 worm = wormPool.pop();
-                worm.getSprite().setPosition(wormStartX, wormStartY);
+                worm.getSprite().setPosition(startWormPosition.x, startWormPosition.y);
             }else {
-                worm = new Worm(new Vector2(wormStartX, wormStartY));
+                worm = new Worm(startWormPosition);
             }
+
             worms.add(worm);
             wormSpawnTimer = 0; // Reset the timer
             long endTime = System.nanoTime();
@@ -230,7 +266,7 @@ public class LevelTwoScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.setProjectionMatrix(camera.combined);
-        stateTime = Gdx.graphics.getDeltaTime(); //check this later
+        stateTime = Gdx.graphics.getDeltaTime();
 
         batch.begin();
         backgroundSprite.draw(batch);
@@ -323,7 +359,7 @@ public class LevelTwoScreen implements Screen {
                 iterator.remove();
                 break;
             }
-        } //check this later
+        }
 
         batch.end();
 
@@ -480,6 +516,12 @@ public class LevelTwoScreen implements Screen {
         voltaicTree.updateTree(shovel, voltaicSapling, wateringCan);
     }
 
+    private void updateEnemyAnimationMovement() {
+        for (Worm worm : worms) {
+            worm.updateWormAnimationMovement();
+        }
+    }
+
 
     @Override
     public void resize(int width, int height) {
@@ -517,7 +559,7 @@ public class LevelTwoScreen implements Screen {
 
         for (Worm worm : worms) {
             worm.drawDebug(shapeRenderer);
-        } //check this later
+        }
 
         liquids.get("water_fountain_hitbox").drawDebug(shapeRenderer);
 
