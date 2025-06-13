@@ -16,7 +16,9 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import io.github.eco_warrior.animation.SmoothMovement;
 import io.github.eco_warrior.controller.BinController;
+import io.github.eco_warrior.controller.FlipFlopController;
 import io.github.eco_warrior.controller.recyclablesController;
 import io.github.eco_warrior.controller.fontGenerator;
 import io.github.eco_warrior.entity.ConveyorBelt;
@@ -76,11 +78,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     private final float startY = WINDOW_HEIGHT / 8;
 
     //flip flop slap
-    private FlipFlop flipFlop;
-    private Vector2 flipFlopOriginalPosition;
-    private boolean isDraggingFlipFlop = false;
-    private boolean isFlipFlopReturning = false;
-    private float flipFlopReturnSpeed = 5.0f;
+    private FlipFlopController flipFlopController;
 
     //input section
     private Vector2 lastTouchPos;
@@ -123,9 +121,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         backgroundMusic.setLooping(true);
         backgroundMusic.play();
 
-        flipFlopOriginalPosition = new Vector2(20f, WINDOW_HEIGHT/2);
-        flipFlop = new FlipFlop(flipFlopOriginalPosition);
-
+        flipFlopController = new FlipFlopController(new Vector2(20f, WINDOW_HEIGHT/2));
         recyclablesController = new recyclablesController(WINDOW_WIDTH, WINDOW_HEIGHT);
         loadHearts();
         loadMap();
@@ -203,6 +199,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         playerHearts.update(delta);
         binController.update(delta);
         recyclablesController.update(delta);
+        flipFlopController.update(delta);
 
         if(score >= winningScore || timerEnded) {
             winningScreen();
@@ -240,8 +237,8 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
             if(Gdx.input.justTouched()){
                 recyclablesController.checkItemTouched(currentTouchPos);
 
-                if(flipFlop.getCollisionRect().contains(currentTouchPos)) {
-                    isDraggingFlipFlop = true;
+                // Check if flip-flop was touched by cursor
+                if(flipFlopController.handleTouch(currentTouchPos)) {
                     lastTouchPos.set(currentTouchPos);
                     return;
                 }
@@ -257,35 +254,22 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         }
 
         //handling flip flop
-        if(isDraggingFlipFlop && Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
+        if(flipFlopController.isDragging() && Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
             currentTouchPos.set(Gdx.input.getX(), Gdx.input.getY());
             viewport.unproject(currentTouchPos);
 
             // Move flip-flop to cursor position
-            flipFlop.getSprite().setPosition(
-                currentTouchPos.x - flipFlop.getSprite().getWidth() * flipFlop.getSprite().getScaleX() / 2,
-                currentTouchPos.y - flipFlop.getSprite().getHeight() * flipFlop.getSprite().getScaleY() / 2
-            );
-
-            // Update collision rectangle
-            flipFlop.getCollisionRect().setPosition(
-                flipFlop.getSprite().getX(),
-                flipFlop.getSprite().getY()
-            );
+           flipFlopController.dragTo(currentTouchPos);
 
             lastTouchPos.set(currentTouchPos);
-        }else if(isDraggingFlipFlop && !Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
+        }else if(flipFlopController.isDragging()  && !Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
             //released
-            if(binController.checkRacoonHit(flipFlop)){
+            if(binController.checkRacoonHit(flipFlopController.getFlipFlop())){
                 // Play slap sound
-                flipFlop.playCorrectSound();
+                flipFlopController.getFlipFlop().playCorrectSound();
                 score++;
             }
-            // Reset flip-flop position
-            isFlipFlopReturning = true;
-
-            returnFlipFlopToOriginalPosition();
-            isDraggingFlipFlop = false;
+            flipFlopController.release();
         }
 
         if(recyclablesController.isDragging() && Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
@@ -316,36 +300,6 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
     }
 
-    private void returnFlipFlopToOriginalPosition() {
-        if(!isFlipFlopReturning) {
-           return;
-        }
-
-        float deltaTime = Gdx.graphics.getDeltaTime();
-
-        // Current position
-        Vector2 current = new Vector2(
-            flipFlop.getSprite().getX(),
-            flipFlop.getSprite().getY()
-        );
-        // Target position (original position)
-        Vector2 target = new Vector2(flipFlopOriginalPosition);
-
-        // Linear interpolation
-        Vector2 lerped = current.lerp(target, flipFlopReturnSpeed * deltaTime);
-
-        // Update position
-        flipFlop.getSprite().setPosition(lerped.x, lerped.y);
-        flipFlop.getCollisionRect().setPosition(lerped.x, lerped.y);
-
-        // Check if we're close enough to the target
-        if (current.dst(target) < 0.05f) {
-            // Snap to exact position and stop returning
-            flipFlop.getSprite().setPosition(target.x, target.y);
-            flipFlop.getCollisionRect().setPosition(target.x, target.y);
-            isFlipFlopReturning = false;
-        }
-    }
 
     private void playBinAnimation() {
         //just play sound
@@ -449,13 +403,9 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         playerHearts.draw(batch);
         binController.draw(batch);
         conveyorBelt.draw(batch);
-        flipFlop.draw(batch);
-
+        flipFlopController.draw(batch);
         //draw recyclables loop
         recyclablesController.draw(batch);
-        returnFlipFlopToOriginalPosition();
-
-
 
         batch.end();
         binController.drawLabels(batch, camera);
@@ -476,7 +426,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         // draw for each recyclable debug
         recyclablesController.drawDebug(shapeRenderer);
         binController.drawDebug(shapeRenderer);
-        flipFlop.drawDebug(shapeRenderer);
+        flipFlopController.drawDebug(shapeRenderer);
 
         shapeRenderer.end();
     }
@@ -514,7 +464,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         scoreFont.dispose();
         timerFont.dispose();
         playerHearts.dispose();
-        flipFlop.dispose();
+        flipFlopController.dispose();
         //disposing bins
         binController.dispose();
        recyclablesController.dispose();
