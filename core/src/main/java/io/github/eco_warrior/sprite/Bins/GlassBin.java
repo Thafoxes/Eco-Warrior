@@ -25,6 +25,11 @@ public class GlassBin extends BinBase {
 
 
     @Override
+    public String getBinType() {
+        return "Glass";
+    }
+
+    @Override
     public void draw(SpriteBatch batch) {
         if (isAnimating) {
             animationTimer += Gdx.graphics.getDeltaTime();

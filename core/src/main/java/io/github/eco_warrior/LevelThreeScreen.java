@@ -636,7 +636,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
 
 
         //debugging draw green line
-        debugSprite();
+//        debugSprite();
     }
 
     private void drawGUI() {

@@ -23,6 +23,11 @@ public class CanBin extends BinBase {
     }
 
     @Override
+    public String getBinType() {
+        return "Metal";
+    }
+
+    @Override
     public boolean isCorrectCategory(ERecycleMap categoryPile){
         for(ERecycleMap m : acceptingMaterial){
             if(m.equals(categoryPile)){

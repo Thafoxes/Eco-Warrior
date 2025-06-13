@@ -61,6 +61,8 @@ atlas/crack/crackx64.atlas
 atlas/crack/crackx64.png
 atlas/crack/crackx64v2.atlas
 atlas/crack/crackx64v2.png
+atlas/flip_flop/flip-flop.atlas
+atlas/flip_flop/flip-flop.png
 atlas/heart/hearts.atlas
 atlas/heart/hearts.png
 atlas/recyclables/recyclables.atlas
@@ -78,6 +80,8 @@ atlas/water_resevior_funnel/water_resevoir.png
 character/goblins/Globlins.atlas
 character/goblins/Globlins.png
 character/goblins/goblins.tpproj
+character/raccoon/raccoon.atlas
+character/raccoon/raccoon.png
 effects/blue_explosion.atlas
 effects/blue_explosion.png
 effects/blue_explosion2.png
@@ -113,6 +117,7 @@ sound_effects/correct.mp3
 sound_effects/fill_water_sfx.mp3
 sound_effects/game_finished_sfx.mp3
 sound_effects/happy_wheels_victory.mp3
+sound_effects/hard_slap.mp3
 sound_effects/hitting_bin.mp3
 sound_effects/socket_wrench.mp3
 sound_effects/sonido-correcto.mp3

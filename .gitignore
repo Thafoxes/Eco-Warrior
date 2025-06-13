@@ -23,6 +23,9 @@ assets/Background_Image/Scary2.jpg
 *.bin
 /external data and info/PixelArt package
 build/reports/problems/problems-report.html
+core/build/libs/core-1.0.0.jar
 core/build/tmp/compileJava/previous-compilation-data.bin
-core/build/tmp/jar/MANIFEST.MF
+core/src/main/java/io/github/eco_warrior/Main.java
+lwjgl3/build/tmp/compileJava/previous-compilation-data.bin
+core/build/libs/core-1.0.0.jar
 core/build/libs/core-1.0.0.jar

@@ -18,6 +18,11 @@ public class PaperBin extends BinBase {
 
 
     @Override
+    public String getBinType() {
+        return "Paper";
+    }
+
+    @Override
     public boolean isCorrectCategory(ERecycleMap categoryPile){
         if(acceptingMaterial.equals(categoryPile)){
             return true;
