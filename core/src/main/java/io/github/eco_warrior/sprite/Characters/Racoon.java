@@ -14,7 +14,7 @@ public class Racoon extends gameSprite {
 
     // Add frame animation timing control
     private float frameTimer = 0.0f;
-    private final float FRAME_DURATION = 0.10f;
+    private float frame_duration = 0.10f;
     private final int IDLE_FRAME = 7;
     private final int FRAME_SIZE = 512;
 
@@ -85,7 +85,7 @@ public class Racoon extends gameSprite {
         }
 
         // Handle state transitions and frame updates, each frame duration check these conditions
-        if (frameTimer >= FRAME_DURATION) {
+        if (frameTimer >= frame_duration) {
             if (!isFreeze && currentState == state.HIT && getCurrentFrame() == IDLE_FRAME) {
                 System.out.println("Raccoon is hit, transitioning to DYING state");
 
@@ -144,6 +144,7 @@ public class Racoon extends gameSprite {
             isHit = true;
             currentState = state.HIT;
             unfreeze();
+            frame_duration = 0.05f;
 
             // Create explosion effect at raccoon position
             Vector2 explosionPos = new Vector2(

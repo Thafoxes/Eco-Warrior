@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Array;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.sprite.Bins.BinBase;
 import io.github.eco_warrior.sprite.Characters.Racoon;
+import io.github.eco_warrior.sprite.tools.FlipFlop;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,13 +26,14 @@ public class BinController {
     // Spawn control
     private float spawnTimer;
     private float spawnInterval;
-    private float minSpawnInterval = 2f;
-    private float maxSpawnInterval = 5f;
+    private float minSpawnInterval = 4f;
+    private float maxSpawnInterval = 6f;
 
     //temp raccoon
     private Racoon tempRacoon;
     //fontGenerator
     private Map<BinBase, fontGenerator> binLabels;
+
 
     //track raccoon spawn locations
     private Map<Integer, Racoon> binToRaccoon = new HashMap<>();
@@ -153,18 +155,12 @@ public class BinController {
 
     }
 
-    public boolean checkRacoonHit(Vector2 touchPosition) {
+    public boolean checkRacoonHit(FlipFlop flipFlop) {
         for (Racoon raccoon : raccoons) {
             if (!raccoon.isHit()
                 && !raccoon.isDying()
-                && raccoon.getCollisionRect().contains(touchPosition)) {
+                && raccoon.getCollisionRect().overlaps(flipFlop.getCollisionRect())) {
                 raccoon.setHit();
-
-                try{
-                    raccoon.setHit();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
                 return true; // Hit detected
             }
         }

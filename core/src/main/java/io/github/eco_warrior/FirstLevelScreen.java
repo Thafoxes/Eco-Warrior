@@ -26,6 +26,7 @@ import io.github.eco_warrior.screen.ResultScreen;
 import io.github.eco_warrior.sprite.Bins.*;
 import io.github.eco_warrior.sprite.Recyables.*;
 import io.github.eco_warrior.sprite.UI.Hearts;
+import io.github.eco_warrior.sprite.tools.FlipFlop;
 
 import static com.badlogic.gdx.Gdx.audio;
 import static com.badlogic.gdx.Gdx.gl;
@@ -74,6 +75,12 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
     private final float startX = WINDOW_WIDTH +  50f;
     private final float startY = WINDOW_HEIGHT / 8;
 
+    //flip flop slap
+    private FlipFlop flipFlop;
+    private Vector2 flipFlopOriginalPosition;
+    private boolean isDraggingFlipFlop = false;
+    private boolean isFlipFlopReturning = false;
+    private float flipFlopReturnSpeed = 5.0f;
 
     //input section
     private Vector2 lastTouchPos;
@@ -115,6 +122,9 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         backgroundMusic.setVolume(0.5f);
         backgroundMusic.setLooping(true);
         backgroundMusic.play();
+
+        flipFlopOriginalPosition = new Vector2(20f, WINDOW_HEIGHT/2);
+        flipFlop = new FlipFlop(flipFlopOriginalPosition);
 
         recyclablesController = new recyclablesController(WINDOW_WIDTH, WINDOW_HEIGHT);
         loadHearts();
@@ -230,21 +240,53 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
             if(Gdx.input.justTouched()){
                 recyclablesController.checkItemTouched(currentTouchPos);
 
+                if(flipFlop.getCollisionRect().contains(currentTouchPos)) {
+                    isDraggingFlipFlop = true;
+                    lastTouchPos.set(currentTouchPos);
+                    return;
+                }
+
                 // Check if a recyclable was touched and set draggingItem
                 if(recyclablesController.checkItemTouched(currentTouchPos)) {
                     draggingItem = recyclablesController.getDraggingItem();
                 }
 
-                // Check for raccoon hits
-                // Award points for hitting raccoons
-                if(binController.checkRacoonHit(currentTouchPos)){
-                    score += 1;
-                }
                 playBinAnimation();
             }
 
         }
 
+        //handling flip flop
+        if(isDraggingFlipFlop && Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
+            currentTouchPos.set(Gdx.input.getX(), Gdx.input.getY());
+            viewport.unproject(currentTouchPos);
+
+            // Move flip-flop to cursor position
+            flipFlop.getSprite().setPosition(
+                currentTouchPos.x - flipFlop.getSprite().getWidth() * flipFlop.getSprite().getScaleX() / 2,
+                currentTouchPos.y - flipFlop.getSprite().getHeight() * flipFlop.getSprite().getScaleY() / 2
+            );
+
+            // Update collision rectangle
+            flipFlop.getCollisionRect().setPosition(
+                flipFlop.getSprite().getX(),
+                flipFlop.getSprite().getY()
+            );
+
+            lastTouchPos.set(currentTouchPos);
+        }else if(isDraggingFlipFlop && !Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
+            //released
+            if(binController.checkRacoonHit(flipFlop)){
+                // Play slap sound
+                flipFlop.playCorrectSound();
+                score++;
+            }
+            // Reset flip-flop position
+            isFlipFlopReturning = true;
+
+            returnFlipFlopToOriginalPosition();
+            isDraggingFlipFlop = false;
+        }
 
         if(recyclablesController.isDragging() && Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
 
@@ -272,6 +314,37 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
 
 
 
+    }
+
+    private void returnFlipFlopToOriginalPosition() {
+        if(!isFlipFlopReturning) {
+           return;
+        }
+
+        float deltaTime = Gdx.graphics.getDeltaTime();
+
+        // Current position
+        Vector2 current = new Vector2(
+            flipFlop.getSprite().getX(),
+            flipFlop.getSprite().getY()
+        );
+        // Target position (original position)
+        Vector2 target = new Vector2(flipFlopOriginalPosition);
+
+        // Linear interpolation
+        Vector2 lerped = current.lerp(target, flipFlopReturnSpeed * deltaTime);
+
+        // Update position
+        flipFlop.getSprite().setPosition(lerped.x, lerped.y);
+        flipFlop.getCollisionRect().setPosition(lerped.x, lerped.y);
+
+        // Check if we're close enough to the target
+        if (current.dst(target) < 0.05f) {
+            // Snap to exact position and stop returning
+            flipFlop.getSprite().setPosition(target.x, target.y);
+            flipFlop.getCollisionRect().setPosition(target.x, target.y);
+            isFlipFlopReturning = false;
+        }
     }
 
     private void playBinAnimation() {
@@ -376,9 +449,11 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         playerHearts.draw(batch);
         binController.draw(batch);
         conveyorBelt.draw(batch);
+        flipFlop.draw(batch);
 
         //draw recyclables loop
         recyclablesController.draw(batch);
+        returnFlipFlopToOriginalPosition();
 
 
 
@@ -401,6 +476,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         // draw for each recyclable debug
         recyclablesController.drawDebug(shapeRenderer);
         binController.drawDebug(shapeRenderer);
+        flipFlop.drawDebug(shapeRenderer);
 
         shapeRenderer.end();
     }
@@ -438,6 +514,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         scoreFont.dispose();
         timerFont.dispose();
         playerHearts.dispose();
+        flipFlop.dispose();
         //disposing bins
         binController.dispose();
        recyclablesController.dispose();
