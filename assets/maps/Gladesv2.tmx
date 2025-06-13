@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="43" height="29" tilewidth="16" tileheight="16" infinite="0" nextlayerid="140" nextobjectid="86">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="43" height="29" tilewidth="16" tileheight="16" infinite="0" nextlayerid="140" nextobjectid="91">
  <tileset firstgid="1" name="Ground_grass" tilewidth="16" tileheight="16" tilecount="742" columns="53">
   <image source="world_map/ground_grasss.png" width="848" height="224"/>
  </tileset>

@@ -101,11 +101,11 @@
             "scaleInDock": 1
         },
         "D:/github_project/Eco-Warrior/assets/maps/Gladesv2.tmx": {
-            "scale": 1.5,
-            "selectedLayer": 2,
+            "scale": 3,
+            "selectedLayer": 15,
             "viewCenter": {
-                "x": 281.66666666666663,
-                "y": 293.66666666666663
+                "x": 80.49999999999999,
+                "y": 349.8333333333333
             }
         },
         "D:/github_project/Eco-Warrior/assets/maps/Gladesv2.tmx#Details": {
