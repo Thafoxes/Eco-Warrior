@@ -151,7 +151,6 @@ public class LevelTwoScreen implements Screen {
         liquids = new HashMap<>();
         trees = new HashMap<>();
 
-
         initializeEntities();
     }
 
@@ -248,6 +247,7 @@ public class LevelTwoScreen implements Screen {
             if(wormPool.size > 0) {
                 worm = wormPool.pop();
                 worm.getSprite().setPosition(startWormPosition.x, startWormPosition.y);
+                worm = new Worm(startWormPosition); // Reset the worm with the new position and scale
             }else {
                 worm = new Worm(startWormPosition);
             }
