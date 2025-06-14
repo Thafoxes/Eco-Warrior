@@ -17,7 +17,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Matrix4;
 import io.github.eco_warrior.MapLoader.MapLoader;
+import io.github.eco_warrior.animation.Screen.ScreenTransition;
 import io.github.eco_warrior.controller.*;
+import io.github.eco_warrior.screen.instructions.L1Instructions;
 import io.github.eco_warrior.sprite.Characters.GameCharacter;
 import io.github.eco_warrior.sprite.Characters.adventurerGirl;
 
@@ -54,9 +56,16 @@ public class WorldTestsV2 implements Screen {
     // Get total number of layers
     private int numLayers = 0 ;
 
+    //level threshold
+    private static int level=1;
+
+    //fade
+    private ScreenTransition transition;
+
     public WorldTestsV2(Game game) {
         this.game = game;
         this.shapeRenderer = new ShapeRenderer();
+        this.transition = new ScreenTransition(game);
 
         LoadMap();
         CreateCharacter();
@@ -173,29 +182,16 @@ public class WorldTestsV2 implements Screen {
 
     @Override
     public void render(float delta) {
-        // For demo: trigger dialog with F key
-        if (!dialogBox.isVisible() && Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-            GameCharacter character =  npcManager.checkInteraction(adventurerGirl.getBoundingRectangle());
-            if(character == null) {
-                return;
-            }
-            npcManager.setInteracting(true);
 
-
-            System.out.println("Is pressed");
-            dialogBox.startDialog(character.getName(), Arrays.asList(
-                "Hi!",
-                "This is a longer sentence to demonstrate the auto-sizing of the dialog box. dfsfdsfsff",
-                "Done."
-            ));
-
-            npcManager.setInteracting(false);
-
-        }
-
-        dialogBox.update();
+        input();
+        draw(delta);
         update(delta);
 
+
+
+    }
+
+    private void draw(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -222,12 +218,52 @@ public class WorldTestsV2 implements Screen {
 
         // Draw DialogBox in screen coordinates so it is always visible
         batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+
         batch.begin();
         dialogBox.render(batch);
         batch.end();
 
+        transition.update(delta);
+        transition.render();
+
 //        drawDebug();
     }
+
+    private void input() {
+        // For demo: trigger dialog with F key
+        if (dialogTrigger()) return;
+        dialogBox.update();
+    }
+
+    private boolean dialogTrigger() {
+        if (!dialogBox.isVisible() && Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+            GameCharacter character =  npcManager.checkInteraction(adventurerGirl.getBoundingRectangle());
+            if(character == null) {
+                return true;
+            }
+            npcManager.setInteracting(true);
+
+            if(level <= 1) {
+                dialogBox.startDialog(character.getName(), Arrays.asList(
+                    "Hi!",
+                    "Please help us to reduce waste!"
+                ), () -> {
+                    npcManager.setInteracting(false);
+                    triggerLevel(1);
+                });
+            }
+
+        }
+        return false;
+    }
+
+    private void triggerLevel(int i) {
+        System.out.println("Dialog completed, triggering level transition");
+        if (i == 1) {
+            transition.startTransition(new L1Instructions((Main)game));
+        }
+    }
+
 
     private void update(float delta) {
         // Pause game logic while dialog is visible
@@ -236,7 +272,7 @@ public class WorldTestsV2 implements Screen {
             adventurerGirl.update(delta, map.getMap());
         }
 
-        updateInteraaction(delta);
+        updateInteraction(delta);
 
         // --- Camera follows goblin, but clamps at map edges ---
         int mapPixelWidth = map.getMap().getProperties().get("width", Integer.class) * WORLD_MAP_PIXEL_SIZE;
@@ -252,7 +288,7 @@ public class WorldTestsV2 implements Screen {
         camera.update();
     }
 
-    private void updateInteraaction(float delta) {
+    private void updateInteraction(float delta) {
         // Update NPCs
         npcManager.update(delta, map.getMap());
 
@@ -321,5 +357,6 @@ public class WorldTestsV2 implements Screen {
         dialogFont.dispose();
         speakerFont.dispose();
         npcManager.dispose();
+        transition.dispose();
     }
 }

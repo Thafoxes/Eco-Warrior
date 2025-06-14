@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "D:/github_project/Eco-Warrior/assets/maps/Gladesv2.tmx",
+    "activeFile": "",
     "expandedProjectPaths": [
         "."
     ],
@@ -101,31 +101,31 @@
             "scaleInDock": 1
         },
         "D:/github_project/Eco-Warrior/assets/maps/Gladesv2.tmx": {
-            "scale": 3,
-            "selectedLayer": 15,
+            "scale": 5.5,
+            "selectedLayer": 6,
             "viewCenter": {
-                "x": 80.49999999999999,
-                "y": 349.8333333333333
+                "x": 544.0909090909091,
+                "y": 112.0909090909091
             }
         },
         "D:/github_project/Eco-Warrior/assets/maps/Gladesv2.tmx#Details": {
-            "scaleInDock": 1.5,
+            "scaleInDock": 1,
             "scaleInEditor": 1
         },
         "D:/github_project/Eco-Warrior/assets/maps/Gladesv2.tmx#Ground_grass": {
-            "scaleInDock": 1.5,
+            "scaleInDock": 1,
             "scaleInEditor": 2
         },
         "D:/github_project/Eco-Warrior/assets/maps/Gladesv2.tmx#Trees_rocks": {
-            "scaleInDock": 1.5,
+            "scaleInDock": 1,
             "scaleInEditor": 2
         },
         "D:/github_project/Eco-Warrior/assets/maps/Gladesv2.tmx#Water_coasts": {
-            "scaleInDock": 1.5,
+            "scaleInDock": 1,
             "scaleInEditor": 1
         },
         "D:/github_project/Eco-Warrior/assets/maps/Gladesv2.tmx#Water_detilazation": {
-            "scaleInDock": 1.5,
+            "scaleInDock": 1,
             "scaleInEditor": 1
         },
         "D:/github_project/Eco-Warrior/assets/maps/Water_detilazation2.tsx": {
@@ -171,7 +171,7 @@
             "scaleInDock": 1
         },
         "D:/github_project/Eco-Warrior/assets/maps/world_map/Water_detilazation2.tsx": {
-            "scaleInDock": 1.5,
+            "scaleInDock": 1,
             "scaleInEditor": 1
         },
         "D:/github_project/Eco-Warrior/assets/tilesets/Pipes.tsx": {
@@ -187,7 +187,7 @@
             "scaleInDock": 1
         },
         "garden_tile.tsx": {
-            "scaleInDock": 1.5,
+            "scaleInDock": 1,
             "scaleInEditor": 1
         },
         "level2 map.tmx": {
@@ -207,7 +207,7 @@
             }
         },
         "soil.tsx": {
-            "scaleInDock": 1.5,
+            "scaleInDock": 1,
             "scaleInEditor": 1
         },
         "trees.tsx": {
@@ -226,17 +226,15 @@
     "map.lastUsedFormat": "tmx",
     "map.width": 10,
     "openFiles": [
-        "C:/Users/Asus/Downloads/Compressed/craftpix-net-918283-grassland-top-down-tileset-pixel-art/Tiled_files/Glades.tmx",
-        "C:/Users/Asus/Downloads/Compressed/craftpix-net-918283-grassland-top-down-tileset-pixel-art/Tiled_files/Water_detilazation2.tsx",
         "level2 map.tmx",
         "D:/github_project/Eco-Warrior/assets/maps/Gladesv2.tmx"
     ],
     "project": "tree_background.tiled-project",
     "recentFiles": [
-        "C:/Users/Asus/Downloads/Compressed/craftpix-net-918283-grassland-top-down-tileset-pixel-art/Tiled_files/Glades.tmx",
-        "C:/Users/Asus/Downloads/Compressed/craftpix-net-918283-grassland-top-down-tileset-pixel-art/Tiled_files/Water_detilazation2.tsx",
         "level2 map.tmx",
         "D:/github_project/Eco-Warrior/assets/maps/Gladesv2.tmx",
+        "C:/Users/Asus/Downloads/Compressed/craftpix-net-918283-grassland-top-down-tileset-pixel-art/Tiled_files/Glades.tmx",
+        "C:/Users/Asus/Downloads/Compressed/craftpix-net-918283-grassland-top-down-tileset-pixel-art/Tiled_files/Water_detilazation2.tsx",
         "D:/github_project/Eco-Warrior/assets/maps/world_map/Water_detilazation2.tsx",
         "D:/github_project/Eco-Warrior/assets/character/goblins/Goblin1.tmx",
         "D:/github_project/Eco-Warrior/assets/maps/world_map/Gladesv2.tmx",

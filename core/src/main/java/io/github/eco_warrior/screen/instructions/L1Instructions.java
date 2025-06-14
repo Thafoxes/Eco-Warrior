@@ -42,6 +42,8 @@ public class L1Instructions implements Screen {
     private buttonGenerator buttonGen;
     private TextButton acknowledgeButton;
 
+
+
     public L1Instructions(Main game) {
         this.game = game;
     }
@@ -139,6 +141,8 @@ public class L1Instructions implements Screen {
         // Draw stage (for button)
         stage.act(delta);
         stage.draw();
+
+
     }
 
     @Override
@@ -168,4 +172,6 @@ public class L1Instructions implements Screen {
         instructionImage.dispose();
         backgroundImage.dispose();
     }
+
+
 }

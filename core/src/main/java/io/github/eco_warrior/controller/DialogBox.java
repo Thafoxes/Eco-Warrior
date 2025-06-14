@@ -28,6 +28,7 @@ public class DialogBox {
 
     private String advancePrompt = "[Tab]";
     private int advanceKey = Input.Keys.TAB;
+    private Runnable onCompleteCallback = null;
 
 
     public DialogBox(BitmapFont font, BitmapFont speakerFont) {
@@ -44,8 +45,9 @@ public class DialogBox {
         updateBoxRect();
     }
 
-    public void startDialog(String speaker, List<String> lines) {
+    public void startDialog(String speaker, List<String> lines, Runnable onComplete) {
         if (lines.isEmpty()) return;
+        this.onCompleteCallback = onComplete;
         this.speaker = speaker;
         this.dialogLines = lines;
         this.currentLine = 0;
@@ -53,12 +55,23 @@ public class DialogBox {
         updateBoxRect();
     }
 
+    // In your closeDialog or advanceDialog method:
+    private void closeDialog() {
+        visible = false;
+        if (currentLine >= dialogLines.size()) {
+            if (onCompleteCallback != null) {
+                onCompleteCallback.run();
+                onCompleteCallback = null;
+            }
+        }
+    }
+
     public void update() {
         if (!visible) return;
         if (Gdx.input.isKeyJustPressed(advanceKey)) {
             currentLine++;
             if (currentLine >= dialogLines.size()) {
-                visible = false;
+               closeDialog();
             } else {
                 updateBoxRect();
             }
