@@ -17,11 +17,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Matrix4;
 import io.github.eco_warrior.MapLoader.MapLoader;
-import io.github.eco_warrior.controller.MapController;
-import io.github.eco_warrior.controller.PlayerController;
-import io.github.eco_warrior.controller.FontGenerator;
+import io.github.eco_warrior.controller.*;
+import io.github.eco_warrior.sprite.Characters.GameCharacter;
 import io.github.eco_warrior.sprite.Characters.adventurerGirl;
-import io.github.eco_warrior.controller.DialogBox;
 
 import java.util.Arrays;
 
@@ -43,6 +41,8 @@ public class WorldTestsV2 implements Screen {
     private Rectangle rect;
     private PlayerController playerController;
 
+    //NPC
+    private NPCManager npcManager;
 
     // Dialog Box
     private DialogBox dialogBox;
@@ -59,8 +59,9 @@ public class WorldTestsV2 implements Screen {
         this.shapeRenderer = new ShapeRenderer();
 
         LoadMap();
-        createCharacter();
+        CreateCharacter();
         setupCamera();
+        initializeNPCs();
         batch = new SpriteBatch();
         playerController = new PlayerController(adventurerGirl);
         Gdx.input.setInputProcessor(playerController);
@@ -71,16 +72,23 @@ public class WorldTestsV2 implements Screen {
         dialogBox = new DialogBox(dialogFont.getFont(), speakerFont.getFont());
     }
 
-    private void createCharacter(){
+    private void initializeNPCs() {
+        npcManager = new NPCManager(map.getMap(), mapController.tileWidth, mapController.tileHeight);
+
+        npcManager.setMapController(mapController);
+        mapController.setNPCManager(npcManager);
+    }
+
+    private void CreateCharacter(){
         try {
-            CreateCharacter();
+            createAdventurerGirl();
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
 
 
-    private void CreateCharacter() throws Exception {
+    private void createAdventurerGirl() throws Exception {
         MapController result = getGetMapInfo();
 
 
@@ -165,13 +173,24 @@ public class WorldTestsV2 implements Screen {
 
     @Override
     public void render(float delta) {
-        // For demo: trigger dialog with D key
-        if (!dialogBox.isVisible() && Gdx.input.isKeyJustPressed(Input.Keys.O)) {
-            dialogBox.startDialog("Rival", Arrays.asList(
+        // For demo: trigger dialog with F key
+        if (!dialogBox.isVisible() && Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+            GameCharacter character =  npcManager.checkInteraction(adventurerGirl.getBoundingRectangle());
+            if(character == null) {
+                return;
+            }
+            npcManager.setInteracting(true);
+
+
+            System.out.println("Is pressed");
+            dialogBox.startDialog(character.getName(), Arrays.asList(
                 "Hi!",
-                "This is a longer sentence to demonstrate the auto-sizing of the dialog box.",
+                "This is a longer sentence to demonstrate the auto-sizing of the dialog box. dfsfdsfsff",
                 "Done."
             ));
+
+            npcManager.setInteracting(false);
+
         }
 
         dialogBox.update();
@@ -191,6 +210,7 @@ public class WorldTestsV2 implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         adventurerGirl.draw(batch);
+        npcManager.render(batch);
         batch.end();
 
         // Draw the top 3 layers above the character
@@ -216,6 +236,8 @@ public class WorldTestsV2 implements Screen {
             adventurerGirl.update(delta, map.getMap());
         }
 
+        updateInteraaction(delta);
+
         // --- Camera follows goblin, but clamps at map edges ---
         int mapPixelWidth = map.getMap().getProperties().get("width", Integer.class) * WORLD_MAP_PIXEL_SIZE;
         int mapPixelHeight = map.getMap().getProperties().get("height", Integer.class) * WORLD_MAP_PIXEL_SIZE;
@@ -228,6 +250,22 @@ public class WorldTestsV2 implements Screen {
 
         camera.position.set(cameraX, cameraY, 0f); // z=0 for 2D
         camera.update();
+    }
+
+    private void updateInteraaction(float delta) {
+        // Update NPCs
+        npcManager.update(delta, map.getMap());
+
+
+
+        // Create player bounding box
+        Rectangle playerBox = new Rectangle(
+            adventurerGirl.getPosition().x - adventurerGirl.getCurrentFrame().getRegionWidth() / 2f,
+            adventurerGirl.getPosition().y - adventurerGirl.getCurrentFrame().getRegionHeight() / 2f,
+            adventurerGirl.getCurrentFrame().getRegionWidth(),
+            adventurerGirl.getCurrentFrame().getRegionHeight()
+        );
+
     }
 
     private void drawDebug() {
@@ -251,6 +289,7 @@ public class WorldTestsV2 implements Screen {
         );
         shapeRenderer.rect(goblinBox.x, goblinBox.y, goblinBox.width, goblinBox.height);
 
+        npcManager.drawDebug(shapeRenderer);
 
 
         shapeRenderer.end();
@@ -281,5 +320,6 @@ public class WorldTestsV2 implements Screen {
         dialogBox.dispose();
         dialogFont.dispose();
         speakerFont.dispose();
+        npcManager.dispose();
     }
 }

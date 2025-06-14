@@ -30,9 +30,9 @@ public class adventurerGirl extends GameCharacter {
     private Animation<TextureRegion> walkRightAnimation;
 
     // Character state variables
-    private Vector2 position;
-    private Vector2 velocity;
-    private Vector2 oldPosition;
+    private final Vector2 position;
+    private final Vector2 velocity;
+    private final Vector2 oldPosition;
     private PlayerDirection currentDirection;
     private float stateTime;
     private boolean isMoving;
@@ -123,6 +123,8 @@ public class adventurerGirl extends GameCharacter {
             position.y + velocity.y * delta
         );
 
+        updateBoundingBox();
+
 
         TextureRegion currentSprite = getCurrentSprite();
         Rectangle nextBoundingBox = new Rectangle(
@@ -165,6 +167,33 @@ public class adventurerGirl extends GameCharacter {
             position.y = MathUtils.clamp(position.y, 0, mapHeight);
         }
     }
+
+    @Override
+    public Rectangle getBoundingRectangle() {
+        TextureRegion currentSprite = getCurrentSprite();
+        return new Rectangle(
+            position.x - currentSprite.getRegionWidth() / 2f,
+            position.y - currentSprite.getRegionHeight() / 2f,
+            currentSprite.getRegionWidth(),
+            currentSprite.getRegionHeight()
+        );
+    }
+
+    @Override
+    protected void updateBoundingBox() {
+        if (boundingBox == null) {
+            boundingBox = new Rectangle();
+        }
+
+        TextureRegion currentSprite = getCurrentSprite();
+        boundingBox.set(
+            position.x - currentSprite.getRegionWidth() / 2f,
+            position.y - currentSprite.getRegionHeight() / 2f,
+            currentSprite.getRegionWidth(),
+            currentSprite.getRegionHeight()
+        );
+    }
+
 
     public void move(Vector2 direction){
         setVelocity(direction.x * CHARACTER_SPEED, direction.y * CHARACTER_SPEED);

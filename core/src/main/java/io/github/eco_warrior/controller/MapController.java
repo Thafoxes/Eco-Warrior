@@ -29,6 +29,11 @@ public class MapController {
     private final List<Ellipse> collisionEllipses;
 
 
+    //npc manager
+    private NPCManager npcManager;
+    private List<Rectangle> npcCollisionBoxes;
+
+
     public MapController(int tileWidth, int tileHeight, Vector2 spawnPosition) {
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
@@ -41,6 +46,11 @@ public class MapController {
 
 
 
+    }
+
+    public void setNPCManager(NPCManager npcManager){
+        this.npcManager = npcManager;
+        this.npcCollisionBoxes = npcManager.getNpcCollisionBoxes();
     }
 
     /**
@@ -101,6 +111,7 @@ public class MapController {
 
 
     public boolean checkCollision(Rectangle boundingBox){
+
         // Broad phase: Check rectangles
         for (Rectangle rect : collisionRectangles) {
             if (boundingBox.overlaps(rect)) {
@@ -139,6 +150,21 @@ public class MapController {
                 }
             }
         }
+
+        // If not blocked by map, check NPCs
+        if (npcManager != null) {
+            return npcManager.isBlocked(boundingBox);
+        }
+
+        // If not blocked by map, check NPCs directly using their collision boxes
+        if (npcCollisionBoxes != null) {
+            for (Rectangle npcBox : npcCollisionBoxes) {
+                if (boundingBox.overlaps(npcBox)) {
+                    return true;
+                }
+            }
+        }
+
 
         return false;
     }

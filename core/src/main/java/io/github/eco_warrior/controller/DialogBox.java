@@ -71,7 +71,14 @@ public class DialogBox {
         float maxTextWidth = Gdx.graphics.getWidth() * 0.7f; // wrap text if too long
 
         // Measure dialog text
-        layout.setText(font, text, Color.WHITE, maxTextWidth, Align.left, true);
+        // Use speaker name if text is shorter than speaker name
+        if(text.length() > speaker.length()) {
+            layout.setText(font, text, Color.WHITE, maxTextWidth, Align.left, true);
+
+        }else{
+            layout.setText(font, speaker, Color.WHITE, maxTextWidth, Align.left, true);
+
+        }
         float textWidth = layout.width;
         float textHeight = layout.height;
 

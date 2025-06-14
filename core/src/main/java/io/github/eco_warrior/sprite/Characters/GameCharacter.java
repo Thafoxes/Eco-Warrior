@@ -1,5 +1,6 @@
 package io.github.eco_warrior.sprite.Characters;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -11,9 +12,12 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import io.github.eco_warrior.controller.MapController;
 import io.github.eco_warrior.enums.PlayerDirection;
 
 public abstract class GameCharacter extends Sprite {
+    protected String name;
+
     // Common fields and methods from Goblin and Adventurer_Girl
     protected Vector2 position;
     protected Vector2 velocity;
@@ -25,6 +29,10 @@ public abstract class GameCharacter extends Sprite {
     protected MapObjects collisionObjects;
     protected Rectangle boundingBox; // For collision detection
     protected int tileWidth, tileHeight;
+    protected Texture texture;
+    protected TextureRegion textureRegion;
+    protected MapController mapController;
+    protected boolean isBlocking = true;
 
     // Abstract methods that must be implemented
     public abstract void update(float delta, TiledMap tiledMap);
@@ -32,6 +40,11 @@ public abstract class GameCharacter extends Sprite {
     public abstract void move(Vector2 direction);
     public abstract void setVelocity(float x, float y);
     public abstract TextureRegion getCurrentFrame();
+
+    // Dimensions for collision box
+    protected final float COLLISION_WIDTH = 16;
+    protected final float COLLISION_HEIGHT = 16;
+
 
 
     // Add collision check method
@@ -94,7 +107,38 @@ public abstract class GameCharacter extends Sprite {
         return isMoving;
     }
 
+    public void onInteract() {
+        System.out.println("Character interaction!");
+        // Default implementation - override in subclasses
+    }
+
+    protected void updateBoundingBox() {
+        // To be implemented by subclasses if needed
+    }
+
     public void dispose() {
 
+    }
+
+    public void setBlocking(boolean blocking) {
+        isBlocking = blocking;
+    }
+
+    public boolean getBlocking() {
+        return isBlocking;
+    }
+
+    public Rectangle getBoundingBox() {
+        return boundingBox;
+    }
+
+    public String getName(){
+        if(name == null){
+            return "Unnamed Character";
+        } else {
+            return name;
+        }
+    }
+    public void setMapController(MapController mapController) {
     }
 }

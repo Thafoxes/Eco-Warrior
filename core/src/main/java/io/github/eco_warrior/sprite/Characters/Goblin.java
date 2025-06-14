@@ -1,5 +1,6 @@
 package io.github.eco_warrior.sprite.Characters;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.World;
+import io.github.eco_warrior.controller.MapController;
 import io.github.eco_warrior.enums.PlayerDirection;
 
 public class Goblin extends GameCharacter {
@@ -22,6 +24,8 @@ public class Goblin extends GameCharacter {
         ATTACKING,
         DYING
     }
+
+    private String name;
 
     private TextureAtlas goblinsAtlas;
     // Animations
@@ -54,6 +58,11 @@ public class Goblin extends GameCharacter {
     // Speed of the goblin
     private float speed = 100f;
 
+    private boolean isNPC = false;
+    private Texture texture;
+    private TextureRegion textureRegion;
+    private MapController mapController;
+
     public Goblin(Vector2 position, int tileWidth, int tileHeight, TiledMapTileLayer collisionLayer, MapObjects objects) {
         super();
         this.position = position;
@@ -66,6 +75,64 @@ public class Goblin extends GameCharacter {
         this.tileHeight = tileHeight;
         this.collisionLayer = collisionLayer;
         this.collisionObjects =  objects;
+
+        loadAnimations();
+    }
+
+    /**
+     * For NPC uses idle
+     * @param position
+     * @param tileWidth
+     * @param tileHeight
+     */
+    public Goblin(Vector2 position, int tileWidth, int tileHeight, boolean isNPC) {
+        this(position, tileWidth, tileHeight);
+        this.texture = new Texture("character/goblins/Globlins.png");
+        if(isNPC){
+            this.isNPC = true;
+        }
+        // Add this to ensure we have a bounding box for collision
+        if (this.boundingBox == null) {
+            this.boundingBox = new Rectangle(
+                position.x - COLLISION_WIDTH / 2,
+                position.y - COLLISION_HEIGHT / 2,
+                COLLISION_WIDTH,
+                COLLISION_HEIGHT
+            );
+        }
+        // Set default texture region if not loaded from animations
+        if (this.textureRegion == null) {
+            this.textureRegion = new TextureRegion(texture, 0, 0, 32, 32);
+        }
+    }
+    /**
+     * For user uses only
+     * @param position
+     * @param tileWidth
+     * @param tileHeight
+     */
+    public Goblin(Vector2 position, int tileWidth, int tileHeight) {
+        super();
+        this.position = position;
+        this.oldPosition = new Vector2(position);
+        this.velocity = new Vector2(0, 0);
+        this.currentDirection = PlayerDirection.DOWN;
+        this.stateTime = 0.0f;
+        this.isMoving = false;
+        this.tileWidth = tileWidth;
+        this.tileHeight = tileHeight;
+        this.name = "Goblin Warrior";
+
+        // Create a bounding box centered on the goblin's position
+        this.boundingBox = new Rectangle(
+            position.x - COLLISION_WIDTH / 2,
+            position.y - COLLISION_HEIGHT / 2,
+            COLLISION_WIDTH,
+            COLLISION_HEIGHT
+        );
+
+        // Set default direction to face down
+        this.setCurrentDirection(PlayerDirection.DOWN);
 
         loadAnimations();
     }
@@ -86,6 +153,11 @@ public class Goblin extends GameCharacter {
     }
 
     public void update(float delta, TiledMap tiledMap) {
+        if(isNPC){
+            // For NPCs, use idle animation and no movement
+            textureRegion = getCurrentSprite();
+            return;
+        }
         stateTime += delta;
         oldPosition.set(position);
 
@@ -139,17 +211,44 @@ public class Goblin extends GameCharacter {
         setVelocity(direction.x * CHARACTER_SPEED, direction.y * CHARACTER_SPEED);
     }
 
+
     public float getSpeed(){
         return speed;
     }
 
-    public void draw(SpriteBatch batch) {
-        TextureRegion currentSprite = getCurrentSprite();
-        batch.draw(currentSprite,
-            position.x - currentSprite.getRegionWidth()/2f,
-            position.y - currentSprite.getRegionHeight()/2f
+    /**
+     * Set map controller for collision detection
+     */
+    public void setMapController(MapController mapController) {
+        this.mapController = mapController;
+    }
+
+
+    @Override
+    protected void updateBoundingBox() {
+        boundingBox.setPosition(
+            position.x - COLLISION_WIDTH / 2,
+            position.y - COLLISION_HEIGHT / 2
         );
     }
+
+    public void draw(SpriteBatch batch) {
+        batch.draw(textureRegion,
+            position.x - textureRegion.getRegionWidth()/2f,
+            position.y - textureRegion.getRegionHeight()/2f
+        );
+    }
+
+    @Override
+    public Texture getTexture() {
+        return texture;
+    }
+
+    @Override
+    public TextureRegion getCurrentFrame() {
+        return textureRegion;
+    }
+
 
     /** Checks if the goblin's bounding box collides with any collidable object in the collisionObjects */
     private boolean isCollidingWithObjects(Rectangle boundingBox) {
@@ -286,11 +385,18 @@ public class Goblin extends GameCharacter {
         if (goblinsAtlas != null) {
             goblinsAtlas.dispose();
         }
+        if (texture != null) {
+            texture.dispose();
+        }
     }
 
     public float getHeight() {
         TextureRegion currentSprite = getCurrentSprite();
         return currentSprite.getRegionHeight();
+    }
+
+    public String getName() {
+        return name;
     }
 
     // Getters and setters
@@ -315,8 +421,20 @@ public class Goblin extends GameCharacter {
         return isMoving;
     }
 
-    public TextureRegion getCurrentFrame() {
-        return getCurrentSprite();
+    public boolean isNPC() {
+        return isNPC;
     }
 
+    public void setNPCState(boolean controllable) {
+        this.isNPC = controllable;
+    }
+
+    public float getCollisionWidth() {
+        return COLLISION_WIDTH;
+    }
+
+    public float getCollisionHeight() {
+        return COLLISION_HEIGHT;
+    }
 }
+
