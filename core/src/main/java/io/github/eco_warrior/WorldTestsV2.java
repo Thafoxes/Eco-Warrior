@@ -13,6 +13,7 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Matrix4;
@@ -133,7 +134,7 @@ public class WorldTestsV2 implements Screen {
             throw new Exception("Collision object layer not found in the map.");
         }
 
-        return new MapController(tileWidth, tileHeight, spawnPosition, collisionObjectLayer);
+        return new MapController(tileWidth, tileHeight, spawnPosition);
     }
 
 
@@ -143,8 +144,9 @@ public class WorldTestsV2 implements Screen {
             map.loadMap("maps/Gladesv2.tmx");
             this.mapController = getGetMapInfo();
 
-            this.mapController.loadCollisionObjects();
+            //this.mapController.loadCollisionObjects();
             this.mapController.loadCollisionTiles(map.getMap());
+            this.mapController.loadCollisionObjects(map.getMap(), "Collision");
         } catch (Exception e) {
             throw new RuntimeException("Error loading map: " + e.getMessage(), e);
         }
@@ -239,12 +241,7 @@ public class WorldTestsV2 implements Screen {
         }
 
 
-        // Draw collision rectangles
-        shapeRenderer.setColor(Color.RED);
-        for (Rectangle rect : mapController.getCollisionRects()) {
-            shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
-        }
-
+        mapController.drawDebug(shapeRenderer, Color.BLUE);
         shapeRenderer.setColor(Color.GREEN);
         Rectangle goblinBox = new Rectangle(
             adventurerGirl.getPosition().x - adventurerGirl.getCurrentFrame().getRegionWidth() / 2f,
