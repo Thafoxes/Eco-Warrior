@@ -19,6 +19,9 @@ public class ConstantsVar {
     public static final int WORLD_MAP_PIXEL_SIZE = 16;
     public static final int TILES_TO_SHOW = 10;
 
+    public static final int SPEAKER_FONT_SIZE = 34;
+    public static final int DIALOG_FONT_SIZE = 26;
+
 
 
 

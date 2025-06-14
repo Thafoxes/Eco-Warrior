@@ -67,8 +67,8 @@ public class WorldTestsV2 implements Screen {
         Gdx.input.setInputProcessor(playerController);
 
         // --- Dialog Box Setup (auto-sizing) ---
-        dialogFont = new FontGenerator(16, Color.WHITE, Color.BLACK);
-        speakerFont = new FontGenerator(20, Color.YELLOW, Color.BLACK);
+        dialogFont = new FontGenerator(DIALOG_FONT_SIZE, Color.WHITE, Color.BLACK);
+        speakerFont = new FontGenerator(SPEAKER_FONT_SIZE, Color.YELLOW, Color.BLACK);
         dialogBox = new DialogBox(dialogFont.getFont(), speakerFont.getFont());
     }
 
@@ -226,7 +226,7 @@ public class WorldTestsV2 implements Screen {
         dialogBox.render(batch);
         batch.end();
 
-        drawDebug();
+//        drawDebug();
     }
 
     private void update(float delta) {

@@ -28,7 +28,7 @@ public class DialogBox {
 
     private String advancePrompt = "[Tab]";
     private int advanceKey = Input.Keys.TAB;
-    private GlyphLayout layout = new GlyphLayout();
+
 
     public DialogBox(BitmapFont font, BitmapFont speakerFont) {
         this.font = font;
@@ -71,16 +71,16 @@ public class DialogBox {
         float maxTextWidth = Gdx.graphics.getWidth() * 0.7f; // wrap text if too long
 
         // Measure dialog text
-        // Use speaker name if text is shorter than speaker name
-        if(text.length() > speaker.length()) {
-            layout.setText(font, text, Color.WHITE, maxTextWidth, Align.left, true);
-
-        }else{
-            layout.setText(font, speaker, Color.WHITE, maxTextWidth, Align.left, true);
-
-        }
+        GlyphLayout layout = new GlyphLayout();
+        layout.setText(font, text, Color.WHITE, maxTextWidth, Align.left, true);
         float textWidth = layout.width;
         float textHeight = layout.height;
+
+        // Measure speaker text properly
+        GlyphLayout speakerLayout = new GlyphLayout(speakerFont, speaker);
+        float speakerWidth = speakerLayout.width;
+        float speakerHeight = speakerLayout.height;
+
 
         // Measure prompt text (only if it will show)
         float promptWidth = 0f;
@@ -91,9 +91,14 @@ public class DialogBox {
             promptHeight = promptLayout.height;
         }
 
-        // Use max width needed
-        float boxWidth = Math.max(Math.max(textWidth, promptWidth) + 2 * padding, minWidth);
-        float boxHeight = Math.max(textHeight + speakerFont.getCapHeight() + 3 * padding, minHeight);
+        // Use max width needed - consider speaker name width too
+        float boxWidth = Math.max(
+            Math.max(
+                Math.max(textWidth, promptWidth),
+                speakerWidth) + 2 * padding,
+            minWidth);
+        // Account for speaker height properly
+        float boxHeight = Math.max(textHeight + speakerHeight + 3 * padding, minHeight);
 
         // Center horizontally, place at bottom with margin
         float margin = 18f;
