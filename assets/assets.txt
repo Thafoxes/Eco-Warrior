@@ -80,6 +80,8 @@ atlas/water_resevior_funnel/water_resevoir.png
 character/goblins/Globlins.atlas
 character/goblins/Globlins.png
 character/goblins/goblins.tpproj
+character/npc/adventurer_girl.atlas
+character/npc/adventurer_girl.png
 character/raccoon/raccoon.atlas
 character/raccoon/raccoon.png
 effects/blue_explosion.atlas

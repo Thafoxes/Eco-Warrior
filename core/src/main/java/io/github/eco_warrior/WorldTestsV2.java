@@ -11,39 +11,38 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.EllipseMapObject;
-import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.math.Ellipse;
-import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Matrix4;
 import io.github.eco_warrior.MapLoader.MapLoader;
+import io.github.eco_warrior.controller.MapController;
 import io.github.eco_warrior.controller.PlayerController;
 import io.github.eco_warrior.controller.FontGenerator;
-import io.github.eco_warrior.sprite.Characters.Goblin;
+import io.github.eco_warrior.sprite.Characters.Adventurer_Girl;
 import io.github.eco_warrior.controller.DialogBox;
 
 import java.util.Arrays;
-import java.util.List;
 
 import static io.github.eco_warrior.constant.ConstantsVar.*;
 
 public class WorldTestsV2 implements Screen {
 
+    public static final int LAYER_MAP = 4;
     private MapLoader map;
+    private MapController mapController;
     private OrthographicCamera camera;
     private float viewportWidth = TILES_TO_SHOW * WORLD_MAP_PIXEL_SIZE;
     private float viewportHeight = TILES_TO_SHOW * WORLD_MAP_PIXEL_SIZE;
     private Game game;
 
     private SpriteBatch batch;
-    private Goblin goblin;
+    private Adventurer_Girl adventurerGirl;
     private ShapeRenderer shapeRenderer;
     private Rectangle rect;
     private PlayerController playerController;
+
 
     // Dialog Box
     private DialogBox dialogBox;
@@ -51,15 +50,19 @@ public class WorldTestsV2 implements Screen {
 
     private static final float CAMERA_ZOOM = 1f; // 1f = no zoom
 
+    //map layers
+    // Get total number of layers
+    private int numLayers = 0 ;
+
     public WorldTestsV2(Game game) {
         this.game = game;
         this.shapeRenderer = new ShapeRenderer();
 
-        loadmap();
+        LoadMap();
         createCharacter();
         setupCamera();
         batch = new SpriteBatch();
-        playerController = new PlayerController(goblin);
+        playerController = new PlayerController(adventurerGirl);
         Gdx.input.setInputProcessor(playerController);
 
         // --- Dialog Box Setup (auto-sizing) ---
@@ -68,15 +71,38 @@ public class WorldTestsV2 implements Screen {
         dialogBox = new DialogBox(dialogFont.getFont(), speakerFont.getFont());
     }
 
-    private void createCharacter() {
+    private void createCharacter(){
         try {
-            createGoblin();
+            CreateCharacter();
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
 
-    private void createGoblin() throws Exception {
+
+    private void CreateCharacter() throws Exception {
+        MapController result = getGetMapInfo();
+
+
+        adventurerGirl = new Adventurer_Girl(
+            result.spawnPosition,
+            result.tileWidth,
+            result.tileHeight,
+            (TiledMapTileLayer) map.getMap().getLayers().get("water background"),
+            result.allCollisionObjects,
+            mapController
+        );
+
+        adventurerGirl.setPosition(
+            adventurerGirl.getPosition().x + adventurerGirl.getHeight() / 2,
+            adventurerGirl.getPosition().y + adventurerGirl.getHeight() / 2
+        );
+
+    }
+
+
+    //Overriding Map Controller
+    public MapController getGetMapInfo() throws Exception {
         TiledMapTileLayer layer = (TiledMapTileLayer) map.getMap().getLayers().get("main_space");
         int tileWidth = layer.getTileWidth();
         int tileHeight = layer.getTileHeight();
@@ -107,27 +133,22 @@ public class WorldTestsV2 implements Screen {
             throw new Exception("Collision object layer not found in the map.");
         }
 
-        goblin = new Goblin(
-            spawnPosition,
-            tileWidth,
-            tileHeight,
-            (TiledMapTileLayer) map.getMap().getLayers().get("water background"),
-            collisionObjectLayer.getObjects()
-        );
-
-        goblin.setPosition(
-            goblin.getPosition().x + goblin.getHeight() / 2,
-            goblin.getPosition().y + goblin.getHeight() / 2
-        );
+        return new MapController(tileWidth, tileHeight, spawnPosition, collisionObjectLayer);
     }
 
-    private void loadmap() {
+
+    private void LoadMap() {
         map = new MapLoader();
         try {
             map.loadMap("maps/Gladesv2.tmx");
+            this.mapController = getGetMapInfo();
+
+            this.mapController.loadCollisionObjects();
+            this.mapController.loadCollisionTiles(map.getMap());
         } catch (Exception e) {
             throw new RuntimeException("Error loading map: " + e.getMessage(), e);
         }
+        numLayers = map.getMap().getLayers().size();
     }
 
     private void setupCamera() {
@@ -159,12 +180,23 @@ public class WorldTestsV2 implements Screen {
 
         // Draw world/game using world camera
         map.getRenderer().setView(camera);
-        map.getRenderer().render();
+        int[] backgroundLayers = new int[numLayers - LAYER_MAP];
+        for (int i = 0; i < numLayers - LAYER_MAP; i++) {
+            backgroundLayers[i] = i;
+        }
+        map.getRenderer().render(backgroundLayers);
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        goblin.draw(batch);
+        adventurerGirl.draw(batch);
         batch.end();
+
+        // Draw the top 3 layers above the character
+        int[] foregroundLayers = new int[LAYER_MAP];
+        for (int i = 0; i < LAYER_MAP; i++) {
+            foregroundLayers[i] = numLayers - LAYER_MAP + i;
+        }
+        map.getRenderer().render(foregroundLayers);
 
         // Draw DialogBox in screen coordinates so it is always visible
         batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
@@ -179,7 +211,7 @@ public class WorldTestsV2 implements Screen {
         // Pause game logic while dialog is visible
         if (!dialogBox.isVisible()) {
             playerController.update(delta);
-            goblin.update(delta, map.getMap());
+            adventurerGirl.update(delta, map.getMap());
         }
 
         // --- Camera follows goblin, but clamps at map edges ---
@@ -189,8 +221,8 @@ public class WorldTestsV2 implements Screen {
         float halfViewportWidth = camera.viewportWidth * camera.zoom / 2f;
         float halfViewportHeight = camera.viewportHeight * camera.zoom / 2f;
 
-        float cameraX = Math.max(halfViewportWidth, Math.min(goblin.getPosition().x, mapPixelWidth - halfViewportWidth));
-        float cameraY = Math.max(halfViewportHeight, Math.min(goblin.getPosition().y, mapPixelHeight - halfViewportHeight));
+        float cameraX = Math.max(halfViewportWidth, Math.min(adventurerGirl.getPosition().x, mapPixelWidth - halfViewportWidth));
+        float cameraY = Math.max(halfViewportHeight, Math.min(adventurerGirl.getPosition().y, mapPixelHeight - halfViewportHeight));
 
         camera.position.set(cameraX, cameraY, 0f); // z=0 for 2D
         camera.update();
@@ -200,36 +232,29 @@ public class WorldTestsV2 implements Screen {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
 
+
         if (rect != null) {
             shapeRenderer.setColor(Color.RED);
             shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
         }
 
-        MapLayer collisionObjectLayer = map.getMap().getLayers().get("Collision");
-        if (collisionObjectLayer != null) {
-            shapeRenderer.setColor(Color.BLUE);
-            for (MapObject object : collisionObjectLayer.getObjects()) {
-                if (object instanceof RectangleMapObject) {
-                    Rectangle r = ((RectangleMapObject) object).getRectangle();
-                    shapeRenderer.rect(r.x, r.y, r.width, r.height);
-                } else if (object instanceof EllipseMapObject) {
-                    Ellipse e = ((EllipseMapObject) object).getEllipse();
-                    shapeRenderer.ellipse(e.x, e.y, e.width, e.height);
-                } else if (object instanceof PolygonMapObject) {
-                    Polygon p = ((PolygonMapObject) object).getPolygon();
-                    shapeRenderer.polygon(p.getTransformedVertices());
-                }
-            }
+
+        // Draw collision rectangles
+        shapeRenderer.setColor(Color.RED);
+        for (Rectangle rect : mapController.getCollisionRects()) {
+            shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
         }
 
         shapeRenderer.setColor(Color.GREEN);
         Rectangle goblinBox = new Rectangle(
-            goblin.getPosition().x - goblin.getCurrentFrame().getRegionWidth() / 2f,
-            goblin.getPosition().y - goblin.getCurrentFrame().getRegionHeight() / 2f,
-            goblin.getCurrentFrame().getRegionWidth(),
-            goblin.getCurrentFrame().getRegionHeight()
+            adventurerGirl.getPosition().x - adventurerGirl.getCurrentFrame().getRegionWidth() / 2f,
+            adventurerGirl.getPosition().y - adventurerGirl.getCurrentFrame().getRegionHeight() / 2f,
+            adventurerGirl.getCurrentFrame().getRegionWidth(),
+            adventurerGirl.getCurrentFrame().getRegionHeight()
         );
         shapeRenderer.rect(goblinBox.x, goblinBox.y, goblinBox.width, goblinBox.height);
+
+
 
         shapeRenderer.end();
     }
@@ -254,7 +279,7 @@ public class WorldTestsV2 implements Screen {
     public void dispose() {
         map.dispose();
         batch.dispose();
-        goblin.dispose();
+        adventurerGirl.dispose();
         shapeRenderer.dispose();
         dialogBox.dispose();
         dialogFont.dispose();

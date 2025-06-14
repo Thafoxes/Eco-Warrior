@@ -1,29 +1,24 @@
 package io.github.eco_warrior.sprite.Characters;
 
 import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.maps.objects.EllipseMapObject;
-import com.badlogic.gdx.maps.objects.PolygonMapObject;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.objects.EllipseMapObject;
+import com.badlogic.gdx.maps.objects.PolygonMapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.*;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
+import io.github.eco_warrior.controller.MapController;
 import io.github.eco_warrior.enums.PlayerDirection;
 
-public class Goblin extends GameCharacter {
+public class Adventurer_Girl extends GameCharacter {
 
-    public enum State{
-        IDLE,
-        WALKING,
-        ATTACKING,
-        DYING
-    }
 
-    private TextureAtlas goblinsAtlas;
+    private TextureAtlas character;
     // Animations
     private Animation<TextureRegion> idleFrontAnimation;
     private Animation<TextureRegion> idleBackAnimation;
@@ -46,62 +41,96 @@ public class Goblin extends GameCharacter {
     //Tile information
     private TiledMapTileLayer collisionLayer;
     private int tileWidth, tileHeight;
-    private int goblinTileX, goblinTileY;
+    private int tileX, tileY;
 
     // Object Layer (for arbitrary collision shapes)
     private MapObjects collisionObjects;
 
-    // Speed of the goblin
+    // Speed of the character
     private float speed = 100f;
 
-    public Goblin(Vector2 position, int tileWidth, int tileHeight, TiledMapTileLayer collisionLayer, MapObjects objects) {
-        super();
-        this.position = position;
-        this.oldPosition = new Vector2(position);
-        this.velocity = new Vector2(0, 0);
-        this.currentDirection = PlayerDirection.DOWN;
-        this.stateTime = 0.0f;
-        this.isMoving = false;
-        this.tileWidth = tileWidth;
-        this.tileHeight = tileHeight;
-        this.collisionLayer = collisionLayer;
-        this.collisionObjects =  objects;
+    private static int PIXELS_PER_X_METER = 48;
+    private static int PIXELS_PER_Y_METER = 64;
 
+    private MapController mapController;
+
+
+    private Body body;
+
+    public Adventurer_Girl(Vector2 position, int tileWidth, int tileHeight, TiledMapTileLayer collisionLayer,
+                           MapObjects objects, MapController mapController) {
+        super();
+        try {
+            this.position = position;
+            this.oldPosition = new Vector2(position);
+            this.velocity = new Vector2(0, 0);
+            this.currentDirection = PlayerDirection.DOWN;
+            this.stateTime = 0.0f;
+            this.isMoving = false;
+            this.tileWidth = tileWidth;
+            this.tileHeight = tileHeight;
+            this.collisionLayer = collisionLayer;
+            this.collisionObjects = objects;
+            this.mapController = mapController;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException("Error initializing");
+        }
         loadAnimations();
     }
 
+    public void createPhysicsBody(World world){
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(getPosition().x / PIXELS_PER_X_METER, getPosition().y / PIXELS_PER_Y_METER);
+
+        body = world.createBody(bodyDef);
+
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(
+            getCurrentFrame().getRegionWidth() / 2f / PIXELS_PER_X_METER,
+            getCurrentFrame().getRegionHeight() / 2f / PIXELS_PER_Y_METER
+        );
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.density = 1f;
+
+        body.createFixture(fixtureDef);
+        shape.dispose();
+    }
     private void loadAnimations() {
-        goblinsAtlas = new TextureAtlas("character/goblins/Globlins.atlas");
+        character = new TextureAtlas("character/npc/adventurer_girl.atlas");
 
         // Create animations for each direction and state
-        idleFrontAnimation = new Animation<>(0.15f, goblinsAtlas.findRegions("Idle_front"));
-        idleBackAnimation = new Animation<>(0.15f, goblinsAtlas.findRegions("Idle_back"));
-        idleLeftAnimation = new Animation<>(0.15f, goblinsAtlas.findRegions("Idle_left"));
-        idleRightAnimation = new Animation<>(0.15f, goblinsAtlas.findRegions("Idle_right"));
+        idleFrontAnimation = new Animation<>(0.15f, character.findRegions("Idle_Up"));
+        idleBackAnimation = new Animation<>(0.15f, character.findRegions("Idle_Down"));
+        idleLeftAnimation = new Animation<>(0.15f, character.findRegions("Idle_Left_Down"));
+        idleRightAnimation = new Animation<>(0.15f, character.findRegions("Idle_Right_Down"));
 
-        walkFrontAnimation = new Animation<>(0.1f, goblinsAtlas.findRegions("Walk_front"));
-        walkBackAnimation = new Animation<>(0.1f, goblinsAtlas.findRegions("Walk_back"));
-        walkLeftAnimation = new Animation<>(0.1f, goblinsAtlas.findRegions("Walk_left"));
-        walkRightAnimation = new Animation<>(0.1f, goblinsAtlas.findRegions("Walk_right"));
+        walkFrontAnimation = new Animation<>(0.1f, character.findRegions("walk_Up"));
+        walkBackAnimation = new Animation<>(0.1f, character.findRegions("walk_Down"));
+        walkLeftAnimation = new Animation<>(0.1f, character.findRegions("walk_Left_Down"));
+        walkRightAnimation = new Animation<>(0.1f, character.findRegions("walk_Right_Down"));
     }
 
     public void update(float delta, TiledMap tiledMap) {
         stateTime += delta;
         oldPosition.set(position);
 
+        // Calculate next position
         Vector2 nextPosition = new Vector2(
             position.x + velocity.x * delta,
             position.y + velocity.y * delta
         );
 
+
         TextureRegion currentSprite = getCurrentSprite();
-        float goblinWidth = currentSprite.getRegionWidth();
-        float goblinHeight = currentSprite.getRegionHeight();
         Rectangle nextBoundingBox = new Rectangle(
-            nextPosition.x - goblinWidth / 2f,
-            nextPosition.y - goblinHeight / 2f,
-            goblinWidth,
-            goblinHeight
+            nextPosition.x - currentSprite.getRegionWidth() / 2f,
+            nextPosition.y - currentSprite.getRegionHeight() / 2f,
+            currentSprite.getRegionWidth(),
+            currentSprite.getRegionHeight()
         );
 
         // Check collision with objects and tile layer
@@ -109,7 +138,10 @@ public class Goblin extends GameCharacter {
         if (collisionObjects != null && isCollidingWithObjects(nextBoundingBox)) {
             blocked = true;
         }
-        if (!blocked && collisionLayer != null && isCollidingWithTiles(nextBoundingBox)) {
+
+
+        // Add check for tile-based collision rectangles
+        if (!blocked && mapController.checkCollision(nextBoundingBox)) {
             blocked = true;
         }
 
@@ -122,8 +154,8 @@ public class Goblin extends GameCharacter {
 
         isMoving = velocity.len2() > 0.0001f;
 
-        goblinTileX = (int) (position.x / tileWidth);
-        goblinTileY = (int) (position.y / tileHeight);
+        tileX = (int) (position.x / tileWidth);
+        tileY = (int) (position.y / tileHeight);
 
         // Clamp position to map bounds if tiledMap is provided
         if(tiledMap != null) {
@@ -151,7 +183,7 @@ public class Goblin extends GameCharacter {
         );
     }
 
-    /** Checks if the goblin's bounding box collides with any collidable object in the collisionObjects */
+    /** Checks if the character's bounding box collides with any collidable object in the collisionObjects */
     private boolean isCollidingWithObjects(Rectangle boundingBox) {
         if (collisionObjects == null) return false;
         for (MapObject object : collisionObjects) {
@@ -188,7 +220,7 @@ public class Goblin extends GameCharacter {
         return polyRect.overlaps(rect);
     }
 
-    /** Checks if the goblin's bounding box collides with any blocked tile */
+    /** Checks if the character's bounding box collides with any blocked tile */
     private boolean isCollidingWithTiles(Rectangle boundingBox) {
         int startX = (int) (boundingBox.x / tileWidth);
         int startY = (int) (boundingBox.y / tileHeight);
@@ -283,8 +315,8 @@ public class Goblin extends GameCharacter {
 
     @Override
     public void dispose() {
-        if (goblinsAtlas != null) {
-            goblinsAtlas.dispose();
+        if (character != null) {
+            character.dispose();
         }
     }
 
@@ -318,5 +350,4 @@ public class Goblin extends GameCharacter {
     public TextureRegion getCurrentFrame() {
         return getCurrentSprite();
     }
-
 }

@@ -3,17 +3,18 @@ package io.github.eco_warrior.controller;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
+import io.github.eco_warrior.sprite.Characters.GameCharacter;
 import io.github.eco_warrior.sprite.Characters.Goblin;
 
 public class PlayerController implements InputProcessor {
 
-        private Goblin player;
+        private GameCharacter player;
         private boolean left;
         private boolean right;
         private boolean up;
         private boolean down;
 
-    public PlayerController(Goblin player) {
+    public PlayerController(GameCharacter player) {
         this.player = player;
     }
     @Override
@@ -96,6 +97,7 @@ public class PlayerController implements InputProcessor {
     public boolean scrolled(float amountX, float amountY) {
         return false;
     }
+
 
     public void update(float delta) {
         float speed = 1f;
