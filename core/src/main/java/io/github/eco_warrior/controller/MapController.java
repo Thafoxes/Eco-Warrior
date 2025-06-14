@@ -26,7 +26,6 @@ public class MapController {
     private static final float PIXELS_PER_METER = 32f; // Adjust based on your scale
 
     private static final String COLLISION_LAYER_NAME = "objects1";
-//    private final List<Rectangle> collisionRects;
     private final List<Object> collisionPolygons;
 
 
@@ -85,6 +84,18 @@ public class MapController {
                 // Create a polygon from the polyline
                 Polygon poly = new Polygon(vertices);
                 collisionPolygons.add(poly);
+            }else if(object instanceof EllipseMapObject){
+                EllipseMapObject ellipseObj = (EllipseMapObject) object;
+                Ellipse ellipse = ellipseObj.getEllipse();
+
+                Circle circle = new Circle(
+                    ellipse.x + ellipse.width / 2f,
+                    ellipse.y + ellipse.height / 2f,
+                    ellipse.width / 2f // or average of width/height if not circular
+                );
+
+                collisionPolygons.add(circle);
+
             }
         }
     }
@@ -101,33 +112,32 @@ public class MapController {
 
     public boolean checkCollision(Rectangle boundingBox){
         for(Object rect : collisionPolygons){
-            if(rect instanceof Rectangle){
-                // Check if the bounding box overlaps with the rectangle
-                if(boundingBox.overlaps((Rectangle)rect)){
-                    return true; // Collision detected
+            // Check against polygons
+            float[] rectVertices = new float[] {
+                boundingBox.x, boundingBox.y,
+                boundingBox.x + boundingBox.width, boundingBox.y,
+                boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height,
+                boundingBox.x, boundingBox.y + boundingBox.height
+            };
+            Polygon boundingPoly = new Polygon(rectVertices);
+
+
+            for (Object shape : collisionPolygons) {
+                if (shape instanceof Polygon) {
+                    if (Intersector.overlapConvexPolygons(boundingPoly, (Polygon) shape)) return true;
+                    // Collision detected
+                } else if (shape instanceof Rectangle) {
+                    if (boundingBox.overlaps((Rectangle) shape)) {
+                        return true; // Collision detected
+                    }
                 }
-        }
-
-        // Check against polygons
-        float[] rectVertices = new float[] {
-            boundingBox.x, boundingBox.y,
-            boundingBox.x + boundingBox.width, boundingBox.y,
-            boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height,
-            boundingBox.x, boundingBox.y + boundingBox.height
-        };
-        Polygon boundingPoly = new Polygon(rectVertices);
-
-
-        for (Object shape : collisionPolygons) {
-            if (shape instanceof Polygon) {
-                if (Intersector.overlapConvexPolygons(boundingPoly, (Polygon) shape)) return true;
-                // Collision detected
-            } else if (shape instanceof Rectangle) {
-                if (boundingBox.overlaps((Rectangle) shape)) {
-                    return true; // Collision detected
+                if( shape instanceof Circle) {
+                    Circle circle = (Circle) shape;
+                    if (Intersector.overlaps( circle, boundingBox)) {
+                        return true; // Collision detected
+                    }
                 }
             }
-        }
         }
 
         return false;

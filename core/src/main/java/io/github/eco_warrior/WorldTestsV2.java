@@ -144,7 +144,6 @@ public class WorldTestsV2 implements Screen {
             map.loadMap("maps/Gladesv2.tmx");
             this.mapController = getGetMapInfo();
 
-            //this.mapController.loadCollisionObjects();
             this.mapController.loadCollisionTiles(map.getMap());
             this.mapController.loadCollisionObjects(map.getMap(), "Collision");
         } catch (Exception e) {
