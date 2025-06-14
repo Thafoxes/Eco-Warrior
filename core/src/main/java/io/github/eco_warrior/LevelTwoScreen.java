@@ -3,6 +3,7 @@ package io.github.eco_warrior;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -55,7 +56,7 @@ public class LevelTwoScreen implements Screen {
     //entities declaration
     private WateringCan wateringCan;
     private WaterFountain waterFountain;
-    private Shovel shovel;
+    public static Shovel shovel;
 
     private OrdinaryTree ordinaryTree;
     private BlazingTree blazingTree;
@@ -114,15 +115,18 @@ public class LevelTwoScreen implements Screen {
 
         public Vector2 getWormStartPosition() {
             switch (this) {
-                case PATH_1: return new Vector2(wormStartX, 100);
-                case PATH_2: return new Vector2(wormStartX, 200);
-                case PATH_3: return new Vector2(wormStartX, 300);
-                case PATH_4: return new Vector2(wormStartX, 400);
-                case PATH_5: return new Vector2(wormStartX, 500);
+                case PATH_1: return new Vector2(wormStartX, 25);
+                case PATH_2: return new Vector2(wormStartX, 100);
+                case PATH_3: return new Vector2(wormStartX, 175);
+                case PATH_4: return new Vector2(wormStartX, 250);
+                case PATH_5: return new Vector2(wormStartX, 300);
                 default: return new Vector2(0, 0); // Default case, should not happen
             }
         }
     }
+
+    //sound effects
+    private Sound shovelSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/pan.mp3"));
 
     public LevelTwoScreen(Main main) {
         this.game = main;
@@ -238,25 +242,51 @@ public class LevelTwoScreen implements Screen {
 
     private void spawnWorm(float delta) {
         wormSpawnTimer += delta; // Adds the current delta to the timer
+
         if (wormSpawnTimer > 3f) { // Check if it has been more than 3 second\
-            Worm worm;
-            WormPath path = WormPath.values()[rand.nextInt(WormPath.values().length)];
-            startWormPosition = path.getWormStartPosition();
-            long startTime = System.nanoTime();
+            if (wormPool.size == 0) { // If the pool is empty, do not spawn a new worm
+                wormSpawnTimer = 0; // Reset the timer
+            } else {
+                Worm worm;
+                WormPath path = WormPath.values()[rand.nextInt(WormPath.values().length)];
 
-            if(wormPool.size > 0) {
-                worm = wormPool.pop();
-                worm.getSprite().setPosition(startWormPosition.x, startWormPosition.y);
-                worm.getCollisionRect().setPosition(startWormPosition); // Reset the worm with the new position and scale
-            }else {
-                worm = new Worm(startWormPosition);
+                startWormPosition = path.getWormStartPosition();
+                long startTime = System.nanoTime();
+
+                if(wormPool.size > 0) {
+                    worm = wormPool.pop();
+                    worm.getSprite().setPosition(startWormPosition.x, startWormPosition.y);
+                    worm.getCollisionRect().setPosition(startWormPosition); // Reset the worm with the new position and scale
+                }else {
+                    worm = new Worm(startWormPosition);
+                }
+
+                worms.add(worm);
+
+                // Assign tree target based on path
+                switch(path.getNumber()) {
+                    case 1:
+                        worm.treeTarget(iceTree);
+                        break;
+                    case 2:
+                        worm.treeTarget(ordinaryTree);
+                        break;
+                    case 3:
+                        worm.treeTarget(breezingTree);
+                        break;
+                    case 4:
+                        worm.treeTarget(blazingTree);
+                        break;
+                    case 5:
+                        worm.treeTarget(voltaicTree);
+                        break;
+                }
+
+                wormSpawnTimer = 0; // Reset the timer
+                long endTime = System.nanoTime();
+                System.out.println("Worm creation time: " + (endTime - startTime) / 1000000.0 + " ms");
+                System.out.println("Worms in pool: " + wormPool.size + ", Worms in game: " + worms.size);
             }
-
-            worms.add(worm);
-            wormSpawnTimer = 0; // Reset the timer
-            long endTime = System.nanoTime();
-            System.out.println("Worm creation time: " + (endTime - startTime) / 1000000.0 + " ms");
-            System.out.println("Worms in pool: " + wormPool.size + ", Worms in game: " + worms.size);
         }
     }
 
@@ -279,9 +309,9 @@ public class LevelTwoScreen implements Screen {
             }
         }
 
-        for (gameSprite tree : trees.values()) {
+        for (Trees tree : trees.values()) {
             tree.draw(batch);
-        }
+        } //edit
 
         //remove ordinary sapling upon planting
         if ((ordinaryTree.treeLevel == OrdinaryTree.TreeStage.HOLE.ordinal())
@@ -353,7 +383,8 @@ public class LevelTwoScreen implements Screen {
             Worm worm = iterator.next();
             worm.update(stateTime);
             worm.draw(batch);
-            if(worm.isOffScreen()) {
+
+            if(worm.isDead) {
                 worm.reset();
                 wormPool.add(worm); //push back into pull
                 iterator.remove();
@@ -363,7 +394,7 @@ public class LevelTwoScreen implements Screen {
 
         batch.end();
 
-        debugSprite();
+//        debugSprite();
     }
 
     private void input(){
@@ -465,6 +496,25 @@ public class LevelTwoScreen implements Screen {
 
         }
 
+        if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            if (draggingTool == tools.get(gameSpriteType.SHOVEL)) {
+                for (Worm worm : worms) {
+                    if (worm.getCollisionRect().overlaps(shovel.getCollisionRect()) && !worm.isDeathTransition) {
+                        worm.speed = 0;
+                        worm.isDeathTransition = true;
+
+                        if (worm.attackTask != null) {
+                            worm.attackTask.cancel();
+                            worm.attackTask = null;
+                        }
+
+                        shovelSound.play(.5f);
+                        worm.startDeathAnimation();
+                    }
+                }
+            }
+        }
+
         if(isReturning){
             returnOriginalPosition();
         }
@@ -500,8 +550,64 @@ public class LevelTwoScreen implements Screen {
 
     private void onMouseRelease() {
         isDragging = false;
-        isReturning = true;
 
+        if(draggingTool != null) {
+            isReturning = true;
+
+            if (draggingTool.equals(tools.get(gameSpriteType.SHOVEL))) {
+
+                if (ordinaryTree.treeLevel == OrdinaryTree.TreeStage.FLAG.ordinal()
+                && ordinaryTree.getCollisionRect().overlaps(shovel.getCollisionRect())) {
+
+                    ordinaryTree.treeLevel = OrdinaryTree.TreeStage.HOLE.ordinal();
+                    ordinaryTree.diggingSound();
+
+                    ordinaryTree.setFrame(ordinaryTree.treeLevel);
+                }
+                else if (blazingTree.treeLevel == BlazingTree.TreeStage.FLAG.ordinal()
+                    && blazingTree.getCollisionRect().overlaps(shovel.getCollisionRect())
+                    && iceTree.isMatureTree) {
+
+                    blazingTree.treeLevel = BlazingTree.TreeStage.HOLE.ordinal();
+                    blazingTree.diggingSound();
+
+                    blazingTree.setFrame(blazingTree.treeLevel);
+                }
+                else if (breezingTree.treeLevel == BreezingTree.TreeStage.FLAG.ordinal()
+                    && breezingTree.getCollisionRect().overlaps(shovel.getCollisionRect())
+                    && voltaicTree.isMatureTree) {
+
+                    breezingTree.treeLevel = BreezingTree.TreeStage.HOLE.ordinal();
+                    breezingTree.diggingSound();
+
+                    breezingTree.setFrame(breezingTree.treeLevel);
+                }
+                else if (iceTree.treeLevel == IceTree.TreeStage.FLAG.ordinal()
+                    && iceTree.getCollisionRect().overlaps(shovel.getCollisionRect())
+                    && breezingTree.isMatureTree) {
+
+                    iceTree.treeLevel = IceTree.TreeStage.HOLE.ordinal();
+                    iceTree.diggingSound();
+
+                    iceTree.setFrame(iceTree.treeLevel);
+                }
+                else if (voltaicTree.treeLevel == VoltaicTree.TreeStage.FLAG.ordinal()
+                    && voltaicTree.getCollisionRect().overlaps(shovel.getCollisionRect())
+                    && ordinaryTree.isMatureTree) {
+
+                    voltaicTree.treeLevel = VoltaicTree.TreeStage.HOLE.ordinal();
+                    voltaicTree.diggingSound();
+
+                    voltaicTree.setFrame(voltaicTree.treeLevel);
+                }
+
+//                for (Worm worm : worms) {
+//                    if (worm.getCollisionRect().overlaps(shovel.getCollisionRect())) {
+//                        isShovelReleased = true; //set to true when shovel is used
+//                    }
+//                }
+            }
+        }
     }
 
     private void updateWateringCan() {
@@ -579,7 +685,7 @@ public class LevelTwoScreen implements Screen {
             tool.dispose();
         }
 
-        for (gameSprite tree : trees.values()) {
+        for (Trees tree : trees.values()) {
             tree.dispose();
         }
 

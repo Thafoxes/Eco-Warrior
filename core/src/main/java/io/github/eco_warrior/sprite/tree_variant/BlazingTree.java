@@ -24,9 +24,7 @@ public class BlazingTree extends Trees {
 
 
     public int treeLevel = TreeStage.FLAG.ordinal();
-    private boolean isStageTransitionScheduled = false;
 
-    private final Sound digSound;
     private final Sound growthSound;
     private final Sound waterPourSound;
     private final Sound saplingSound;
@@ -38,21 +36,12 @@ public class BlazingTree extends Trees {
             position,
             scale);
 
-        digSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/Gravel_dig1.mp3"));
         growthSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/fireball.mp3"));
         waterPourSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/pour_watering_can.mp3"));
         saplingSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/sapling_placement.mp3"));
     }
 
     public void updateTree(gameSprite shovel, gameSprite sapling, WateringCan wateringCan) {
-        // Check for interactions with the shovel, sapling, and watering can
-        if (treeLevel == TreeStage.FLAG.ordinal() && getCollisionRect().overlaps(shovel.getCollisionRect())) {
-            digSound.play();
-            treeLevel = TreeStage.HOLE.ordinal();
-
-            setFrame(treeLevel);
-        }
-
         if (treeLevel == TreeStage.HOLE.ordinal() && getCollisionRect().overlaps(sapling.getCollisionRect())) {
             saplingSound.play(1.5f);
             treeLevel = TreeStage.SAPLING.ordinal();
@@ -77,6 +66,7 @@ public class BlazingTree extends Trees {
                         treeLevel = TreeStage.YOUNG_TREE.ordinal();
                     } else if (treeLevel == TreeStage.YOUNG_TREE.ordinal()) {
                         treeLevel = TreeStage.ANIMATED_MATURE_TREE_1.ordinal();
+                        isMatureTree = true;
                     }
                     growthSound.play(.3f);
                     setFrame(treeLevel);
