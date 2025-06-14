@@ -5,10 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
-import com.badlogic.gdx.maps.objects.EllipseMapObject;
-import com.badlogic.gdx.maps.objects.PolygonMapObject;
-import com.badlogic.gdx.maps.objects.PolylineMapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.objects.*;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.*;
@@ -26,7 +23,10 @@ public class MapController {
     private static final float PIXELS_PER_METER = 32f; // Adjust based on your scale
 
     private static final String COLLISION_LAYER_NAME = "objects1";
-    private final List<Object> collisionPolygons;
+    private final List<Polygon> collisionPolygons;
+    private final List<Rectangle> collisionRectangles;
+    private final List<Circle> collisionCircles;
+    private final List<Ellipse> collisionEllipses;
 
 
     public MapController(int tileWidth, int tileHeight, Vector2 spawnPosition) {
@@ -35,6 +35,9 @@ public class MapController {
         this.spawnPosition = spawnPosition;
         this.allCollisionObjects = new MapObjects();
         this.collisionPolygons = new ArrayList<>();
+        this.collisionRectangles = new ArrayList<>();
+        this.collisionCircles = new ArrayList<>();
+        this.collisionEllipses = new ArrayList<>();
 
 
 
@@ -53,55 +56,152 @@ public class MapController {
             return;
         }
 
-        for (MapObject object : layer.getObjects()) {
+        for(MapObject object : layer.getObjects()){
+            FilterCollisionObj(object, 0, 0);
+
+        }
+    }
+
+    private void FilterCollisionObj(MapObject object, float worldX, float worldY) {
+
             if (object instanceof RectangleMapObject) {
                 Rectangle rect = ((RectangleMapObject) object).getRectangle();
-                collisionPolygons.add(rect);
+                rect.x += worldX;
+                rect.y += worldY;
+                collisionRectangles.add(rect);
+            }
+            else if (object instanceof CircleMapObject) {
+                // Store ellipse data for circle collision
+                CircleMapObject circleObj = (CircleMapObject) object;
+                // We'll store as a rectangle for now (bounding box)
+                Circle circle = circleObj.getCircle();
+                circle.x += worldX + circle.radius;
+                circle.y += worldY + circle.radius;
+                collisionCircles.add(circle);
             }
             else if (object instanceof EllipseMapObject) {
-                // Store ellipse data for circle collision
-                EllipseMapObject ellipseObj = (EllipseMapObject) object;
-                // We'll store as a rectangle for now (bounding box)
-                Ellipse ellipse = ellipseObj.getEllipse();
-                Rectangle rect = new Rectangle(
-                    ellipse.x, ellipse.y,
-                    ellipse.width, ellipse.height
-                );
-                collisionPolygons.add(rect);
+                Ellipse ellipse = ((EllipseMapObject) object).getEllipse();
+                ellipse.x += worldX;
+                ellipse.y += worldY;
+                collisionEllipses.add(ellipse);
             }
             else if (object instanceof PolygonMapObject) {
                 // Store polygon for polygon collision
                 PolygonMapObject polyObj = (PolygonMapObject) object;
                 Polygon poly = polyObj.getPolygon();
+                float[] vertices = poly.getTransformedVertices();
+                for (int i = 0; i < vertices.length; i += 2) {
+                    vertices[i] += worldX;
+                    vertices[i + 1] += worldY;
+                }
                 collisionPolygons.add(poly);
             }
-            else if (object instanceof PolylineMapObject) {
-                // Convert polyline to polygon for collision
-                PolylineMapObject lineObj = (PolylineMapObject) object;
-                Polyline polyline = lineObj.getPolyline();
-                float[] vertices = polyline.getTransformedVertices();
 
-                // Create a polygon from the polyline
-                Polygon poly = new Polygon(vertices);
-                collisionPolygons.add(poly);
-            }else if(object instanceof EllipseMapObject){
-                EllipseMapObject ellipseObj = (EllipseMapObject) object;
-                Ellipse ellipse = ellipseObj.getEllipse();
+    }
 
-                Circle circle = new Circle(
-                    ellipse.x + ellipse.width / 2f,
-                    ellipse.y + ellipse.height / 2f,
-                    ellipse.width / 2f // or average of width/height if not circular
-                );
 
-                collisionPolygons.add(circle);
-
+    public boolean checkCollision(Rectangle boundingBox){
+        // Broad phase: Check rectangles
+        for (Rectangle rect : collisionRectangles) {
+            if (boundingBox.overlaps(rect)) {
+                return true;
             }
         }
+
+        // Broad phase: Check circles
+        for (Circle circle : collisionCircles) {
+            if (Intersector.overlaps(circle, boundingBox)) {
+                return true;
+            }
+        }
+
+        // Check ellipses
+        for (Ellipse ellipse : collisionEllipses) {
+            // Convert ellipse to a polygon representation
+            if (ellipseRectangleCollision(ellipse, boundingBox)) {
+                return true;
+            }
+        }
+
+        // Narrow phase: Check polygons
+        float[] rectVertices = new float[] {
+            boundingBox.x, boundingBox.y,
+            boundingBox.x + boundingBox.width, boundingBox.y,
+            boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height,
+            boundingBox.x, boundingBox.y + boundingBox.height
+        };
+        Polygon boundingPoly = new Polygon(rectVertices);
+
+        for (Object poly : collisionPolygons) {
+            if(poly instanceof Polygon){
+                if (Intersector.overlapConvexPolygons(boundingPoly, (Polygon) poly)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean ellipseRectangleCollision(Ellipse ellipse, Rectangle rect) {
+        // Check if rectangle center is inside ellipse (simplification)
+        float rectCenterX = rect.x + rect.width / 2;
+        float rectCenterY = rect.y + rect.height / 2;
+
+        float ellipseCenterX = ellipse.x + ellipse.width / 2;
+        float ellipseCenterY = ellipse.y + ellipse.height / 2;
+
+        // Quick rejection test - bounding boxes
+        if (!new Rectangle(ellipse.x, ellipse.y, ellipse.width, ellipse.height).overlaps(rect)) {
+            return false;
+        }
+
+        // More accurate test for ellipse-rectangle collision
+        // Check if any corner of the rectangle is inside the ellipse
+        return isPointInEllipse(rect.x, rect.y, ellipse) ||
+            isPointInEllipse(rect.x + rect.width, rect.y, ellipse) ||
+            isPointInEllipse(rect.x, rect.y + rect.height, ellipse) ||
+            isPointInEllipse(rect.x + rect.width, rect.y + rect.height, ellipse) ||
+            // Additional checks for rectangle edges intersecting with ellipse
+            lineEllipseIntersection(rect.x, rect.y, rect.x + rect.width, rect.y, ellipse) ||
+            lineEllipseIntersection(rect.x, rect.y, rect.x, rect.y + rect.height, ellipse) ||
+            lineEllipseIntersection(rect.x + rect.width, rect.y, rect.x + rect.width, rect.y + rect.height, ellipse) ||
+            lineEllipseIntersection(rect.x, rect.y + rect.height, rect.x + rect.width, rect.y + rect.height, ellipse);
+    }
+
+    private boolean lineEllipseIntersection(float x1, float y1, float x2, float y2, Ellipse ellipse) {
+        // Simplified approach - check several points along the line
+        final int STEPS = 10;
+
+        for (int i = 0; i <= STEPS; i++) {
+            float t = i / (float)STEPS;
+            float x = x1 + t * (x2 - x1);
+            float y = y1 + t * (y2 - y1);
+
+            if (isPointInEllipse(x, y, ellipse)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isPointInEllipse(float x, float y, Ellipse ellipse) {
+        float centerX = ellipse.x + ellipse.width / 2;
+        float centerY = ellipse.y + ellipse.height / 2;
+        float a = ellipse.width / 2;
+        float b = ellipse.height / 2;
+
+        // Check if point (x,y) is inside the ellipse using the standard equation
+        float normalizedX = (x - centerX) / a;
+        float normalizedY = (y - centerY) / b;
+
+        return normalizedX * normalizedX + normalizedY * normalizedY <= 1.0f;
     }
 
     /**
      * Loads collision tiles from the default set layer in the TiledMap.
+     * To test cause is using object3
      *
      * @param map The TiledMap to load collision tiles from.
      */
@@ -109,39 +209,6 @@ public class MapController {
         loadCollisionTiles(map, COLLISION_LAYER_NAME);
     }
 
-
-    public boolean checkCollision(Rectangle boundingBox){
-        for(Object rect : collisionPolygons){
-            // Check against polygons
-            float[] rectVertices = new float[] {
-                boundingBox.x, boundingBox.y,
-                boundingBox.x + boundingBox.width, boundingBox.y,
-                boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height,
-                boundingBox.x, boundingBox.y + boundingBox.height
-            };
-            Polygon boundingPoly = new Polygon(rectVertices);
-
-
-            for (Object shape : collisionPolygons) {
-                if (shape instanceof Polygon) {
-                    if (Intersector.overlapConvexPolygons(boundingPoly, (Polygon) shape)) return true;
-                    // Collision detected
-                } else if (shape instanceof Rectangle) {
-                    if (boundingBox.overlaps((Rectangle) shape)) {
-                        return true; // Collision detected
-                    }
-                }
-                if( shape instanceof Circle) {
-                    Circle circle = (Circle) shape;
-                    if (Intersector.overlaps( circle, boundingBox)) {
-                        return true; // Collision detected
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
 
     /**
      * Loads collision tiles from a specified layer in the TiledMap.
@@ -159,20 +226,17 @@ public class MapController {
         for(int y = 0; y < layer.getHeight(); y++){
             for(int x = 0; x < layer.getWidth(); x++){
                 TiledMapTileLayer.Cell cell = layer.getCell(x, y);
+
+                // Check if the cell is not null and has a tile
                 if(cell != null && cell.getTile() != null){
-                    // Convert tile position to world coordinates
                     float worldX = x * layer.getTileWidth();
                     float worldY = y * layer.getTileHeight();
+                    // Convert tile position to world coordinates
                     MapObjects objects = cell.getTile().getObjects();
 
-                    for(MapObject object : objects) {
-                        if(object instanceof RectangleMapObject){
-                            RectangleMapObject rectObj = (RectangleMapObject) object;
-                            Rectangle rect = new Rectangle(rectObj.getRectangle());
-                            rect.x += worldX;
-                            rect.y += worldY;
-                            collisionPolygons.add(rect);
-                        }
+                    for(MapObject object : objects){
+                        FilterCollisionObj(object, worldX, worldY);
+
                     }
 
                 }
@@ -182,28 +246,50 @@ public class MapController {
 
     public void drawDebug(ShapeRenderer shapeRenderer, Color color){
 
-        shapeRenderer.setColor(Color.RED);
-        for (Object obj : collisionPolygons) {
-            if(obj instanceof Rectangle){
-                Rectangle rect = (Rectangle) obj;
-                shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
-            }
+        shapeRenderer.setColor(color);
+
+        // Draw rectangles
+        for (Rectangle rect : collisionRectangles) {
+            shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
         }
 
-        for(Object shape: collisionPolygons){
+        // Draw circles
+        for (Circle circle : collisionCircles) {
+            shapeRenderer.circle(circle.x, circle.y, circle.radius);
+        }
+
+        // Draw ellipses
+        for (Ellipse ellipse : collisionEllipses) {
+            shapeRenderer.ellipse(ellipse.x, ellipse.y, ellipse.width, ellipse.height);
+        }
+
+
+
+        for(Polygon shape: collisionPolygons){
             if(shape instanceof Polygon){
-                Polygon polygon = (Polygon) shape;
-                float[] vertices = polygon.getTransformedVertices();
+                float[] vertices = shape.getTransformedVertices();
                 for (int i = 0; i < vertices.length; i += 2) {
                     int nextIndex = (i + 2) % vertices.length;
                     shapeRenderer.line(vertices[i], vertices[i + 1], vertices[nextIndex], vertices[nextIndex + 1]);
                 }
-            }else if(shape instanceof Rectangle){
-                Rectangle rect = (Rectangle) shape;
-                shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
             }
-
         }
+    }
+
+    public List<Ellipse> getCollisionEllipses() {
+        return collisionEllipses;
+    }
+
+    public List<Rectangle> getCollisionRectangles() {
+        return collisionRectangles;
+    }
+
+    public List<Circle> getCollisionCircles() {
+        return collisionCircles;
+    }
+
+    public List<Polygon> getCollisionPolygons() {
+        return collisionPolygons;
     }
 
 

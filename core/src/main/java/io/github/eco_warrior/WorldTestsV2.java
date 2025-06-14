@@ -13,7 +13,6 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Matrix4;
@@ -21,7 +20,7 @@ import io.github.eco_warrior.MapLoader.MapLoader;
 import io.github.eco_warrior.controller.MapController;
 import io.github.eco_warrior.controller.PlayerController;
 import io.github.eco_warrior.controller.FontGenerator;
-import io.github.eco_warrior.sprite.Characters.Adventurer_Girl;
+import io.github.eco_warrior.sprite.Characters.adventurerGirl;
 import io.github.eco_warrior.controller.DialogBox;
 
 import java.util.Arrays;
@@ -39,7 +38,7 @@ public class WorldTestsV2 implements Screen {
     private Game game;
 
     private SpriteBatch batch;
-    private Adventurer_Girl adventurerGirl;
+    private adventurerGirl adventurerGirl;
     private ShapeRenderer shapeRenderer;
     private Rectangle rect;
     private PlayerController playerController;
@@ -85,11 +84,10 @@ public class WorldTestsV2 implements Screen {
         MapController result = getGetMapInfo();
 
 
-        adventurerGirl = new Adventurer_Girl(
+        adventurerGirl = new adventurerGirl(
             result.spawnPosition,
             result.tileWidth,
             result.tileHeight,
-            (TiledMapTileLayer) map.getMap().getLayers().get("water background"),
             result.allCollisionObjects,
             mapController
         );
@@ -144,7 +142,10 @@ public class WorldTestsV2 implements Screen {
             map.loadMap("maps/Gladesv2.tmx");
             this.mapController = getGetMapInfo();
 
-            this.mapController.loadCollisionTiles(map.getMap());
+
+            this.mapController.loadCollisionTiles(map.getMap(), "columns");
+            this.mapController.loadCollisionTiles(map.getMap(), "objects3");
+            this.mapController.loadCollisionTiles(map.getMap(), "objects1");
             this.mapController.loadCollisionObjects(map.getMap(), "Collision");
         } catch (Exception e) {
             throw new RuntimeException("Error loading map: " + e.getMessage(), e);
@@ -240,7 +241,7 @@ public class WorldTestsV2 implements Screen {
         }
 
 
-        mapController.drawDebug(shapeRenderer, Color.BLUE);
+        mapController.drawDebug(shapeRenderer, Color.RED);
         shapeRenderer.setColor(Color.GREEN);
         Rectangle goblinBox = new Rectangle(
             adventurerGirl.getPosition().x - adventurerGirl.getCurrentFrame().getRegionWidth() / 2f,

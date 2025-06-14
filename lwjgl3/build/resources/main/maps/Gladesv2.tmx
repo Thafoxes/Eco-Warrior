@@ -2,6 +2,61 @@
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="43" height="29" tilewidth="16" tileheight="16" infinite="0" nextlayerid="140" nextobjectid="91">
  <tileset firstgid="1" name="Ground_grass" tilewidth="16" tileheight="16" tilecount="742" columns="53">
   <image source="world_map/ground_grasss.png" width="848" height="224"/>
+  <tile id="51">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="52">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="131">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="145">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="147">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="0" width="16" height="10"/>
+   </objectgroup>
+  </tile>
+  <tile id="148">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="0" width="16" height="10"/>
+   </objectgroup>
+  </tile>
+  <tile id="184">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="197">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="5" y="0" width="11" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="198">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="199">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="0" width="11" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="252">
+   <objectgroup draworder="index" id="2">
+    <object id="3" x="0" y="0" width="9" height="9"/>
+   </objectgroup>
+  </tile>
  </tileset>
  <tileset firstgid="743" name="Water_coasts" tilewidth="16" tileheight="16" tilecount="1716" columns="39">
   <image source="world_map/Water_coasts.png" width="624" height="704"/>
@@ -3061,7 +3116,17 @@
     <object id="1" x="0" y="0" width="14" height="14"/>
    </objectgroup>
   </tile>
+  <tile id="273">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
   <tile id="274">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="277">
    <objectgroup draworder="index" id="2">
     <object id="1" x="0" y="0" width="16" height="16"/>
    </objectgroup>
@@ -3069,9 +3134,20 @@
   <tile id="278">
    <objectgroup draworder="index" id="2">
     <object id="1" x="0" y="0" width="16" height="16"/>
+    <object id="2" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="281">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="0" width="16" height="16"/>
    </objectgroup>
   </tile>
   <tile id="282">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="285">
    <objectgroup draworder="index" id="2">
     <object id="1" x="0" y="0" width="16" height="16"/>
    </objectgroup>
@@ -3106,6 +3182,11 @@
   <tile id="357">
    <objectgroup draworder="index" id="2">
     <object id="1" x="0" y="0" width="14" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="365">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="0" width="16" height="16"/>
    </objectgroup>
   </tile>
   <tile id="366">
@@ -3181,6 +3262,11 @@
     <object id="1" x="0" y="0" width="16" height="16"/>
    </objectgroup>
   </tile>
+  <tile id="446">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="0" width="14" height="16"/>
+   </objectgroup>
+  </tile>
   <tile id="458">
    <objectgroup draworder="index" id="2">
     <object id="1" x="0" y="0" width="16" height="16"/>
@@ -3201,9 +3287,34 @@
     <object id="1" x="0" y="0" width="16" height="16"/>
    </objectgroup>
   </tile>
+  <tile id="475">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
   <tile id="478">
    <objectgroup draworder="index" id="2">
     <object id="1" x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="502">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="1" y="2" width="15" height="14"/>
+   </objectgroup>
+  </tile>
+  <tile id="504">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="4" y="2" width="12" height="14"/>
+   </objectgroup>
+  </tile>
+  <tile id="506">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="3" y="3" width="13" height="13"/>
+   </objectgroup>
+  </tile>
+  <tile id="508">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="3" y="3" width="13" height="13"/>
    </objectgroup>
   </tile>
   <tile id="513">

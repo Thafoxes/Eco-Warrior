@@ -15,7 +15,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import io.github.eco_warrior.controller.MapController;
 import io.github.eco_warrior.enums.PlayerDirection;
 
-public class Adventurer_Girl extends GameCharacter {
+public class adventurerGirl extends GameCharacter {
 
 
     private TextureAtlas character;
@@ -57,8 +57,8 @@ public class Adventurer_Girl extends GameCharacter {
 
     private Body body;
 
-    public Adventurer_Girl(Vector2 position, int tileWidth, int tileHeight, TiledMapTileLayer collisionLayer,
-                           MapObjects objects, MapController mapController) {
+    public adventurerGirl(Vector2 position, int tileWidth, int tileHeight,
+                          MapObjects objects, MapController mapController) {
         super();
         try {
             this.position = position;
@@ -69,7 +69,6 @@ public class Adventurer_Girl extends GameCharacter {
             this.isMoving = false;
             this.tileWidth = tileWidth;
             this.tileHeight = tileHeight;
-            this.collisionLayer = collisionLayer;
             this.collisionObjects = objects;
             this.mapController = mapController;
         }catch (Exception e){
