@@ -12,17 +12,35 @@ public class TreeHealth extends gameSprite {
         HP_0
     }
 
-    public TreeHealth(String atlasPath, String regionBaseName, Vector2 position) {
+    Trees tree;
+
+    public TreeHealth(String atlasPath, String regionBaseName, Vector2 position, Trees tree) {
         super(atlasPath,
             regionBaseName,
             5,
             position,
             .1f);
+
+        this.tree = tree;
     }
 
-   public void updateHealth() {
-        // This method should be overridden by subclasses to update the health
-        // based on the specific tree type.
-        throw new UnsupportedOperationException("updateHealth() must be implemented in subclasses");
+    public void updateHealth() {
+        switch (tree.health) {
+            case 4:
+                setFrame(TreeHealthAnimation.HP_MAX.ordinal());
+                break;
+            case 3:
+                setFrame(TreeHealthAnimation.HP_3.ordinal());
+                break;
+            case 2:
+                setFrame(TreeHealthAnimation.HP_2.ordinal());
+                break;
+            case 1:
+                setFrame(TreeHealthAnimation.HP_1.ordinal());
+                break;
+            default:
+                setFrame(TreeHealthAnimation.HP_0.ordinal());
+                break;
+        }
     }
 }
