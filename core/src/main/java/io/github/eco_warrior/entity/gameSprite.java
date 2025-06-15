@@ -18,15 +18,12 @@ public class gameSprite extends spriteGenerator {
     private Sound correctSoundFX;
     private Sound wrongSoundFx;
     private Sound hittingSFX;
-    private boolean soundPlayed = false;
     private String atlasPath;
     private float scale = 1f;
     private Vector2 initPosition;
-    private Map<String, Animation<TextureRegion>> animations = new HashMap<>();
-    private String currentAnimationName;
     private float stateTime;
 
-    //debug mthod
+    //debug method
     private ShapeRenderer shapeRenderer;
 
     //for manual frame

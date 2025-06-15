@@ -18,6 +18,7 @@ public class WormController {
     }
 
     private void initializeEffects() {
+
         deathEffect = new RedExplosion(worm.getPosition(), 1f);
     }
 
@@ -36,7 +37,10 @@ public class WormController {
 
         // Handle death effect
         if (worm.getCurrentState() == Worm.WormState.DEAD && !isExploding) {
-            deathEffect.reset(worm.getPosition());
+            Vector2 position = worm.getPosition();
+            position.x += worm.getSprite().getWidth() /2; // Center the explosion effect
+            position.y += worm.getSprite().getHeight() / 2; // Center the explosion effect
+            deathEffect.reset(position);
             isExploding = true;
         }
 
