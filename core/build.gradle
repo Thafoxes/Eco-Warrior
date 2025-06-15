@@ -10,6 +10,12 @@ dependencies {
   api "space.earlygrey:shapedrawer:$shapeDrawerVersion"
   api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
 
+  testImplementation "com.badlogicgames.gdx:gdx-backend-headless:1.12.0"
+  testImplementation "com.badlogicgames.gdx:gdx-platform:1.12.0:natives-desktop"
+  testImplementation "com.badlogicgames.gdx:gdx:1.12.0"
+  testImplementation 'junit:junit:4.13.2'
+  testImplementation 'org.mockito:mockito-core:3.12.4'
+
 
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
