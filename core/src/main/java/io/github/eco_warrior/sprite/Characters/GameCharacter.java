@@ -33,12 +33,12 @@ public abstract class GameCharacter extends Sprite {
     protected TextureRegion textureRegion;
     protected MapController mapController;
     protected boolean isBlocking = true;
+    protected boolean isNPC = false;
+
 
     // Abstract methods that must be implemented
-    public abstract void update(float delta, TiledMap tiledMap);
     public abstract void draw(SpriteBatch batch);
     public abstract void move(Vector2 direction);
-    public abstract void setVelocity(float x, float y);
     public abstract TextureRegion getCurrentFrame();
 
     // Dimensions for collision box
@@ -46,6 +46,23 @@ public abstract class GameCharacter extends Sprite {
     protected final float COLLISION_HEIGHT = 16;
 
 
+    public void setVelocity(float x, float y){
+
+        velocity.set(x, y);
+
+        // Update direction based on velocity
+        if (x > 0 && Math.abs(x) > Math.abs(y)) {
+            currentDirection = PlayerDirection.RIGHT;
+        } else if (x < 0 && Math.abs(x) > Math.abs(y)) {
+            currentDirection = PlayerDirection.LEFT;
+        } else if (y > 0) {
+            currentDirection = PlayerDirection.UP;
+        } else if (y < 0) {
+            currentDirection = PlayerDirection.DOWN;
+        }
+
+    }
+    public abstract void update(float delta, TiledMap tiledMap);
 
     // Add collision check method
     protected boolean checkCollision(float newX, float newY) {
@@ -118,6 +135,14 @@ public abstract class GameCharacter extends Sprite {
 
     public void dispose() {
 
+    }
+
+    public void setNPC(boolean isNPC) {
+        this.isNPC = isNPC;
+    }
+
+    public boolean isNPC() {
+        return isNPC;
     }
 
     public void setBlocking(boolean blocking) {

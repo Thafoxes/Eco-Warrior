@@ -45,6 +45,13 @@ public class DialogBox {
         updateBoxRect();
     }
 
+    /**
+     * Starts a dialog with the given speaker and lines.
+     * After done, perform the onComplete callback if provided.
+     * @param speaker
+     * @param lines
+     * @param onComplete
+     */
     public void startDialog(String speaker, List<String> lines, Runnable onComplete) {
         if (lines.isEmpty()) return;
         this.onCompleteCallback = onComplete;
