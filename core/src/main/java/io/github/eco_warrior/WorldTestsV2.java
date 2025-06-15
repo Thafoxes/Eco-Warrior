@@ -248,6 +248,7 @@ public class WorldTestsV2 implements Screen {
                     "Help!",
                     "Please help us to reduce waste!"
                 ), () -> {
+                    //trigger after dialog is completed
                     npcManager.setInteracting(false);
                     triggerLevel(1);
                 });

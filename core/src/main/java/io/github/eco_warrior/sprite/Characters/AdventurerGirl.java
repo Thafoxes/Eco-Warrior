@@ -106,7 +106,7 @@ public class AdventurerGirl extends GameCharacter {
         }
 
     }
-    
+
     public void createPhysicsBody(World world){
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
