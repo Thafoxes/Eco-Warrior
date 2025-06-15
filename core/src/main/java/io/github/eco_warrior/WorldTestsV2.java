@@ -21,7 +21,7 @@ import io.github.eco_warrior.animation.Screen.ScreenTransition;
 import io.github.eco_warrior.controller.*;
 import io.github.eco_warrior.screen.instructions.L1Instructions;
 import io.github.eco_warrior.sprite.Characters.GameCharacter;
-import io.github.eco_warrior.sprite.Characters.adventurerGirl;
+import io.github.eco_warrior.sprite.Characters.AdventurerGirl;
 
 import java.util.Arrays;
 
@@ -38,7 +38,7 @@ public class WorldTestsV2 implements Screen {
     private Game game;
 
     private SpriteBatch batch;
-    private adventurerGirl adventurerGirl;
+    private AdventurerGirl adventurerGirl;
     private ShapeRenderer shapeRenderer;
     private Rectangle rect;
     private PlayerController playerController;
@@ -101,7 +101,7 @@ public class WorldTestsV2 implements Screen {
         MapController result = getGetMapInfo();
 
 
-        adventurerGirl = new adventurerGirl(
+        adventurerGirl = new AdventurerGirl(
             result.spawnPosition,
             result.tileWidth,
             result.tileHeight,

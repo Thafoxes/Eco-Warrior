@@ -15,7 +15,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import io.github.eco_warrior.controller.MapController;
 import io.github.eco_warrior.enums.PlayerDirection;
 
-public class adventurerGirl extends GameCharacter {
+public class AdventurerGirl extends GameCharacter {
 
 
     private TextureAtlas character;
@@ -57,7 +57,7 @@ public class adventurerGirl extends GameCharacter {
 
     private Body body;
 
-    public adventurerGirl(Vector2 position, int tileWidth, int tileHeight,
+    public AdventurerGirl(Vector2 position, int tileWidth, int tileHeight,
                           MapObjects objects, MapController mapController) {
         super();
         try {
@@ -326,6 +326,7 @@ public class adventurerGirl extends GameCharacter {
         return region;
     }
 
+    @Override
     public void setVelocity(float x, float y) {
         velocity.set(x, y);
 
@@ -378,4 +379,5 @@ public class adventurerGirl extends GameCharacter {
     public TextureRegion getCurrentFrame() {
         return getCurrentSprite();
     }
+
 }

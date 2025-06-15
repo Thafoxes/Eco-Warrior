@@ -189,7 +189,7 @@ public class Goblin extends GameCharacter {
                 goblinHeight
             );
         }
-        
+
 
         // Check collision with objects and tile layer
         boolean blocked = false;
@@ -381,6 +381,7 @@ public class Goblin extends GameCharacter {
         return region;
     }
 
+    @Override
     public void setVelocity(float x, float y) {
         velocity.set(x, y);
 
