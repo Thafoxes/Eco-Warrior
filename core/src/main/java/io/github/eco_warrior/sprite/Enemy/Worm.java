@@ -25,7 +25,6 @@ public class Worm extends gameSprite {
     private float stateTime;
     private boolean isMovingRight;
     private float movementSpeed = 50f;
-    private boolean isAttacking = false;
     private float attackCooldown = 1.5f;
     private float timeSinceLastAttack = 0f;
     private boolean canAttack = true;
