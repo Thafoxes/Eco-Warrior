@@ -165,29 +165,10 @@ public class Goblin extends GameCharacter {
         Rectangle nextBoundingBox;
         if(isNPC){
 
-            // Update the textureRegion with the current animation frame
-            textureRegion = getCurrentSprite();
-
-
-            float goblinWidth = textureRegion.getRegionWidth();
-            float goblinHeight = textureRegion.getRegionHeight();
-            nextBoundingBox = new Rectangle(
-                nextPosition.x - goblinWidth / 2f,
-                nextPosition.y - goblinHeight / 2f,
-                goblinWidth,
-                goblinHeight
-            );
+            nextBoundingBox = GetNPCBox(nextPosition);
 
         }else{
-            TextureRegion currentSprite = getCurrentSprite();
-            float goblinWidth = currentSprite.getRegionWidth();
-            float goblinHeight = currentSprite.getRegionHeight();
-            nextBoundingBox= new Rectangle(
-                nextPosition.x - goblinWidth / 2f,
-                nextPosition.y - goblinHeight / 2f,
-                goblinWidth,
-                goblinHeight
-            );
+            nextBoundingBox = GetPlayerBox(nextPosition);
         }
 
 
@@ -220,6 +201,38 @@ public class Goblin extends GameCharacter {
             position.x = MathUtils.clamp(position.x, 0, mapWidth);
             position.y = MathUtils.clamp(position.y, 0, mapHeight);
         }
+    }
+
+    private Rectangle GetPlayerBox(Vector2 nextPosition) {
+        Rectangle nextBoundingBox;
+        TextureRegion currentSprite = getCurrentSprite();
+        float goblinWidth = currentSprite.getRegionWidth();
+        float goblinHeight = currentSprite.getRegionHeight();
+        nextBoundingBox= new Rectangle(
+            nextPosition.x - goblinWidth / 2f,
+            nextPosition.y - goblinHeight / 2f,
+            goblinWidth,
+            goblinHeight
+        );
+        return nextBoundingBox;
+    }
+
+
+    private Rectangle GetNPCBox(Vector2 nextPosition) {
+        Rectangle nextBoundingBox;
+        // Update the textureRegion with the current animation frame
+        textureRegion = getCurrentSprite();
+
+
+        float goblinWidth = textureRegion.getRegionWidth();
+        float goblinHeight = textureRegion.getRegionHeight();
+        nextBoundingBox = new Rectangle(
+            nextPosition.x - goblinWidth / 2f,
+            nextPosition.y - goblinHeight / 2f,
+            goblinWidth,
+            goblinHeight
+        );
+        return nextBoundingBox;
     }
 
 

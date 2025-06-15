@@ -71,6 +71,8 @@ public class AdventurerGirl extends GameCharacter {
             this.tileHeight = tileHeight;
             this.collisionObjects = objects;
             this.mapController = mapController;
+            this.name = "Adventurer";
+
         }catch (Exception e){
             e.printStackTrace();
             throw new RuntimeException("Error initializing");
@@ -78,6 +80,33 @@ public class AdventurerGirl extends GameCharacter {
         loadAnimations();
     }
 
+    /**
+     * For NPC uses idle
+     * @param position
+     * @param tileWidth
+     * @param tileHeight
+     */
+    public AdventurerGirl(Vector2 position, int tileWidth, int tileHeight,
+                          MapObjects objects, MapController mapController, boolean isNPC) {
+        this(position, tileWidth, tileHeight, objects, mapController);
+        this.isNPC = true;
+        this.currentDirection = PlayerDirection.DOWN; // Default direction for NPC
+        // Add this to ensure we have a bounding box for collision
+        if (this.boundingBox == null) {
+            this.boundingBox = new Rectangle(
+                position.x - COLLISION_WIDTH / 2,
+                position.y - COLLISION_HEIGHT / 2,
+                COLLISION_WIDTH,
+                COLLISION_HEIGHT
+            );
+        }
+        // Set default texture region if not loaded from animations
+        if (this.textureRegion == null) {
+            this.textureRegion = new TextureRegion(texture, 0, 0, 32, 32);
+        }
+
+    }
+    
     public void createPhysicsBody(World world){
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -125,14 +154,13 @@ public class AdventurerGirl extends GameCharacter {
 
         updateBoundingBox();
 
-
         TextureRegion currentSprite = getCurrentSprite();
-        Rectangle nextBoundingBox = new Rectangle(
-            nextPosition.x - currentSprite.getRegionWidth() / 2f,
-            nextPosition.y - currentSprite.getRegionHeight() / 2f,
-            currentSprite.getRegionWidth(),
-            currentSprite.getRegionHeight()
-        );
+        Rectangle nextBoundingBox;
+        if(isNPC){
+            nextBoundingBox = GetNPCBox(nextPosition);
+        }else{
+            nextBoundingBox = GetPlayerBox(nextPosition);
+        }
 
         // Check collision with objects and tile layer
         boolean blocked = false;
@@ -378,6 +406,42 @@ public class AdventurerGirl extends GameCharacter {
 
     public TextureRegion getCurrentFrame() {
         return getCurrentSprite();
+    }
+
+    public boolean isNPC() {
+        return isNPC;
+    }
+
+    private Rectangle GetPlayerBox(Vector2 nextPosition) {
+        Rectangle nextBoundingBox;
+        TextureRegion currentSprite = getCurrentSprite();
+        float goblinWidth = currentSprite.getRegionWidth();
+        float goblinHeight = currentSprite.getRegionHeight();
+        nextBoundingBox= new Rectangle(
+            nextPosition.x - goblinWidth / 2f,
+            nextPosition.y - goblinHeight / 2f,
+            goblinWidth,
+            goblinHeight
+        );
+        return nextBoundingBox;
+    }
+
+
+    private Rectangle GetNPCBox(Vector2 nextPosition) {
+        Rectangle nextBoundingBox;
+        // Update the textureRegion with the current animation frame
+        textureRegion = getCurrentSprite();
+
+
+        float goblinWidth = textureRegion.getRegionWidth();
+        float goblinHeight = textureRegion.getRegionHeight();
+        nextBoundingBox = new Rectangle(
+            nextPosition.x - goblinWidth / 2f,
+            nextPosition.y - goblinHeight / 2f,
+            goblinWidth,
+            goblinHeight
+        );
+        return nextBoundingBox;
     }
 
 }
