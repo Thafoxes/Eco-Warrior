@@ -245,7 +245,7 @@ public class WorldTestsV2 implements Screen {
 
             if(level <= 1) {
                 dialogBox.startDialog(character.getName(), Arrays.asList(
-                    "Hi!",
+                    "Help!",
                     "Please help us to reduce waste!"
                 ), () -> {
                     npcManager.setInteracting(false);
@@ -266,6 +266,7 @@ public class WorldTestsV2 implements Screen {
 
 
     private void update(float delta) {
+        npcManager.update(delta, map.getMap());
         // Pause game logic while dialog is visible
         if (!dialogBox.isVisible()) {
             playerController.update(delta);

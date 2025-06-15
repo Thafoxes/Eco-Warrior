@@ -153,11 +153,7 @@ public class Goblin extends GameCharacter {
     }
 
     public void update(float delta, TiledMap tiledMap) {
-        if(isNPC){
-            // For NPCs, use idle animation and no movement
-            textureRegion = getCurrentSprite();
-            return;
-        }
+
         stateTime += delta;
         oldPosition.set(position);
 
@@ -166,15 +162,34 @@ public class Goblin extends GameCharacter {
             position.y + velocity.y * delta
         );
 
-        TextureRegion currentSprite = getCurrentSprite();
-        float goblinWidth = currentSprite.getRegionWidth();
-        float goblinHeight = currentSprite.getRegionHeight();
-        Rectangle nextBoundingBox = new Rectangle(
-            nextPosition.x - goblinWidth / 2f,
-            nextPosition.y - goblinHeight / 2f,
-            goblinWidth,
-            goblinHeight
-        );
+        Rectangle nextBoundingBox;
+        if(isNPC){
+
+            // Update the textureRegion with the current animation frame
+            textureRegion = getCurrentSprite();
+
+
+            float goblinWidth = textureRegion.getRegionWidth();
+            float goblinHeight = textureRegion.getRegionHeight();
+            nextBoundingBox = new Rectangle(
+                nextPosition.x - goblinWidth / 2f,
+                nextPosition.y - goblinHeight / 2f,
+                goblinWidth,
+                goblinHeight
+            );
+
+        }else{
+            TextureRegion currentSprite = getCurrentSprite();
+            float goblinWidth = currentSprite.getRegionWidth();
+            float goblinHeight = currentSprite.getRegionHeight();
+            nextBoundingBox= new Rectangle(
+                nextPosition.x - goblinWidth / 2f,
+                nextPosition.y - goblinHeight / 2f,
+                goblinWidth,
+                goblinHeight
+            );
+        }
+        
 
         // Check collision with objects and tile layer
         boolean blocked = false;
@@ -206,6 +221,7 @@ public class Goblin extends GameCharacter {
             position.y = MathUtils.clamp(position.y, 0, mapHeight);
         }
     }
+
 
     public void move(Vector2 direction){
         setVelocity(direction.x * CHARACTER_SPEED, direction.y * CHARACTER_SPEED);
