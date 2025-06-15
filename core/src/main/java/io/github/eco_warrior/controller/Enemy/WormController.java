@@ -11,6 +11,12 @@ public class WormController {
     private RedExplosion deathEffect;
     private boolean isExploding = false;
 
+    /***
+     * This is where you add effects for the worm, such as explosion effects.
+     * You can add more effects as needed.
+     * Add text on top of the worm when it dies, or any other effects.
+     * you can add sprite icon on top of the worm when it dies, or any other effects.
+     */
     public WormController(Worm worm) {
         this.worm = worm;
         // Initialize effects for explosion

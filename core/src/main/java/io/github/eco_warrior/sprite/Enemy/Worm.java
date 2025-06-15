@@ -59,6 +59,14 @@ public class Worm extends gameSprite {
         loadAnimations();
     }
 
+    /**
+     * This is normally where you add sound, animation, state of it.
+     * @param position
+     */
+    public Worm(Vector2 position) {
+        this(position, .2f);
+    }
+
     private void loadAnimations() {
         // Load animations directly here
         atlas = new TextureAtlas(Gdx.files.internal("atlas/worm/worm.atlas"));
@@ -73,9 +81,7 @@ public class Worm extends gameSprite {
 
     }
 
-    public Worm(Vector2 position) {
-        this(position, .2f);
-    }
+
 
     public void update(float delta) {
         timeSinceLastAttack += delta;
