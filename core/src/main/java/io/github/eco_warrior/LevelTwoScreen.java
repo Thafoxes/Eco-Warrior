@@ -301,6 +301,25 @@ public class LevelTwoScreen implements Screen {
         batch.begin();
         backgroundSprite.draw(batch);
 
+
+        drawTrees();
+        drawWorm();
+        drawToolFiltering();
+        drawTools();
+
+
+        batch.end();
+
+//        debugSprite();
+    }
+
+    private void drawTrees() {
+        for (Trees tree : trees.values()) {
+            tree.draw(batch);
+        } //edit
+    }
+
+    private void drawTools() {
         //draw tools that are not saplings to be unlocked
         for (gameSprite tool : tools.values()) {
 
@@ -308,11 +327,25 @@ public class LevelTwoScreen implements Screen {
                 tool.draw(batch);
             }
         }
+    }
 
-        for (Trees tree : trees.values()) {
-            tree.draw(batch);
-        } //edit
+    private void drawWorm() {
+        Iterator<Worm> iterator = worms.iterator();
+        while(iterator.hasNext()) {
+            Worm worm = iterator.next();
+            worm.update(stateTime);
+            worm.draw(batch);
 
+            if(worm.isDead) {
+                worm.reset();
+                wormPool.add(worm); //push back into pull
+                iterator.remove();
+                break;
+            }
+        }
+    }
+
+    private void drawToolFiltering() {
         //remove ordinary sapling upon planting
         if ((ordinaryTree.treeLevel == OrdinaryTree.TreeStage.HOLE.ordinal())
             && ordinaryTree.getCollisionRect().overlaps(ordinarySapling.getCollisionRect())) {
@@ -377,24 +410,6 @@ public class LevelTwoScreen implements Screen {
             tools.remove(gameSpriteType.BLAZING_SAPLING);
             isBlazingSaplingUsed = true; //set to true when blazing sapling is used
         }
-
-        Iterator<Worm> iterator = worms.iterator();
-        while(iterator.hasNext()) {
-            Worm worm = iterator.next();
-            worm.update(stateTime);
-            worm.draw(batch);
-
-            if(worm.isDead) {
-                worm.reset();
-                wormPool.add(worm); //push back into pull
-                iterator.remove();
-                break;
-            }
-        }
-
-        batch.end();
-
-//        debugSprite();
     }
 
     private void input(){
