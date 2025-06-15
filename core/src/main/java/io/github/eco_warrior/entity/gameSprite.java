@@ -3,14 +3,14 @@ package io.github.eco_warrior.entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class gameSprite extends spriteGenerator {
     private Sprite sprite;
@@ -22,6 +22,9 @@ public class gameSprite extends spriteGenerator {
     private String atlasPath;
     private float scale = 1f;
     private Vector2 initPosition;
+    private Map<String, Animation<TextureRegion>> animations = new HashMap<>();
+    private String currentAnimationName;
+    private float stateTime;
 
     //debug mthod
     private ShapeRenderer shapeRenderer;
@@ -174,13 +177,6 @@ public class gameSprite extends spriteGenerator {
         sprite.setRegion(frames[currentFrameIndex]);
     }
 
-    /**
-     * reset the frame back to a custom frame
-     */
-    public void resetFrame(int frameCount){
-        currentFrameIndex = frameCount;
-        sprite.setRegion(frames[currentFrameIndex]);
-    }
 
     /**
      * for manual frame get index
@@ -215,9 +211,7 @@ public class gameSprite extends spriteGenerator {
         this.sprite.draw(batch);
     }
 
-    public boolean checkCollision(Rectangle rect){
-        return this.collisionRect.overlaps(rect);
-    }
+
 
     public boolean isPressed(Vector2 cursorPosition){
         if(this.collisionRect.contains(cursorPosition)){
@@ -258,10 +252,6 @@ public class gameSprite extends spriteGenerator {
 
     }
 
-    public void resetSound(){
-//        soundPlayed = false;
-
-    }
 
     public Rectangle getCollisionRect(){
         return this.collisionRect;

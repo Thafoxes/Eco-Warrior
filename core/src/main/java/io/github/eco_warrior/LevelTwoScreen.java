@@ -301,23 +301,6 @@ public class LevelTwoScreen implements Screen {
                 worms.add(worm);
 
                 // Assign tree target based on path
-                switch(path.getNumber()) {
-                    case 1:
-                        worm.treeTarget(iceTree);
-                        break;
-                    case 2:
-                        worm.treeTarget(ordinaryTree);
-                        break;
-                    case 3:
-                        worm.treeTarget(breezingTree);
-                        break;
-                    case 4:
-                        worm.treeTarget(blazingTree);
-                        break;
-                    case 5:
-                        worm.treeTarget(voltaicTree);
-                        break;
-                }
 
                 wormSpawnTimer = 0; // Reset the timer
                 long endTime = System.nanoTime();
@@ -380,12 +363,12 @@ public class LevelTwoScreen implements Screen {
             worm.update(stateTime);
             worm.draw(batch);
 
-            if(worm.isDead) {
-                worm.reset();
-                wormPool.add(worm); //push back into pull
-                iterator.remove();
-                break;
-            }
+//            if(worm.isDead) {
+//                worm.reset();
+//                wormPool.add(worm); //push back into pull
+//                iterator.remove();
+//                break;
+//            }
         }
     }
 
@@ -570,22 +553,22 @@ public class LevelTwoScreen implements Screen {
         }
 
         if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            if (draggingTool == tools.get(gameSpriteType.SHOVEL)) {
-                for (Worm worm : worms) {
-                    if (worm.getCollisionRect().overlaps(shovel.getCollisionRect()) && !worm.isDeathTransition) {
-                        worm.speed = 0;
-                        worm.isDeathTransition = true;
-
-                        if (worm.attackTask != null) {
-                            worm.attackTask.cancel();
-                            worm.attackTask = null;
-                        }
-
-                        shovelSound.play(.5f);
-                        worm.startDeathAnimation();
-                    }
-                }
-            }
+//            if (draggingTool == tools.get(gameSpriteType.SHOVEL)) {
+//                for (Worm worm : worms) {
+//                    if (worm.getCollisionRect().overlaps(shovel.getCollisionRect()) && !worm.isDeathTransition) {
+//                        worm.speed = 0;
+//                        worm.isDeathTransition = true;
+//
+//                        if (worm.attackTask != null) {
+//                            worm.attackTask.cancel();
+//                            worm.attackTask = null;
+//                        }
+//
+//                        shovelSound.play(.5f);
+//                        worm.startDeathAnimation();
+//                    }
+//                }
+//            }
         }
 
         if(isReturning){
@@ -697,7 +680,7 @@ public class LevelTwoScreen implements Screen {
 
     private void updateEnemyAnimationMovement() {
         for (Worm worm : worms) {
-            worm.updateWormAnimationMovement();
+//            worm.updateWormAnimationMovement();
         }
     }
 
