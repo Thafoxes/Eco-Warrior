@@ -13,7 +13,7 @@ public class WormController {
 
     public WormController(Worm worm) {
         this.worm = worm;
-        // Initialize effects
+        // Initialize effects for explosion
         initializeEffects();
     }
 

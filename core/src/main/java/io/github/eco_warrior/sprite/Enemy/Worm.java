@@ -33,6 +33,7 @@ public class Worm extends gameSprite {
     private TextureAtlas atlas;
     private Map<WormState, Animation<TextureRegion>> animationMap = new HashMap<>();
 
+
     public enum WormState {
         MOVING,
         IDLE,
