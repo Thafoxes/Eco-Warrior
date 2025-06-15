@@ -29,7 +29,9 @@ public class gameSprite extends spriteGenerator {
     //for manual frame
     private int frameCount;
 
-
+    /**
+     * No frame to worried about, just a single sprite.
+     */
     public gameSprite(String atlasPath, String regionName, Vector2 position, float scale , String correctSoundPath, String wrongSoundPath, String hittingSoundPath) {
         this.atlasPath = atlasPath;
         TextureAtlas atlas = new TextureAtlas(Gdx.files.internal(this.atlasPath));
@@ -92,17 +94,30 @@ public class gameSprite extends spriteGenerator {
         collisionRect = new Rectangle(position.x, position.y, sprite.getWidth(), sprite.getHeight());
     }
 
+    /**
+     * Default scale with correct and wrong sound effects.
+     * */
     public gameSprite(String atlasPath, String regionName, Vector2 position , String correctSoundPath, String wrongSoundPath) {
        this(atlasPath, regionName, position, 1f, correctSoundPath, wrongSoundPath, null);
     }
 
+    /**
+     * Default scale with no sound effects.
+     * */
     public gameSprite(String atlasPath, String regionName, Vector2 position) {
         this(atlasPath, regionName, position, 1f, null, null, null);
     }
+
+    /**
+     * Custom scale with no sound effects.
+     * */
     public gameSprite(String atlasPath, String regionName, Vector2 position, float scale) {
         this(atlasPath, regionName, position, scale, null, null, null);
     }
 
+    /**
+     * Default scale with only correct sound effects.
+     * */
     public gameSprite(String atlasPath, String regionName, Vector2 position, float scale, String correctSoundPath) {
         this(atlasPath, regionName, position, scale, correctSoundPath, null, null);
     }
@@ -121,7 +136,23 @@ public class gameSprite extends spriteGenerator {
                 collisionRect.height
             );
         }
+    }
 
+    /**
+     * draw debug with custom color
+     * @param shapeRenderer
+     * @param debugColor
+     */
+    public void drawDebug(ShapeRenderer shapeRenderer, Color debugColor) {
+        if (collisionRect != null) {
+            shapeRenderer.setColor(debugColor);
+            shapeRenderer.rect(
+                collisionRect.x,
+                collisionRect.y,
+                collisionRect.width,
+                collisionRect.height
+            );
+        }
     }
 
     /**
@@ -140,6 +171,14 @@ public class gameSprite extends spriteGenerator {
      */
     public void resetFrame(){
         currentFrameIndex = 0;
+        sprite.setRegion(frames[currentFrameIndex]);
+    }
+
+    /**
+     * reset the frame back to a custom frame
+     */
+    public void resetFrame(int frameCount){
+        currentFrameIndex = frameCount;
         sprite.setRegion(frames[currentFrameIndex]);
     }
 

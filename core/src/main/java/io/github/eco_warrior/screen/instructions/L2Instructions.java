@@ -14,11 +14,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import io.github.eco_warrior.LevelThreeScreen;
 import io.github.eco_warrior.LevelTwoScreen;
 import io.github.eco_warrior.Main;
 import io.github.eco_warrior.controller.buttonGenerator;
-import io.github.eco_warrior.controller.fontGenerator;
+import io.github.eco_warrior.controller.FontGenerator;
 import io.github.eco_warrior.enums.textEnum;
 
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_HEIGHT;
@@ -32,8 +31,8 @@ public class L2Instructions implements Screen {
     private Stage stage;
 
     // Fonts
-    private fontGenerator titleFont;
-    private fontGenerator instructionFont;
+    private FontGenerator titleFont;
+    private FontGenerator instructionFont;
 
     // Images
     private Texture instructionImage;
@@ -59,8 +58,8 @@ public class L2Instructions implements Screen {
         camera.update();
 
         // Initialize fonts
-        titleFont = new fontGenerator(36, Color.WHITE, Color.BLACK);
-        instructionFont = new fontGenerator(24, Color.WHITE, Color.BLACK);
+        titleFont = new FontGenerator(36, Color.WHITE, Color.BLACK);
+        instructionFont = new FontGenerator(24, Color.WHITE, Color.BLACK);
 
         // Load images
         instructionImage = new Texture(Gdx.files.internal("ui/instructions/L3instructions.png"));

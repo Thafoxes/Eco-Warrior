@@ -6,7 +6,7 @@ set count=1
 for %%f in (*.png) do (
     set "num=00!count!"
     set "num=!num:~-2!"
-    ren "%%f" "image_!num!.png"
+    ren "%%f" "changenamehere_!num!.png"
     set /a count+=1
 )
 

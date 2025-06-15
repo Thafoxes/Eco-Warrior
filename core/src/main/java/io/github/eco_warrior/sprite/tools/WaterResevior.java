@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.controller.fontGenerator;
+import io.github.eco_warrior.controller.FontGenerator;
 import io.github.eco_warrior.entity.gameSprite;
 import io.github.eco_warrior.enums.textEnum;
 
@@ -17,13 +17,13 @@ public class WaterResevior extends gameSprite {
     private Sound emptyingSound;
     //won't be using the water level, but keeping it for future reference
     private int waterCollected = 0;
-    private fontGenerator font;
+    private FontGenerator font;
 
     public WaterResevior(Vector2 position, float scale) {
         super(ATLAS_PATH, REGION_NAME, position, scale);
         emptyingSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/water_pouring.mp3"));
         // Initialize font with white text and black border
-        font = new fontGenerator(16, Color.WHITE, Color.BLACK);
+        font = new FontGenerator(16, Color.WHITE, Color.BLACK);
     }
 
     public boolean receiveWater(int amount) {

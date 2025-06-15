@@ -15,10 +15,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.FirstLevelScreen;
-import io.github.eco_warrior.LevelThreeScreen;
 import io.github.eco_warrior.Main;
 import io.github.eco_warrior.controller.buttonGenerator;
-import io.github.eco_warrior.controller.fontGenerator;
+import io.github.eco_warrior.controller.FontGenerator;
 import io.github.eco_warrior.enums.textEnum;
 
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_HEIGHT;
@@ -32,8 +31,8 @@ public class L1Instructions implements Screen {
     private Stage stage;
 
     // Fonts
-    private fontGenerator titleFont;
-    private fontGenerator instructionFont;
+    private FontGenerator titleFont;
+    private FontGenerator instructionFont;
 
     // Images
     private Texture instructionImage;
@@ -42,6 +41,8 @@ public class L1Instructions implements Screen {
     // Button
     private buttonGenerator buttonGen;
     private TextButton acknowledgeButton;
+
+
 
     public L1Instructions(Main game) {
         this.game = game;
@@ -59,11 +60,11 @@ public class L1Instructions implements Screen {
         camera.update();
 
         // Initialize fonts
-        titleFont = new fontGenerator(36, Color.WHITE, Color.BLACK);
-        instructionFont = new fontGenerator(24, Color.WHITE, Color.BLACK);
+        titleFont = new FontGenerator(36, Color.WHITE, Color.BLACK);
+        instructionFont = new FontGenerator(24, Color.WHITE, Color.BLACK);
 
         // Load images
-        instructionImage = new Texture(Gdx.files.internal("ui/instructions/L3instructions.png"));
+        instructionImage = new Texture(Gdx.files.internal("ui/instructions/L1instructions.png"));
         backgroundImage = new Texture(Gdx.files.internal("Image/recycle_manager_base.png"));
 
         // Create acknowledge button
@@ -113,7 +114,7 @@ public class L1Instructions implements Screen {
 
 
         // Draw the instruction image centered
-        float scale = 0.6f; // Scale factor for image
+        float scale = 0.5f; // Scale factor for image
         float imageWidth = instructionImage.getWidth() * scale;
         float imageHeight = instructionImage.getHeight() * scale;
 
@@ -126,7 +127,7 @@ public class L1Instructions implements Screen {
         String[] instructions = {
             "1. Sort the recyclables into the correct bins",
             "2. Dispose waste into the red bins as general waste",
-            "3. Put wrong items will deduct your score",
+            "3. Put wrong items will deduct your score and hearts!",
         };
 
         float textY = WINDOW_HEIGHT / (instructions.length * 4); // Position text below the title
@@ -140,6 +141,8 @@ public class L1Instructions implements Screen {
         // Draw stage (for button)
         stage.act(delta);
         stage.draw();
+
+
     }
 
     @Override
@@ -169,4 +172,6 @@ public class L1Instructions implements Screen {
         instructionImage.dispose();
         backgroundImage.dispose();
     }
+
+
 }
