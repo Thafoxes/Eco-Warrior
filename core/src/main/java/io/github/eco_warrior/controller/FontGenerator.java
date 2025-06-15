@@ -49,6 +49,12 @@ public class FontGenerator {
 
     }
 
+    /**
+     * Default font generator with size, font color, and border color.
+     * @param size
+     * @param fontColor
+     * @param borderColor
+     */
     public FontGenerator(Integer size, Color fontColor, Color borderColor) {
         if(fontColor != null){
             this.fontColor = fontColor;
@@ -74,6 +80,9 @@ public class FontGenerator {
 
     }
 
+    /**
+     * Default font generator with size 32, black font color, and black border color.
+     */
     public FontGenerator() {
         int size = 32;
         generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/TT Octosquares Trial Medium.ttf"));
