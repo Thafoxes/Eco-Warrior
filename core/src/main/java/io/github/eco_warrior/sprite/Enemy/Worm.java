@@ -129,11 +129,17 @@ public class Worm extends gameSprite {
                 attackTask = new Timer.Task() {
                     @Override
                     public void run() {
+                        runAttackFrame(frame + 1);
+
                         if (frame == WormAnimation.ATTACK_5.ordinal()) {
                             attackSound.play(.5f);
-                            runAttackFrame(frame + 1);
-                        } else {
-                            runAttackFrame(frame + 1);
+                        } else if (frame == WormAnimation.ATTACK_7.ordinal()) {
+                            if (tree.health > 0) {
+                                tree.health--; // Decrease tree health
+                                System.out.println("Tree health:" + tree.health);
+                            } else {
+                                System.out.println("Tree health:" + tree.health);
+                            }
                         }
                     }
                 };
@@ -182,7 +188,7 @@ public class Worm extends gameSprite {
             moveTask = new Timer.Task() {
                 @Override
                 public void run() {
-                    System.out.println("Worm moving to next frame: " + wormLevel);
+//                    System.out.println("Worm moving to next frame: " + wormLevel);
                     int nextFrame = wormLevel + 1;
                     if (nextFrame > WormAnimation.MOVE_4.ordinal()) {
                         nextFrame = WormAnimation.MOVE_1.ordinal();
@@ -203,7 +209,7 @@ public class Worm extends gameSprite {
             stopTask = new Timer.Task() {
                 @Override
                 public void run() {
-                    System.out.println("Stop");
+//                    System.out.println("Stop");
                     speed = 0; // Stop the worm after 0.3s
                     startAttackAnimationLoop();
                 }

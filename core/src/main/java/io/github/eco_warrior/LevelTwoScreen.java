@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import io.github.eco_warrior.entity.TreeHealth;
 import io.github.eco_warrior.entity.Trees;
 import io.github.eco_warrior.entity.gameSprite;
 import java.util.Random;
@@ -19,6 +20,7 @@ import io.github.eco_warrior.sprite.*;
 import io.github.eco_warrior.sprite.Enemy.Worm;
 import io.github.eco_warrior.sprite.gardening_equipments.*;
 import io.github.eco_warrior.sprite.gardening_equipments.sapling_variant.*;
+import io.github.eco_warrior.sprite.tree_healths.*;
 import io.github.eco_warrior.sprite.tree_variant.*;
 
 import java.util.*;
@@ -53,6 +55,9 @@ public class LevelTwoScreen implements Screen {
     //trees
     private Map<treesType, Trees> trees;
 
+    //tree healths
+    private Map<treesHealthsType, TreeHealth> treeHealths;
+
     //entities declaration
     private WateringCan wateringCan;
     private WaterFountain waterFountain;
@@ -69,6 +74,13 @@ public class LevelTwoScreen implements Screen {
     private BreezingSapling breezingSapling;
     private IceSapling iceSapling;
     private VoltaicSapling voltaicSapling;
+
+    //tree healths
+    private OrdinaryTreeHealth ordinaryTreeHealth;
+    private BlazingTreeHealth blazingTreeHealth;
+    private BreezingTreeHealth breezingTreeHealth;
+    private IceTreeHealth iceTreeHealth;
+    private VoltaicTreeHealth voltaicTreeHealth;
 
     //boolean flags to check if saplings are used
     private boolean isVoltaicSaplingUsed = false;
@@ -126,7 +138,7 @@ public class LevelTwoScreen implements Screen {
     }
 
     //sound effects
-    private Sound shovelSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/pan.mp3"));
+    private final Sound shovelSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/pan.mp3"));
 
     public LevelTwoScreen(Main main) {
         this.game = main;
@@ -154,6 +166,7 @@ public class LevelTwoScreen implements Screen {
         worms = new Array<>();
         liquids = new HashMap<>();
         trees = new HashMap<>();
+        treeHealths = new HashMap<>();
 
         initializeEntities();
     }
@@ -185,6 +198,12 @@ public class LevelTwoScreen implements Screen {
         iceSapling = new IceSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
         voltaicSapling = new VoltaicSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
 
+        ordinaryTreeHealth = new OrdinaryTreeHealth(ordinaryTree);
+        blazingTreeHealth = new BlazingTreeHealth(blazingTree);
+        breezingTreeHealth = new BreezingTreeHealth(breezingTree);
+        iceTreeHealth = new IceTreeHealth(iceTree);
+        voltaicTreeHealth = new VoltaicTreeHealth(voltaicTree);
+
         liquids.put("water_fountain_hitbox", waterFountain);
 
         tools.put(gameSpriteType.SHOVEL, shovel);
@@ -203,6 +222,12 @@ public class LevelTwoScreen implements Screen {
         trees.put(treesType.BREEZING_TREE, breezingTree);
         trees.put(treesType.ICE_TREE, iceTree);
         trees.put(treesType.VOLTAIC_TREE, voltaicTree);
+
+        treeHealths.put(treesHealthsType.ORDINARY_TREE_HEALTH, ordinaryTreeHealth);
+        treeHealths.put(treesHealthsType.BLAZING_TREE_HEALTH, blazingTreeHealth);
+        treeHealths.put(treesHealthsType.BREEZING_TREE_HEALTH, breezingTreeHealth);
+        treeHealths.put(treesHealthsType.ICE_TREE_HEALTH, iceTreeHealth);
+        treeHealths.put(treesHealthsType.VOLTAIC_TREE_HEALTH, voltaicTreeHealth);
 
         wormPool = new Array<>(WORM_BUFFER_CAPACITY);
         for (int i = 0; i < WORM_BUFFER_CAPACITY; i++) {
@@ -230,6 +255,14 @@ public class LevelTwoScreen implements Screen {
         VOLTAIC_TREE
     }
 
+    private enum treesHealthsType {
+        ORDINARY_TREE_HEALTH,
+        BLAZING_TREE_HEALTH,
+        BREEZING_TREE_HEALTH,
+        ICE_TREE_HEALTH,
+        VOLTAIC_TREE_HEALTH
+    }
+
     @Override
     public void render(float delta) {
         input();
@@ -238,6 +271,10 @@ public class LevelTwoScreen implements Screen {
         updateTrees();
         spawnWorm(delta);
         updateEnemyAnimationMovement();
+
+        for (TreeHealth treeHealth : treeHealths.values()) {
+            treeHealth.updateHealth();
+        }
     }
 
     private void spawnWorm(float delta) {
@@ -302,8 +339,9 @@ public class LevelTwoScreen implements Screen {
         backgroundSprite.draw(batch);
 
 
-        drawTrees();
         drawWorm();
+        drawTrees();
+        drawTreeHealths();
         drawToolFiltering();
         drawTools();
 
@@ -317,6 +355,12 @@ public class LevelTwoScreen implements Screen {
         for (Trees tree : trees.values()) {
             tree.draw(batch);
         } //edit
+    }
+
+    private void drawTreeHealths() {
+        for (TreeHealth treeHealth : treeHealths.values()) {
+            treeHealth.draw(batch);
+        }
     }
 
     private void drawTools() {
@@ -354,7 +398,8 @@ public class LevelTwoScreen implements Screen {
 
         //draw voltaic sapling when the ordinary tree reaches adult phase
         if(!isVoltaicSaplingUsed) {
-            if (ordinaryTree.treeLevel == OrdinaryTree.TreeStage.MATURE_TREE.ordinal()) {
+            if (ordinaryTree.treeLevel == OrdinaryTree.TreeStage.MATURE_TREE.ordinal()
+                || ordinaryTree.treeLevel == OrdinaryTree.TreeStage.DEAD_MATURE_TREE.ordinal()) {
                 tools.get(gameSpriteType.VOLTAIC_SAPLING).draw(batch);
             }
         }
@@ -369,7 +414,9 @@ public class LevelTwoScreen implements Screen {
         //draw breezing sapling when the voltaic tree reaches adult phase
         if(!isBreezingSaplingUsed) {
             //VoltaicTree.TreeStage.YOUNG_TREE.ordinal() means after the sapling stage
-            if (voltaicTree.treeLevel >= VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()) {
+            if (voltaicTree.treeLevel >= VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+                && voltaicTree.treeLevel <= VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()
+                || voltaicTree.treeLevel == VoltaicTree.TreeStage.DEAD_MATURE_TREE.ordinal()) {
                 tools.get(gameSpriteType.BREEZING_SAPLING).draw(batch);
             }
         }
@@ -384,7 +431,9 @@ public class LevelTwoScreen implements Screen {
         //draw ice sapling when the breezing tree reaches adult phase
         if(!isIceSaplingUsed) {
             //included ANIMATED_MATURE_TREE_1 - 3
-            if (breezingTree.treeLevel >= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()) {
+            if (breezingTree.treeLevel >= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+            && breezingTree.treeLevel <= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal()
+            || breezingTree.treeLevel == BreezingTree.TreeStage.DEAD_MATURE_TREE.ordinal()) {
                 tools.get(gameSpriteType.ICE_SAPLING).draw(batch);
             }
         }
@@ -399,7 +448,9 @@ public class LevelTwoScreen implements Screen {
         //draw blazing sapling when the ice tree reaches adult phase
         if(!isBlazingSaplingUsed) {
             //included ANIMATED_MATURE_TREE_1 - 4
-            if (iceTree.treeLevel >= IceTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()) {
+            if (iceTree.treeLevel >= IceTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+                && iceTree.treeLevel <= IceTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()
+                || iceTree.treeLevel == IceTree.TreeStage.DEAD_MATURE_TREE.ordinal()) {
                 tools.get(gameSpriteType.BLAZING_SAPLING).draw(batch);
             }
         }
@@ -430,7 +481,8 @@ public class LevelTwoScreen implements Screen {
                     if (type == gameSpriteType.VOLTAIC_SAPLING) {
                         //voltaic sapling can only be dragged when ordinary tree is mature
                         if (tool.getCollisionRect().contains(currentTouchPos)
-                            && ordinaryTree.treeLevel == OrdinaryTree.TreeStage.MATURE_TREE.ordinal()) {
+                            && (ordinaryTree.treeLevel == OrdinaryTree.TreeStage.MATURE_TREE.ordinal()
+                            || ordinaryTree.treeLevel == OrdinaryTree.TreeStage.DEAD_MATURE_TREE.ordinal())) {
                             draggingTool = tool;
                             isDragging = true;
                             lastTouchPos.set(currentTouchPos);
@@ -440,7 +492,9 @@ public class LevelTwoScreen implements Screen {
                     else if (type == gameSpriteType.BREEZING_SAPLING) {
                         //breezing sapling can only be dragged when voltaic tree is mature
                         if (tool.getCollisionRect().contains(currentTouchPos)
-                            && (voltaicTree.treeLevel >= VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal())) {
+                            && (voltaicTree.treeLevel >= VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+                            && voltaicTree.treeLevel <= VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()
+                            || voltaicTree.treeLevel == VoltaicTree.TreeStage.DEAD_MATURE_TREE.ordinal())) {
                             draggingTool = tool;
                             isDragging = true;
                             lastTouchPos.set(currentTouchPos);
@@ -450,7 +504,9 @@ public class LevelTwoScreen implements Screen {
                     else if (type == gameSpriteType.ICE_SAPLING) {
                         //ice sapling can only be dragged when breezing tree is mature
                         if (tool.getCollisionRect().contains(currentTouchPos)
-                            && (breezingTree.treeLevel >= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal())) {
+                            && (breezingTree.treeLevel >= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+                            && breezingTree.treeLevel <= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal()
+                            || breezingTree.treeLevel == BreezingTree.TreeStage.DEAD_MATURE_TREE.ordinal())) {
                             draggingTool = tool;
                             isDragging = true;
                             lastTouchPos.set(currentTouchPos);
@@ -460,7 +516,9 @@ public class LevelTwoScreen implements Screen {
                     else if (type == gameSpriteType.BLAZING_SAPLING) {
                         //blazing sapling can only be dragged when ice tree is mature
                         if (tool.getCollisionRect().contains(currentTouchPos)
-                            && (iceTree.treeLevel >= IceTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal())) {
+                            && (iceTree.treeLevel >= IceTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+                            && iceTree.treeLevel <= IceTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()
+                            || iceTree.treeLevel == IceTree.TreeStage.DEAD_MATURE_TREE.ordinal())) {
                             draggingTool = tool;
                             isDragging = true;
                             lastTouchPos.set(currentTouchPos);
@@ -630,11 +688,11 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void updateTrees() {
-        ordinaryTree.updateTree(shovel, ordinarySapling, wateringCan);
-        blazingTree.updateTree(shovel, blazingSapling, wateringCan);
-        breezingTree.updateTree(shovel, breezingSapling, wateringCan);
-        iceTree.updateTree(shovel, iceSapling, wateringCan);
-        voltaicTree.updateTree(shovel, voltaicSapling, wateringCan);
+        ordinaryTree.updateTree(ordinarySapling, wateringCan);
+        blazingTree.updateTree(blazingSapling, wateringCan);
+        breezingTree.updateTree(breezingSapling, wateringCan);
+        iceTree.updateTree(iceSapling, wateringCan);
+        voltaicTree.updateTree(voltaicSapling, wateringCan);
     }
 
     private void updateEnemyAnimationMovement() {
@@ -682,6 +740,10 @@ public class LevelTwoScreen implements Screen {
             worm.drawDebug(shapeRenderer);
         }
 
+//        for (TreeHealth treeHealth : treeHealths.values()) {
+//            treeHealth.drawDebug(shapeRenderer);
+//        }
+
         liquids.get("water_fountain_hitbox").drawDebug(shapeRenderer);
 
 //        debugSpawnArea();
@@ -707,6 +769,11 @@ public class LevelTwoScreen implements Screen {
         for(gameSprite worm: worms){
             worm.dispose();
         }
+
+        for (TreeHealth treeHealth : treeHealths.values()) {
+            treeHealth.dispose();
+        }
+
         wateringCan.dispose();
         waterFountain.dispose();
         shovel.dispose();

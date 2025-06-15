@@ -16,6 +16,9 @@ public class OrdinaryTree extends Trees {
         SAPLING,
         YOUNG_TREE,
         MATURE_TREE,
+        DEAD_SAPLING,
+        DEAD_YOUNG_TREE,
+        DEAD_MATURE_TREE
     }
 
     public int treeLevel = TreeStage.FLAG.ordinal();
@@ -24,10 +27,13 @@ public class OrdinaryTree extends Trees {
     private final Sound waterPourSound;
     private final Sound saplingSound;
 
+    // References to scheduled tasks
+    public Timer.Task growTask;
+
     public OrdinaryTree(Vector2 position, float scale) {
         super("atlas/tree_variant_stages/ordinary_tree_stages.atlas",
             "ordinary_tree",
-            5,
+            8,
             position,
             scale);
 
@@ -36,7 +42,7 @@ public class OrdinaryTree extends Trees {
         saplingSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/sapling_placement.mp3"));
     }
 
-    public void updateTree(gameSprite shovel, gameSprite sapling, WateringCan wateringCan) {
+    public void updateTree(gameSprite sapling, WateringCan wateringCan) {
         if (treeLevel == TreeStage.HOLE.ordinal() && getCollisionRect().overlaps(sapling.getCollisionRect())) {
             saplingSound.play(1.5f);
             treeLevel = TreeStage.SAPLING.ordinal();
@@ -53,7 +59,7 @@ public class OrdinaryTree extends Trees {
             isStageTransitionScheduled = true;
             waterPourSound.play(1f);
 
-            Timer.schedule(new Timer.Task() {
+            growTask = new Timer.Task() {
                 @Override
                 public void run() {
                     if (treeLevel == TreeStage.SAPLING.ordinal()) {
@@ -62,11 +68,36 @@ public class OrdinaryTree extends Trees {
                         treeLevel = TreeStage.MATURE_TREE.ordinal();
                         isMatureTree = true;
                     }
+
                     growthSound.play(1.5f);
+                    health = 4; // Reset health for the next tree stage
                     setFrame(treeLevel);
                     isStageTransitionScheduled = false;
                 }
-            }, 2); // 2 seconds delay
+            };
+            Timer.schedule(growTask, 2); // 2 seconds delay
+        }
+
+        treeObliteration();
+    }
+
+    @Override
+    public void treeObliteration() {
+        if (health == 0) {
+            if (growTask != null) {
+                growTask.cancel();
+                growTask = null;
+            }
+
+            if (treeLevel == TreeStage.SAPLING.ordinal()) {
+                treeLevel = TreeStage.DEAD_SAPLING.ordinal();
+            } else if (treeLevel == TreeStage.YOUNG_TREE.ordinal()) {
+                treeLevel = TreeStage.DEAD_YOUNG_TREE.ordinal();
+            } else if (treeLevel == TreeStage.MATURE_TREE.ordinal()) {
+                treeLevel = TreeStage.DEAD_MATURE_TREE.ordinal();
+            }
+
+            setFrame(treeLevel);
         }
     }
 }

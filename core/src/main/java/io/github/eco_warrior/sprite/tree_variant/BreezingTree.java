@@ -17,7 +17,10 @@ public class BreezingTree extends Trees {
         YOUNG_TREE,
         ANIMATED_MATURE_TREE_1,
         ANIMATED_MATURE_TREE_2,
-        ANIMATED_MATURE_TREE_3
+        ANIMATED_MATURE_TREE_3,
+        DEAD_SAPLING,
+        DEAD_YOUNG_TREE,
+        DEAD_MATURE_TREE
     }
 
 
@@ -27,10 +30,14 @@ public class BreezingTree extends Trees {
     private final Sound waterPourSound;
     private final Sound saplingSound;
 
+    // References to scheduled tasks
+    public Timer.Task growTask;
+    public Timer.Task animationTask;
+
     public BreezingTree(Vector2 position, float scale) {
         super("atlas/tree_variant_stages/breezing_tree_stages.atlas",
             "breezing_tree",
-            7,
+            10,
             position,
             scale);
 
@@ -39,7 +46,7 @@ public class BreezingTree extends Trees {
         saplingSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/sapling_placement.mp3"));
     }
 
-    public void updateTree(gameSprite shovel, gameSprite sapling, WateringCan wateringCan) {
+    public void updateTree(gameSprite sapling, WateringCan wateringCan) {
         if (treeLevel == TreeStage.HOLE.ordinal() && getCollisionRect().overlaps(sapling.getCollisionRect())) {
             saplingSound.play(1.5f);
             treeLevel = TreeStage.SAPLING.ordinal();
@@ -56,7 +63,7 @@ public class BreezingTree extends Trees {
             isStageTransitionScheduled = true;
             waterPourSound.play(1f);
 
-            Timer.schedule(new Timer.Task() {
+            growTask = new Timer.Task() {
                 @Override
                 public void run() {
                     if (treeLevel == TreeStage.SAPLING.ordinal()) {
@@ -65,11 +72,14 @@ public class BreezingTree extends Trees {
                         treeLevel = TreeStage.ANIMATED_MATURE_TREE_1.ordinal();
                         isMatureTree = true;
                     }
-                    growthSound.play(0.3f);
+
+                    growthSound.play(1.5f);
+                    health = 4; // Reset health for the next tree stage
                     setFrame(treeLevel);
                     isStageTransitionScheduled = false;
                 }
-            }, 2); // 2 seconds delay
+            };
+            Timer.schedule(growTask, 2); // 2 seconds delay
         }
 
         // Handle the animated mature tree stages
@@ -77,7 +87,8 @@ public class BreezingTree extends Trees {
             && treeLevel <= TreeStage.ANIMATED_MATURE_TREE_3.ordinal()
             && !isStageTransitionScheduled) {
             isStageTransitionScheduled = true;
-            Timer.schedule(new Timer.Task() {
+
+            animationTask = new Timer.Task() {
                 @Override
                 public void run() {
                     int nextFrame = treeLevel + 1;
@@ -88,7 +99,35 @@ public class BreezingTree extends Trees {
                     treeLevel = nextFrame;
                     isStageTransitionScheduled = false;
                 }
-            }, 0.3f); // 0.3 seconds delay
-        }// 3 seconds delay
+            };
+            Timer.schedule(animationTask, .3f); // 0.3 seconds delay
+        }
+
+        treeObliteration();
+    }
+
+    @Override
+    public void treeObliteration() {
+        if (health == 0) {
+            if (growTask != null) {
+                growTask.cancel();
+                growTask = null;
+            }
+            if (animationTask != null) {
+                animationTask.cancel();
+                animationTask = null;
+            }
+
+            if (treeLevel == TreeStage.SAPLING.ordinal()) {
+                treeLevel = TreeStage.DEAD_SAPLING.ordinal();
+            } else if (treeLevel == TreeStage.YOUNG_TREE.ordinal()) {
+                treeLevel = TreeStage.DEAD_YOUNG_TREE.ordinal();
+            } else if (treeLevel >= TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+                && treeLevel <= TreeStage.ANIMATED_MATURE_TREE_3.ordinal()) {
+                treeLevel = TreeStage.DEAD_MATURE_TREE.ordinal();
+            }
+
+            setFrame(treeLevel);
+        }
     }
 }

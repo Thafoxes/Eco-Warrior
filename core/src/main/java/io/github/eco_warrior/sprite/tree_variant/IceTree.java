@@ -19,6 +19,9 @@ public class IceTree extends Trees {
         ANIMATED_MATURE_TREE_2,
         ANIMATED_MATURE_TREE_3,
         ANIMATED_MATURE_TREE_4,
+        DEAD_SAPLING,
+        DEAD_YOUNG_TREE,
+        DEAD_MATURE_TREE
     }
 
     public int treeLevel = TreeStage.FLAG.ordinal();
@@ -27,10 +30,14 @@ public class IceTree extends Trees {
     private final Sound waterPourSound;
     private final Sound saplingSound;
 
+    // References to scheduled tasks
+    public Timer.Task growTask;
+    public Timer.Task animationTask;
+
     public IceTree(Vector2 position, float scale) {
         super("atlas/tree_variant_stages/ice_tree_stages.atlas",
             "ice_tree",
-            8,
+            11,
             position,
             scale);
 
@@ -39,7 +46,7 @@ public class IceTree extends Trees {
         saplingSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/sapling_placement.mp3"));
     }
 
-    public void updateTree(gameSprite shovel, gameSprite sapling, WateringCan wateringCan) {
+    public void updateTree(gameSprite sapling, WateringCan wateringCan) {
         if (treeLevel == TreeStage.HOLE.ordinal() && getCollisionRect().overlaps(sapling.getCollisionRect())) {
             saplingSound.play(1.5f);
             treeLevel = TreeStage.SAPLING.ordinal();
@@ -56,7 +63,7 @@ public class IceTree extends Trees {
             isStageTransitionScheduled = true;
             waterPourSound.play(1f);
 
-            Timer.schedule(new Timer.Task() {
+            growTask = new Timer.Task() {
                 @Override
                 public void run() {
                     if (treeLevel == TreeStage.SAPLING.ordinal()) {
@@ -65,30 +72,62 @@ public class IceTree extends Trees {
                         treeLevel = TreeStage.ANIMATED_MATURE_TREE_1.ordinal();
                         isMatureTree = true;
                     }
+
                     growthSound.play(1.5f);
+                    health = 4; // Reset health for the next tree stage
                     setFrame(treeLevel);
                     isStageTransitionScheduled = false;
                 }
-            }, 2); // 2 seconds delay
+            };
+            Timer.schedule(growTask, 2); // 2 seconds delay
         }
 
         // Handle the animated mature tree stages
-        if (treeLevel >= IceTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
-            && treeLevel <= IceTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()
+        if (treeLevel >= TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+            && treeLevel <= TreeStage.ANIMATED_MATURE_TREE_4.ordinal()
             && !isStageTransitionScheduled) {
             isStageTransitionScheduled = true;
-            Timer.schedule(new Timer.Task() {
+
+            animationTask = new Timer.Task() {
                 @Override
                 public void run() {
                     int nextFrame = treeLevel + 1;
-                    if (nextFrame > IceTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()) {
-                        nextFrame = IceTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal();
+                    if (nextFrame > TreeStage.ANIMATED_MATURE_TREE_4.ordinal()) {
+                        nextFrame = TreeStage.ANIMATED_MATURE_TREE_1.ordinal();
                     }
                     setFrame(nextFrame);
                     treeLevel = nextFrame;
                     isStageTransitionScheduled = false;
                 }
-            }, 0.3f); // 0.3 seconds delay
-        }// 3 seconds delay
+            };
+            Timer.schedule(animationTask, .3f); // 0.3 seconds delay
+        }
+
+        treeObliteration();
+    }
+
+    @Override
+    public void treeObliteration() {
+        if (health == 0) {
+            if (growTask != null) {
+                growTask.cancel();
+                growTask = null;
+            }
+            if (animationTask != null) {
+                animationTask.cancel();
+                animationTask = null;
+            }
+
+            if (treeLevel == TreeStage.SAPLING.ordinal()) {
+                treeLevel = TreeStage.DEAD_SAPLING.ordinal();
+            } else if (treeLevel == TreeStage.YOUNG_TREE.ordinal()) {
+                treeLevel = TreeStage.DEAD_YOUNG_TREE.ordinal();
+            } else if (treeLevel >= TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+                && treeLevel <= TreeStage.ANIMATED_MATURE_TREE_4.ordinal()) {
+                treeLevel = TreeStage.DEAD_MATURE_TREE.ordinal();
+            }
+
+            setFrame(treeLevel);
+        }
     }
 }
