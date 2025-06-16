@@ -1,6 +1,7 @@
 package io.github.eco_warrior.controller.Trees;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.animation.FireBurningAnim;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
@@ -8,6 +9,8 @@ import io.github.eco_warrior.entity.BaseExplosion;
 import io.github.eco_warrior.entity.BaseTreeHealth;
 import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.entity.Trees;
+import io.github.eco_warrior.sprite.gardening_equipments.Fertilizer;
+import io.github.eco_warrior.sprite.gardening_equipments.Shovel;
 import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
 
 public abstract class TreeController <T extends Trees> {
@@ -55,15 +58,17 @@ public abstract class TreeController <T extends Trees> {
         }
     }
 
-    public void handleSaplingPlanting(BaseSaplingController sapling){
+    public boolean handleSaplingPlanting(BaseSaplingController sapling){
         if(!isInteractionEnabled || !canPlantSapling(sapling)) {
             System.out.println("Cannot plant sapling: either interaction is disabled or sapling type does not match.");
-            return;
+            return false;
         }
         if (isInteractionEnabled && tree.getCollisionRect().overlaps(sapling.getCollisionRect())) {
             tree.plantSapling();
             isInteractionEnabled = false;
+            return true;
         }
+        return false;
     }
 
     protected boolean canPlantSapling(BaseSaplingController sapling) {
@@ -150,6 +155,17 @@ public abstract class TreeController <T extends Trees> {
         isDead = false;
     }
 
+    public void drawDebug(ShapeRenderer shapeRenderer) {
+        tree.drawDebug(shapeRenderer);
+        treeHealth.drawDebug(shapeRenderer);
+
+    }
+
+    public void resetHealth() {
+        health = 4;
+        isDead = false;
+    }
+
     public int getHealth() {
         return health;
     }
@@ -157,4 +173,6 @@ public abstract class TreeController <T extends Trees> {
     public boolean isDead() {
         return isDead;
     }
+
+
 }

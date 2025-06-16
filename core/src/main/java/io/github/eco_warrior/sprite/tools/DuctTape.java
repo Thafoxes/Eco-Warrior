@@ -1,9 +1,9 @@
 package io.github.eco_warrior.sprite.tools;
 
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.entity.tool;
+import io.github.eco_warrior.entity.Tool;
 
-public class DuctTape extends tool {
+public class DuctTape extends Tool {
 
     public DuctTape(Vector2 position, float scale) {
         super(

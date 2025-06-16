@@ -1,17 +1,16 @@
 package io.github.eco_warrior.sprite.gardening_equipments;
 
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.entity.tool;
+import io.github.eco_warrior.entity.Tool;
 
-public class PlantingSoil extends tool {
+public class PlantingSoil extends Tool {
 
     public PlantingSoil(Vector2 position, float scale) {
         super(
             "atlas/gardening_equipments/equipments.atlas",
             "planting_soil",
             position,
-            scale,
-            null);
+            scale);
     }
 
 }

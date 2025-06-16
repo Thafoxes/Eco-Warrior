@@ -8,21 +8,27 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.Tree;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import io.github.eco_warrior.entity.BaseTreeHealth;
-import io.github.eco_warrior.entity.Trees;
+import io.github.eco_warrior.controller.Manager.ToolManager;
+import io.github.eco_warrior.controller.Manager.TreeControllerManager;
+import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
+import io.github.eco_warrior.controller.Trees.*;
 import io.github.eco_warrior.entity.GameSprite;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+
+import io.github.eco_warrior.entity.Trees;
+import io.github.eco_warrior.enums.GardeningEnums;
 import io.github.eco_warrior.sprite.*;
 import io.github.eco_warrior.sprite.Enemy.Worm;
 import io.github.eco_warrior.sprite.gardening_equipments.*;
 import io.github.eco_warrior.sprite.gardening_equipments.sapling_variant.*;
-import io.github.eco_warrior.sprite.tree_healths.*;
 import io.github.eco_warrior.sprite.tree_variant.*;
-
-import java.util.*;
 
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_HEIGHT;
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_WIDTH;
@@ -42,44 +48,18 @@ public class LevelTwoScreen implements Screen {
     //debug method
     private ShapeRenderer shapeRenderer;
 
-//    //tools
-//    private Map<gameSpriteType, GameSprite> tools = new HashMap<>();
-//    private float manipulatorX;
-//    private float startY;
-//
-//    //water fountain
-//    private Map<String, GameSprite> liquids;
-//
-//    //trees
-//    private Map<treesType, Trees> trees;
-//
-//    //tree healths
-//    private Map<treesHealthsType, BaseTreeHealth> treeHealths;
+    //tools
+    private ToolManager toolManager;
+    private float manipulatorX;
+    private float startY;
+
+
+    private TreeControllerManager treeControllerManager;
 
     //entities declaration
     private WateringCan wateringCan;
     private WaterFountain waterFountain;
-    public static Shovel shovel;
 
-    private OrdinaryTree ordinaryTree;
-    private BlazingTree blazingTree;
-    private BreezingTree breezingTree;
-    private IceTree iceTree;
-    private VoltaicTree voltaicTree;
-
-
-    //tree healths
-    private OrdinaryTreeHealth ordinaryTreeHealth;
-    private BlazingTreeHealth blazingTreeHealth;
-    private BreezingTreeHealth breezingTreeHealth;
-    private IceTreeHealth iceTreeHealth;
-    private VoltaicTreeHealth voltaicTreeHealth;
-
-    //boolean flags to check if saplings are used
-    private boolean isVoltaicSaplingUsed = false;
-    private boolean isBreezingSaplingUsed = false;
-    private boolean isIceSaplingUsed = false;
-    private boolean isBlazingSaplingUsed = false;
 
     //input selection
     private Vector2 currentTouchPos;
@@ -135,6 +115,8 @@ public class LevelTwoScreen implements Screen {
 
     public LevelTwoScreen(Main main) {
         this.game = main;
+        this.toolManager = new ToolManager();
+        this.treeControllerManager = new TreeControllerManager();
     }
 
     @Override
@@ -149,55 +131,42 @@ public class LevelTwoScreen implements Screen {
 
         lastTouchPos = new Vector2();
         currentTouchPos = new Vector2();
-
         shapeRenderer = new ShapeRenderer();
 
         //setup camera to middle
         camera.position.set(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0);
-        camera.update();
 
         worms = new Array<>();
-//        liquids = new HashMap<>();
-//        trees = new HashMap<>();
-//        treeHealths = new HashMap<>();
+        initializeTools();
+        initializeTrees();
 
-        initializeEntities();
     }
 
-    private void initializeEntities() {
+
+
+    private void initializeTools() {
         int toolCount = 5;
-        float spacing = WINDOW_WIDTH / (toolCount + 4);
+        float spacing = WINDOW_WIDTH / (toolCount + 4); //make it 10 so it look from left to right
         float toolScale = 0.35f;
         float lakeScale = 1.3f;
-        float treeScale = 0.26f;
+
 
         float toolWidth = 200f;
-//        startY = WINDOW_HEIGHT/30f;
-//        manipulatorX = toolWidth/2f;
-//
-//        wateringCan = new WateringCan(new Vector2(spacing * 2 - manipulatorX, startY), toolScale);
-//        waterFountain = new WaterFountain(new Vector2(1, 180), lakeScale);
-//        shovel = new Shovel(new Vector2(spacing * 3 - manipulatorX, startY), toolScale);
-//
-//        ordinaryTree = new OrdinaryTree(new Vector2(763, 92), treeScale);
-//        blazingTree = new BlazingTree(new Vector2(1048, 256), treeScale);
-//        breezingTree = new BreezingTree(new Vector2(920, 183), treeScale);
-//        iceTree = new IceTree(new Vector2(1023, 25), treeScale);
-//        voltaicTree = new VoltaicTree(new Vector2(781, 299), treeScale);
-//
-//        ordinarySapling = new OrdinarySapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
-//        blazingSapling = new BlazingSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
-//        breezingSapling = new BreezingSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
-//        iceSapling = new IceSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
-//        voltaicSapling = new VoltaicSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
-//
-//        ordinaryTreeHealth = new OrdinaryTreeHealth(ordinaryTree);
-//        blazingTreeHealth = new BlazingTreeHealth(blazingTree);
-//        breezingTreeHealth = new BreezingTreeHealth(breezingTree);
-//        iceTreeHealth = new IceTreeHealth(iceTree);
-//        voltaicTreeHealth = new VoltaicTreeHealth(voltaicTree);
-//
-//        liquids.put("water_fountain_hitbox", waterFountain);
+        startY = WINDOW_HEIGHT/30f;
+        manipulatorX = toolWidth/2f;
+        waterFountain = new WaterFountain(new Vector2(1, 180), lakeScale);
+
+
+        RayGun rayGun = new RayGun(new Vector2(spacing - manipulatorX, startY), toolScale);
+        wateringCan = new WateringCan(new Vector2(spacing * 2 - manipulatorX, startY), toolScale);
+        Shovel shovel = new Shovel(new Vector2(spacing * 3 - manipulatorX, startY), toolScale);
+        Fertilizer fertilizer = new Fertilizer(new Vector2(spacing * 4 - manipulatorX, startY), toolScale);
+        toolManager.addTool(GardeningEnums.WATERING_CAN, wateringCan);
+        toolManager.addTool(GardeningEnums.SHOVEL, shovel);
+        toolManager.addTool(GardeningEnums.RAY_GUN, rayGun);
+        toolManager.addTool(GardeningEnums.FERTILIZER, fertilizer);
+
+        initializeSapling(spacing, toolScale);
 //
 //        wormPool = new Array<>(WORM_BUFFER_CAPACITY);
 //        for (int i = 0; i < WORM_BUFFER_CAPACITY; i++) {
@@ -205,19 +174,79 @@ public class LevelTwoScreen implements Screen {
 //        }
     }
 
+    private void initializeSapling(float spacing, float toolScale) {
+        BaseSaplingController ordinarySapling = new OrdinarySapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
+        BaseSaplingController blazingSapling = new BlazingSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
+        BaseSaplingController breezingSapling = new BreezingSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
+        BaseSaplingController iceSapling = new IceSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
+        BaseSaplingController voltaicSapling = new VoltaicSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
+
+        toolManager.addSaplingController(ordinarySapling);
+//        toolManager.addSaplingController(blazingSapling);
+//        toolManager.addSaplingController(breezingSapling);
+//        toolManager.addSaplingController(iceSapling);
+//        toolManager.addSaplingController(voltaicSapling);
+//        ordinarySapling = new OrdinarySapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
+//        blazingSapling = new BlazingSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
+//        breezingSapling = new BreezingSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
+//        iceSapling = new IceSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
+//        voltaicSapling = new VoltaicSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
+    }
+
+    private void initializeTrees() {
+        float treeScale = 0.26f;
+
+        TreeController<OrdinaryTree> ordinaryTreeController = new OrdinaryTreeController(
+            new OrdinaryTree(new Vector2(763, 92), treeScale),
+            wateringCan
+        );
+        TreeController<BlazingTree> blazingTreeController = new BlazingTreeController(
+            new BlazingTree(new Vector2(1048, 256), treeScale),
+                wateringCan
+        );
+        TreeController<BreezingTree> breezingTreeController = new BreezingTreeController(
+            new BreezingTree(new Vector2(920, 183), treeScale),
+            wateringCan
+        );
+        TreeController<IceTree> iceTreeController = new IceTreeController(
+            new IceTree(new Vector2(1023, 25), treeScale),
+            wateringCan
+        );
+        TreeController<VoltaicTree> voltaicTreeController = new VoltaicTreeController(
+            new VoltaicTree(new Vector2(781, 299), treeScale),
+            wateringCan
+        );
+
+        treeControllerManager.addTreeController(ordinaryTreeController);
+        treeControllerManager.addTreeController(blazingTreeController);
+        treeControllerManager.addTreeController(breezingTreeController);
+        treeControllerManager.addTreeController(iceTreeController);
+        treeControllerManager.addTreeController(voltaicTreeController);
+    }
+
 
     @Override
     public void render(float delta) {
-//        input();
-//        draw();
-//        updateWateringCan();
-//        updateTrees();
+        input();
+        draw();
+        returnOriginalPosition();
+        updateToolManager(delta);
+        updateTreeManager(delta);
 //        spawnWorm(delta);
 //        updateEnemyAnimationMovement();
 //
 //        for (TreeHealth treeHealth : treeHealths.values()) {
 //            treeHealth.updateHealth();
 //        }
+    }
+
+
+    private void updateTreeManager(float delta) {
+        treeControllerManager.update(delta);
+    }
+
+    private void updateToolManager(float delta) {
+        toolManager.update(delta);
     }
 
 
@@ -231,119 +260,81 @@ public class LevelTwoScreen implements Screen {
 
         batch.begin();
         backgroundSprite.draw(batch);
+        toolManager.render(batch);
+        treeControllerManager.draw(batch);
 
         batch.end();
-//        debugSprite();
+        debugSprite();
     }
 
 
+    private void input() {
+        if (Gdx.input.isTouched()) {
+            currentTouchPos.set(Gdx.input.getX(), Gdx.input.getY());
+            viewport.unproject(currentTouchPos);
 
+            if(!isDragging){
+                // Only try to pick up a tool if we're not already dragging
+                draggingTool = toolManager.getToolAt(currentTouchPos);
+                if (draggingTool != null) {
+                    isDragging = true;
+                    isReturning = false;
+                }
+            }else if (isDragging && draggingTool != null){ //ensure the tool is not null
+                // Update tool position while dragging
+                float xPos = currentTouchPos.x - draggingTool.getSprite().getWidth() / 2;
+                float yPos = currentTouchPos.y - draggingTool.getSprite().getHeight() / 2;
+                draggingTool.setPosition(new Vector2(xPos, yPos));
+            }
+        }else if(isDragging){
+            //on mouse release, check for interaction
+            if(draggingTool != null){
+                // Check if the tool is a sapling and if it can be planted
+                if(treeControllerManager.interactWithTrees(draggingTool)){
+                    // If a sapling was successfully planted, handle the planting logic
+                    toolManager.handleSaplingPlanting(draggingTool);
+                }
+                // Check if the tool is a watering can and if it can water a fountain
+                toolManager.isWaterCansCollide(waterFountain);
+            }
+            isDragging = false;
+            isReturning = true;
+        }
+    }
 
     private void returnOriginalPosition() {
         float deltaTime = Gdx.graphics.getDeltaTime();
 
-//        if(draggingTool != null){
-//            float dy = startY;
-//            Vector2 current = new Vector2(draggingTool.getSprite().getX(), draggingTool.getSprite().getY());
-//            Vector2 target = draggingTool.getInitPosition();
-//
-//            Vector2 learped = current.lerp(target, deltaTime * 10f);
-//
-//            draggingTool.getSprite().setPosition(learped.x, learped.y);
-//            draggingTool.getCollisionRect().setPosition(
-//                draggingTool.getSprite().getX(),
-//                draggingTool.getSprite().getY());
-//
-//            if(current.dst(target) < 2f){
-//                draggingTool.getSprite().setPosition(target.x, target.y);
-//                draggingTool.getCollisionRect().setPosition(
-//                    draggingTool.getSprite().getX(),
-//                    draggingTool.getSprite().getY());
-//                isReturning = false;
-//                draggingTool = null;
-//            }
-//
-//        }
+        if(isReturning && draggingTool != null){
+            Vector2 current = new Vector2(draggingTool.getSprite().getX(), draggingTool.getSprite().getY());
+            Vector2 target = draggingTool.getInitPosition();
+
+            Vector2 learped = current.lerp(target, deltaTime * 10f);
+
+            draggingTool.getSprite().setPosition(learped.x, learped.y);
+            draggingTool.getCollisionRect().setPosition(
+                draggingTool.getSprite().getX(),
+                draggingTool.getSprite().getY());
+
+            if(current.dst(target) < 2f){
+                draggingTool.getSprite().setPosition(target.x, target.y);
+                draggingTool.getCollisionRect().setPosition(
+                    draggingTool.getSprite().getX(),
+                    draggingTool.getSprite().getY());
+                isReturning = false;
+                draggingTool = null;
+            }
+
+        }
     }
-//
-//    private void onMouseRelease() {
-//        isDragging = false;
-//
-//        if(draggingTool != null) {
-//            isReturning = true;
-//
-//            if (draggingTool.equals(tools.get(gameSpriteType.SHOVEL))) {
-//
-//                if (ordinaryTree.treeLevel == OrdinaryTree.TreeStage.FLAG.ordinal()
-//                && ordinaryTree.getCollisionRect().overlaps(shovel.getCollisionRect())) {
-//
-//                    ordinaryTree.treeLevel = OrdinaryTree.TreeStage.HOLE.ordinal();
-//                    ordinaryTree.diggingSound();
-//
-//                    ordinaryTree.setFrame(ordinaryTree.treeLevel);
-//                }
-////                else if (blazingTree.treeLevel == BlazingTree.TreeStage.FLAG.ordinal()
-////                    && blazingTree.getCollisionRect().overlaps(shovel.getCollisionRect())
-////                    && iceTree.isMatureTree) {
-////
-////                    blazingTree.treeLevel = BlazingTree.TreeStage.HOLE.ordinal();
-////                    blazingTree.diggingSound();
-////
-////                    blazingTree.setFrame(blazingTree.treeLevel);
-////                }
-//                else if (breezingTree.treeLevel == BreezingTree.TreeStage.FLAG.ordinal()
-//                    && breezingTree.getCollisionRect().overlaps(shovel.getCollisionRect())
-//                    && voltaicTree.isMatureTree) {
-//
-//                    breezingTree.treeLevel = BreezingTree.TreeStage.HOLE.ordinal();
-//                    breezingTree.diggingSound();
-//
-//                    breezingTree.setFrame(breezingTree.treeLevel);
-//                }
-//                else if (iceTree.treeLevel == IceTree.TreeStage.FLAG.ordinal()
-//                    && iceTree.getCollisionRect().overlaps(shovel.getCollisionRect())
-//                    && breezingTree.isMatureTree) {
-//
-//                    iceTree.treeLevel = IceTree.TreeStage.HOLE.ordinal();
-//                    iceTree.diggingSound();
-//
-//                    iceTree.setFrame(iceTree.treeLevel);
-//                }
-//                else if (voltaicTree.treeLevel == VoltaicTree.TreeStage.FLAG.ordinal()
-//                    && voltaicTree.getCollisionRect().overlaps(shovel.getCollisionRect())
-//                    && ordinaryTree.isMatureTree) {
-//
-//                    voltaicTree.treeLevel = VoltaicTree.TreeStage.HOLE.ordinal();
-//                    voltaicTree.diggingSound();
-//
-//                    voltaicTree.setFrame(voltaicTree.treeLevel);
-//                }
-//
+
+    private void onMouseRelease() {
+        isDragging = false;
 ////                for (Worm worm : worms) {
 ////                    if (worm.getCollisionRect().overlaps(shovel.getCollisionRect())) {
 ////                        isShovelReleased = true; //set to true when shovel is used
 ////                    }
 ////                }
-//            }
-//        }
-//    }
-//
-//    private void updateWateringCan() {
-//        wateringCan.updateWateringCan(waterFountain);
-//    }
-//
-//    private void updateTrees() {
-//        ordinaryTree.updateTree(ordinarySapling, wateringCan);
-////        blazingTree.updateTree(blazingSapling, wateringCan);
-//        breezingTree.updateTree(breezingSapling, wateringCan);
-//        iceTree.updateTree(iceSapling, wateringCan);
-//        voltaicTree.updateTree(voltaicSapling, wateringCan);
-//    }
-
-    private void updateEnemyAnimationMovement() {
-        for (Worm worm : worms) {
-//            worm.updateWormAnimationMovement();
-        }
     }
 
 
@@ -373,23 +364,14 @@ public class LevelTwoScreen implements Screen {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.GREEN);
 
-//        for(GameSprite tool: tools.values()){
-//            tool.drawDebug(shapeRenderer);
-//        }
-//
-//        for(Trees tree: trees.values()){
-//            tree.drawDebug(shapeRenderer);
-//        }
+        toolManager.drawDebug(shapeRenderer);
+        treeControllerManager.drawDebug(shapeRenderer);
+        waterFountain.drawDebug(shapeRenderer);
 //
 //        for (Worm worm : worms) {
 //            worm.drawDebug(shapeRenderer);
 //        }
 
-//        for (TreeHealth treeHealth : treeHealths.values()) {
-//            treeHealth.drawDebug(shapeRenderer);
-//        }
-
-//        liquids.get("water_fountain_hitbox").drawDebug(shapeRenderer);
 
 //        debugSpawnArea();
 
@@ -402,14 +384,9 @@ public class LevelTwoScreen implements Screen {
         batch.dispose();
         backgroundTexture.dispose();
         shapeRenderer.dispose();
+        toolManager.dispose();
+        treeControllerManager.dispose();
 
-//        for (GameSprite tool : tools.values()) {
-//            tool.dispose();
-//        }
-//
-//        for (Trees tree : trees.values()) {
-//            tree.dispose();
-//        }
 //
 //        for(GameSprite worm: worms){
 //            worm.dispose();
@@ -420,9 +397,7 @@ public class LevelTwoScreen implements Screen {
 //        }
 //
 //        wateringCan.dispose();
-//        waterFountain.dispose();
+        waterFountain.dispose();
 //        shovel.dispose();
-//
-//        liquids.get("water_fountain_hitbox").dispose();
     }
 }

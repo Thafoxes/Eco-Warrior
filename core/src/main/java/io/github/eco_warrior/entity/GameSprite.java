@@ -27,7 +27,7 @@ public class GameSprite extends spriteGenerator {
     private int frameCount;
 
     /**
-     * No frame to worried about, just a single sprite.
+     * No frame to worried about, just a single sprite. With audio effects.
      */
     public GameSprite(String atlasPath, String regionName, Vector2 position, float scale , String correctSoundPath, String wrongSoundPath, String hittingSoundPath) {
         this.atlasPath = atlasPath;
@@ -91,7 +91,8 @@ public class GameSprite extends spriteGenerator {
 
         this.currentFrameIndex = 0;
         this.sprite = new Sprite(frames[currentFrameIndex]);
-        this.sprite.setSize(sprite.getWidth() * scale, sprite.getHeight() * scale);
+        this.scale = scale;
+        this.sprite.setSize(sprite.getWidth() * this.scale, sprite.getHeight() * this.scale);
         this.sprite.setPosition(position.x, position.y);
         this.initPosition = position;
 
@@ -178,7 +179,10 @@ public class GameSprite extends spriteGenerator {
         sprite.setRegion(frames[currentFrameIndex]);
     }
 
-
+    public void render(SpriteBatch batch) {
+        // Draw the sprite
+        this.sprite.draw(batch);
+    }
 
     /**
      * for manual frame get index
@@ -264,6 +268,13 @@ public class GameSprite extends spriteGenerator {
     }
 
     public Rectangle getCollisionRect(){
+        return this.collisionRect;
+    }
+
+    public Rectangle setCollisionRect(Rectangle newCollisionRect){
+        this.collisionRect = newCollisionRect;
+        this.sprite.setPosition(newCollisionRect.x, newCollisionRect.y);
+        this.sprite.setSize(newCollisionRect.width, newCollisionRect.height);
         return this.collisionRect;
     }
 

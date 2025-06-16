@@ -4,8 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.entity.GameSprite;
+import io.github.eco_warrior.entity.Tool;
 
-public class WateringCan extends GameSprite {
+public class WateringCan extends Tool {
 
     public enum WateringCanState {
         EMPTY,
@@ -38,7 +39,7 @@ public class WateringCan extends GameSprite {
                 fillSound2.play(1f);
             }
             waterLevel = WateringCanState.FILLED;
-            setFrame(waterLevel.ordinal());
+            setFrame(waterLevel.ordinal()); // Update frame to filled state
         }
     }
 }
