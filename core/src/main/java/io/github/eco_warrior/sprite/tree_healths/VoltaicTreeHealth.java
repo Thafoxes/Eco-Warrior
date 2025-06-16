@@ -9,7 +9,7 @@ public class VoltaicTreeHealth extends TreeHealth {
     public VoltaicTreeHealth(VoltaicTree voltaicTree) {
         super("atlas/tree_health/voltaic_tree_health.atlas",
             "VHP",
-            voltaicTree.adjustedPosition);
+            voltaicTree.middlePosition);
 
         this.voltaicTree = voltaicTree;
     }

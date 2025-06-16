@@ -9,7 +9,7 @@ public class BreezingTreeHealth extends TreeHealth {
     public BreezingTreeHealth(BreezingTree breezingTree) {
         super("atlas/tree_health/breezing_tree_health.atlas",
             "BrHP",
-            breezingTree.adjustedPosition);
+            breezingTree.middlePosition);
 
         this.breezingTree = breezingTree;
     }

@@ -265,16 +265,16 @@ public class LevelTwoScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        input();
-        draw();
-        updateWateringCan();
-        updateTrees();
-        spawnWorm(delta);
-        updateEnemyAnimationMovement();
-
-        for (TreeHealth treeHealth : treeHealths.values()) {
-            treeHealth.updateHealth();
-        }
+//        input();
+//        draw();
+//        updateWateringCan();
+//        updateTrees();
+//        spawnWorm(delta);
+//        updateEnemyAnimationMovement();
+//
+//        for (TreeHealth treeHealth : treeHealths.values()) {
+//            treeHealth.updateHealth();
+//        }
     }
 
     private void spawnWorm(float delta) {
@@ -325,7 +325,7 @@ public class LevelTwoScreen implements Screen {
         drawWorm();
         drawTrees();
         drawTreeHealths();
-        drawToolFiltering();
+//        drawToolFiltering();
         drawTools();
 
 
@@ -372,210 +372,210 @@ public class LevelTwoScreen implements Screen {
         }
     }
 
-    private void drawToolFiltering() {
-        //remove ordinary sapling upon planting
-        if ((ordinaryTree.treeLevel == OrdinaryTree.TreeStage.HOLE.ordinal())
-            && ordinaryTree.getCollisionRect().overlaps(ordinarySapling.getCollisionRect())) {
-            tools.remove(gameSpriteType.ORDINARY_SAPLING);
-        }
-
-        //draw voltaic sapling when the ordinary tree reaches adult phase
-        if(!isVoltaicSaplingUsed) {
-            if (ordinaryTree.treeLevel == OrdinaryTree.TreeStage.MATURE_TREE.ordinal()
-                || ordinaryTree.treeLevel == OrdinaryTree.TreeStage.DEAD_MATURE_TREE.ordinal()) {
-                tools.get(gameSpriteType.VOLTAIC_SAPLING).draw(batch);
-            }
-        }
-
-        //remove voltaic sapling upon planting
-        if ((voltaicTree.treeLevel == VoltaicTree.TreeStage.HOLE.ordinal())
-            && voltaicTree.getCollisionRect().overlaps(voltaicSapling.getCollisionRect())) {
-            tools.remove(gameSpriteType.VOLTAIC_SAPLING);
-            isVoltaicSaplingUsed = true; //set to true when voltaic sapling is used
-        }
-
-        //draw breezing sapling when the voltaic tree reaches adult phase
-        if(!isBreezingSaplingUsed) {
-            //VoltaicTree.TreeStage.YOUNG_TREE.ordinal() means after the sapling stage
-            if (voltaicTree.treeLevel >= VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
-                && voltaicTree.treeLevel <= VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()
-                || voltaicTree.treeLevel == VoltaicTree.TreeStage.DEAD_MATURE_TREE.ordinal()) {
-                tools.get(gameSpriteType.BREEZING_SAPLING).draw(batch);
-            }
-        }
-
-        //remove breezing sapling upon planting
-        if ((breezingTree.treeLevel == BreezingTree.TreeStage.HOLE.ordinal())
-            && breezingTree.getCollisionRect().overlaps(breezingSapling.getCollisionRect())) {
-            tools.remove(gameSpriteType.BREEZING_SAPLING);
-            isBreezingSaplingUsed = true; //set to true when breezing sapling is used
-        }
-
-        //draw ice sapling when the breezing tree reaches adult phase
-        if(!isIceSaplingUsed) {
-            //included ANIMATED_MATURE_TREE_1 - 3
-            if (breezingTree.treeLevel >= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
-            && breezingTree.treeLevel <= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal()
-            || breezingTree.treeLevel == BreezingTree.TreeStage.DEAD_MATURE_TREE.ordinal()) {
-                tools.get(gameSpriteType.ICE_SAPLING).draw(batch);
-            }
-        }
-
-        //remove ice sapling upon planting
-        if ((iceTree.treeLevel == IceTree.TreeStage.HOLE.ordinal())
-            && iceTree.getCollisionRect().overlaps(iceSapling.getCollisionRect())) {
-            tools.remove(gameSpriteType.ICE_SAPLING);
-            isIceSaplingUsed = true; //set to true when ice sapling is used
-        }
-
-        //draw blazing sapling when the ice tree reaches adult phase
-        if(!isBlazingSaplingUsed) {
-            //included ANIMATED_MATURE_TREE_1 - 4
-            if (iceTree.treeLevel >= IceTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
-                && iceTree.treeLevel <= IceTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()
-                || iceTree.treeLevel == IceTree.TreeStage.DEAD_MATURE_TREE.ordinal()) {
-                tools.get(gameSpriteType.BLAZING_SAPLING).draw(batch);
-            }
-        }
-
-        //remove blazing sapling upon planting
-//        if ((blazingTree.treeLevel == BlazingTree.TreeStage.HOLE.ordinal())
-//            && blazingTree.getCollisionRect().overlaps(blazingSapling.getCollisionRect())) {
-//            tools.remove(gameSpriteType.BLAZING_SAPLING);
-//            isBlazingSaplingUsed = true; //set to true when blazing sapling is used
+//    private void drawToolFiltering() {
+//        //remove ordinary sapling upon planting
+//        if ((ordinaryTree.treeLevel == OrdinaryTree.TreeStage.HOLE.ordinal())
+//            && ordinaryTree.getCollisionRect().overlaps(ordinarySapling.getCollisionRect())) {
+//            tools.remove(gameSpriteType.ORDINARY_SAPLING);
 //        }
-    }
-
-    private void input(){
-        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            currentTouchPos.set(Gdx.input.getX(), Gdx.input.getY());
-            viewport.unproject(currentTouchPos);
-
-            //check if pressed the tools
-            if (Gdx.input.justTouched()) {
-                for (Map.Entry<gameSpriteType, GameSprite> entry : tools.entrySet()){
-                    gameSpriteType type = entry.getKey();
-                    GameSprite tool = entry.getValue();
-
-                    if(!tool.getCollisionRect().contains(currentTouchPos)){
-                        continue; //skip if the tool is not touched
-                    }
-                    //if is touched the tools
-                    if (type == gameSpriteType.VOLTAIC_SAPLING) {
-                        //voltaic sapling can only be dragged when ordinary tree is mature
-                        if (tool.getCollisionRect().contains(currentTouchPos)
-                            && (ordinaryTree.treeLevel == OrdinaryTree.TreeStage.MATURE_TREE.ordinal()
-                            || ordinaryTree.treeLevel == OrdinaryTree.TreeStage.DEAD_MATURE_TREE.ordinal())) {
-                            draggingTool = tool;
-                            isDragging = true;
-                            lastTouchPos.set(currentTouchPos);
-                            break;
-                        }
-                    }
-                    else if (type == gameSpriteType.BREEZING_SAPLING) {
-                        //breezing sapling can only be dragged when voltaic tree is mature
-                        if (tool.getCollisionRect().contains(currentTouchPos)
-                            && (voltaicTree.treeLevel >= VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
-                            && voltaicTree.treeLevel <= VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()
-                            || voltaicTree.treeLevel == VoltaicTree.TreeStage.DEAD_MATURE_TREE.ordinal())) {
-                            draggingTool = tool;
-                            isDragging = true;
-                            lastTouchPos.set(currentTouchPos);
-                            break;
-                        }
-                    }
-                    else if (type == gameSpriteType.ICE_SAPLING) {
-                        //ice sapling can only be dragged when breezing tree is mature
-                        if (tool.getCollisionRect().contains(currentTouchPos)
-                            && (breezingTree.treeLevel >= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
-                            && breezingTree.treeLevel <= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal()
-                            || breezingTree.treeLevel == BreezingTree.TreeStage.DEAD_MATURE_TREE.ordinal())) {
-                            draggingTool = tool;
-                            isDragging = true;
-                            lastTouchPos.set(currentTouchPos);
-                            break;
-                        }
-                    }
-                    else if (type == gameSpriteType.BLAZING_SAPLING) {
-                        //blazing sapling can only be dragged when ice tree is mature
-                        if (tool.getCollisionRect().contains(currentTouchPos)
-                            && (iceTree.treeLevel >= IceTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
-                            && iceTree.treeLevel <= IceTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()
-                            || iceTree.treeLevel == IceTree.TreeStage.DEAD_MATURE_TREE.ordinal())) {
-                            draggingTool = tool;
-                            isDragging = true;
-                            lastTouchPos.set(currentTouchPos);
-                            break;
-                        }
-                    }
-                    else {
-                        //other tools can be dragged anytime
-                        if (tool.getCollisionRect().contains(currentTouchPos)) {
-                            draggingTool = tool;
-                            isDragging = true;
-                            lastTouchPos.set(currentTouchPos);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        if(isDragging && Gdx.input.isButtonPressed(Input.Buttons.LEFT) && draggingTool != null){
-            currentTouchPos.set(Gdx.input.getX(), Gdx.input.getY());
-            viewport.unproject(currentTouchPos);
-
-            float dx = currentTouchPos.x - draggingTool.getMidX();
-            float dy = currentTouchPos.y - draggingTool.getMidY();
-
-            draggingTool.getSprite().setPosition(dx,dy);
-
-            //sync the collision rectangle with the new sprite location
-            draggingTool.getCollisionRect().setPosition(
-                draggingTool.getSprite().getX(),
-                draggingTool.getSprite().getY());
-
-            lastTouchPos.set(currentTouchPos);
-
-        }else if(!Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
-            //if the left click is released
-            if(draggingTool != null){
-                try{
-                    onMouseRelease();
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }else if(draggingTool != null){
-            isDragging = false;
-            isReturning = true;
-
-        }
-
-        if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-//            if (draggingTool == tools.get(gameSpriteType.SHOVEL)) {
-//                for (Worm worm : worms) {
-//                    if (worm.getCollisionRect().overlaps(shovel.getCollisionRect()) && !worm.isDeathTransition) {
-//                        worm.speed = 0;
-//                        worm.isDeathTransition = true;
 //
-//                        if (worm.attackTask != null) {
-//                            worm.attackTask.cancel();
-//                            worm.attackTask = null;
+//        //draw voltaic sapling when the ordinary tree reaches adult phase
+//        if(!isVoltaicSaplingUsed) {
+//            if (ordinaryTree.treeLevel == OrdinaryTree.TreeStage.MATURE_TREE.ordinal()
+//                || ordinaryTree.treeLevel == OrdinaryTree.TreeStage.DEAD_MATURE_TREE.ordinal()) {
+//                tools.get(gameSpriteType.VOLTAIC_SAPLING).draw(batch);
+//            }
+//        }
+//
+//        //remove voltaic sapling upon planting
+//        if ((voltaicTree.treeLevel == VoltaicTree.TreeStage.HOLE.ordinal())
+//            && voltaicTree.getCollisionRect().overlaps(voltaicSapling.getCollisionRect())) {
+//            tools.remove(gameSpriteType.VOLTAIC_SAPLING);
+//            isVoltaicSaplingUsed = true; //set to true when voltaic sapling is used
+//        }
+//
+//        //draw breezing sapling when the voltaic tree reaches adult phase
+//        if(!isBreezingSaplingUsed) {
+//            //VoltaicTree.TreeStage.YOUNG_TREE.ordinal() means after the sapling stage
+//            if (voltaicTree.treeLevel >= VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+//                && voltaicTree.treeLevel <= VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()
+//                || voltaicTree.treeLevel == VoltaicTree.TreeStage.DEAD_MATURE_TREE.ordinal()) {
+//                tools.get(gameSpriteType.BREEZING_SAPLING).draw(batch);
+//            }
+//        }
+//
+//        //remove breezing sapling upon planting
+//        if ((breezingTree.treeLevel == BreezingTree.TreeStage.HOLE.ordinal())
+//            && breezingTree.getCollisionRect().overlaps(breezingSapling.getCollisionRect())) {
+//            tools.remove(gameSpriteType.BREEZING_SAPLING);
+//            isBreezingSaplingUsed = true; //set to true when breezing sapling is used
+//        }
+//
+//        //draw ice sapling when the breezing tree reaches adult phase
+//        if(!isIceSaplingUsed) {
+//            //included ANIMATED_MATURE_TREE_1 - 3
+//            if (breezingTree.treeLevel >= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+//            && breezingTree.treeLevel <= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal()
+//            || breezingTree.treeLevel == BreezingTree.TreeStage.DEAD_MATURE_TREE.ordinal()) {
+//                tools.get(gameSpriteType.ICE_SAPLING).draw(batch);
+//            }
+//        }
+//
+//        //remove ice sapling upon planting
+//        if ((iceTree.treeLevel == IceTree.TreeStage.HOLE.ordinal())
+//            && iceTree.getCollisionRect().overlaps(iceSapling.getCollisionRect())) {
+//            tools.remove(gameSpriteType.ICE_SAPLING);
+//            isIceSaplingUsed = true; //set to true when ice sapling is used
+//        }
+//
+//        //draw blazing sapling when the ice tree reaches adult phase
+//        if(!isBlazingSaplingUsed) {
+//            //included ANIMATED_MATURE_TREE_1 - 4
+//            if (iceTree.treeLevel >= IceTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+//                && iceTree.treeLevel <= IceTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()
+//                || iceTree.treeLevel == IceTree.TreeStage.DEAD_MATURE_TREE.ordinal()) {
+//                tools.get(gameSpriteType.BLAZING_SAPLING).draw(batch);
+//            }
+//        }
+//
+//        //remove blazing sapling upon planting
+////        if ((blazingTree.treeLevel == BlazingTree.TreeStage.HOLE.ordinal())
+////            && blazingTree.getCollisionRect().overlaps(blazingSapling.getCollisionRect())) {
+////            tools.remove(gameSpriteType.BLAZING_SAPLING);
+////            isBlazingSaplingUsed = true; //set to true when blazing sapling is used
+////        }
+//    }
+
+//    private void input(){
+//        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+//            currentTouchPos.set(Gdx.input.getX(), Gdx.input.getY());
+//            viewport.unproject(currentTouchPos);
+//
+//            //check if pressed the tools
+//            if (Gdx.input.justTouched()) {
+//                for (Map.Entry<gameSpriteType, GameSprite> entry : tools.entrySet()){
+//                    gameSpriteType type = entry.getKey();
+//                    GameSprite tool = entry.getValue();
+//
+//                    if(!tool.getCollisionRect().contains(currentTouchPos)){
+//                        continue; //skip if the tool is not touched
+//                    }
+//                    //if is touched the tools
+//                    if (type == gameSpriteType.VOLTAIC_SAPLING) {
+//                        //voltaic sapling can only be dragged when ordinary tree is mature
+//                        if (tool.getCollisionRect().contains(currentTouchPos)
+//                            && (ordinaryTree.treeLevel == OrdinaryTree.TreeStage.MATURE_TREE.ordinal()
+//                            || ordinaryTree.treeLevel == OrdinaryTree.TreeStage.DEAD_MATURE_TREE.ordinal())) {
+//                            draggingTool = tool;
+//                            isDragging = true;
+//                            lastTouchPos.set(currentTouchPos);
+//                            break;
 //                        }
-//
-//                        shovelSound.play(.5f);
-//                        worm.startDeathAnimation();
+//                    }
+//                    else if (type == gameSpriteType.BREEZING_SAPLING) {
+//                        //breezing sapling can only be dragged when voltaic tree is mature
+//                        if (tool.getCollisionRect().contains(currentTouchPos)
+//                            && (voltaicTree.treeLevel >= VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+//                            && voltaicTree.treeLevel <= VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()
+//                            || voltaicTree.treeLevel == VoltaicTree.TreeStage.DEAD_MATURE_TREE.ordinal())) {
+//                            draggingTool = tool;
+//                            isDragging = true;
+//                            lastTouchPos.set(currentTouchPos);
+//                            break;
+//                        }
+//                    }
+//                    else if (type == gameSpriteType.ICE_SAPLING) {
+//                        //ice sapling can only be dragged when breezing tree is mature
+//                        if (tool.getCollisionRect().contains(currentTouchPos)
+//                            && (breezingTree.treeLevel >= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+//                            && breezingTree.treeLevel <= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal()
+//                            || breezingTree.treeLevel == BreezingTree.TreeStage.DEAD_MATURE_TREE.ordinal())) {
+//                            draggingTool = tool;
+//                            isDragging = true;
+//                            lastTouchPos.set(currentTouchPos);
+//                            break;
+//                        }
+//                    }
+//                    else if (type == gameSpriteType.BLAZING_SAPLING) {
+//                        //blazing sapling can only be dragged when ice tree is mature
+//                        if (tool.getCollisionRect().contains(currentTouchPos)
+//                            && (iceTree.treeLevel >= IceTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+//                            && iceTree.treeLevel <= IceTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()
+//                            || iceTree.treeLevel == IceTree.TreeStage.DEAD_MATURE_TREE.ordinal())) {
+//                            draggingTool = tool;
+//                            isDragging = true;
+//                            lastTouchPos.set(currentTouchPos);
+//                            break;
+//                        }
+//                    }
+//                    else {
+//                        //other tools can be dragged anytime
+//                        if (tool.getCollisionRect().contains(currentTouchPos)) {
+//                            draggingTool = tool;
+//                            isDragging = true;
+//                            lastTouchPos.set(currentTouchPos);
+//                            break;
+//                        }
 //                    }
 //                }
 //            }
-        }
-
-        if(isReturning){
-            returnOriginalPosition();
-        }
-
-    }
+//        }
+//
+//        if(isDragging && Gdx.input.isButtonPressed(Input.Buttons.LEFT) && draggingTool != null){
+//            currentTouchPos.set(Gdx.input.getX(), Gdx.input.getY());
+//            viewport.unproject(currentTouchPos);
+//
+//            float dx = currentTouchPos.x - draggingTool.getMidX();
+//            float dy = currentTouchPos.y - draggingTool.getMidY();
+//
+//            draggingTool.getSprite().setPosition(dx,dy);
+//
+//            //sync the collision rectangle with the new sprite location
+//            draggingTool.getCollisionRect().setPosition(
+//                draggingTool.getSprite().getX(),
+//                draggingTool.getSprite().getY());
+//
+//            lastTouchPos.set(currentTouchPos);
+//
+//        }else if(!Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
+//            //if the left click is released
+//            if(draggingTool != null){
+//                try{
+//                    onMouseRelease();
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//                }
+//            }
+//        }else if(draggingTool != null){
+//            isDragging = false;
+//            isReturning = true;
+//
+//        }
+//
+//        if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+////            if (draggingTool == tools.get(gameSpriteType.SHOVEL)) {
+////                for (Worm worm : worms) {
+////                    if (worm.getCollisionRect().overlaps(shovel.getCollisionRect()) && !worm.isDeathTransition) {
+////                        worm.speed = 0;
+////                        worm.isDeathTransition = true;
+////
+////                        if (worm.attackTask != null) {
+////                            worm.attackTask.cancel();
+////                            worm.attackTask = null;
+////                        }
+////
+////                        shovelSound.play(.5f);
+////                        worm.startDeathAnimation();
+////                    }
+////                }
+////            }
+//        }
+//
+//        if(isReturning){
+//            returnOriginalPosition();
+//        }
+//
+//    }
 
     private void returnOriginalPosition() {
         float deltaTime = Gdx.graphics.getDeltaTime();
@@ -603,80 +603,80 @@ public class LevelTwoScreen implements Screen {
 
         }
     }
-
-    private void onMouseRelease() {
-        isDragging = false;
-
-        if(draggingTool != null) {
-            isReturning = true;
-
-            if (draggingTool.equals(tools.get(gameSpriteType.SHOVEL))) {
-
-                if (ordinaryTree.treeLevel == OrdinaryTree.TreeStage.FLAG.ordinal()
-                && ordinaryTree.getCollisionRect().overlaps(shovel.getCollisionRect())) {
-
-                    ordinaryTree.treeLevel = OrdinaryTree.TreeStage.HOLE.ordinal();
-                    ordinaryTree.diggingSound();
-
-                    ordinaryTree.setFrame(ordinaryTree.treeLevel);
-                }
-//                else if (blazingTree.treeLevel == BlazingTree.TreeStage.FLAG.ordinal()
-//                    && blazingTree.getCollisionRect().overlaps(shovel.getCollisionRect())
-//                    && iceTree.isMatureTree) {
 //
-//                    blazingTree.treeLevel = BlazingTree.TreeStage.HOLE.ordinal();
-//                    blazingTree.diggingSound();
+//    private void onMouseRelease() {
+//        isDragging = false;
 //
-//                    blazingTree.setFrame(blazingTree.treeLevel);
+//        if(draggingTool != null) {
+//            isReturning = true;
+//
+//            if (draggingTool.equals(tools.get(gameSpriteType.SHOVEL))) {
+//
+//                if (ordinaryTree.treeLevel == OrdinaryTree.TreeStage.FLAG.ordinal()
+//                && ordinaryTree.getCollisionRect().overlaps(shovel.getCollisionRect())) {
+//
+//                    ordinaryTree.treeLevel = OrdinaryTree.TreeStage.HOLE.ordinal();
+//                    ordinaryTree.diggingSound();
+//
+//                    ordinaryTree.setFrame(ordinaryTree.treeLevel);
 //                }
-                else if (breezingTree.treeLevel == BreezingTree.TreeStage.FLAG.ordinal()
-                    && breezingTree.getCollisionRect().overlaps(shovel.getCollisionRect())
-                    && voltaicTree.isMatureTree) {
-
-                    breezingTree.treeLevel = BreezingTree.TreeStage.HOLE.ordinal();
-                    breezingTree.diggingSound();
-
-                    breezingTree.setFrame(breezingTree.treeLevel);
-                }
-                else if (iceTree.treeLevel == IceTree.TreeStage.FLAG.ordinal()
-                    && iceTree.getCollisionRect().overlaps(shovel.getCollisionRect())
-                    && breezingTree.isMatureTree) {
-
-                    iceTree.treeLevel = IceTree.TreeStage.HOLE.ordinal();
-                    iceTree.diggingSound();
-
-                    iceTree.setFrame(iceTree.treeLevel);
-                }
-                else if (voltaicTree.treeLevel == VoltaicTree.TreeStage.FLAG.ordinal()
-                    && voltaicTree.getCollisionRect().overlaps(shovel.getCollisionRect())
-                    && ordinaryTree.isMatureTree) {
-
-                    voltaicTree.treeLevel = VoltaicTree.TreeStage.HOLE.ordinal();
-                    voltaicTree.diggingSound();
-
-                    voltaicTree.setFrame(voltaicTree.treeLevel);
-                }
-
-//                for (Worm worm : worms) {
-//                    if (worm.getCollisionRect().overlaps(shovel.getCollisionRect())) {
-//                        isShovelReleased = true; //set to true when shovel is used
-//                    }
+////                else if (blazingTree.treeLevel == BlazingTree.TreeStage.FLAG.ordinal()
+////                    && blazingTree.getCollisionRect().overlaps(shovel.getCollisionRect())
+////                    && iceTree.isMatureTree) {
+////
+////                    blazingTree.treeLevel = BlazingTree.TreeStage.HOLE.ordinal();
+////                    blazingTree.diggingSound();
+////
+////                    blazingTree.setFrame(blazingTree.treeLevel);
+////                }
+//                else if (breezingTree.treeLevel == BreezingTree.TreeStage.FLAG.ordinal()
+//                    && breezingTree.getCollisionRect().overlaps(shovel.getCollisionRect())
+//                    && voltaicTree.isMatureTree) {
+//
+//                    breezingTree.treeLevel = BreezingTree.TreeStage.HOLE.ordinal();
+//                    breezingTree.diggingSound();
+//
+//                    breezingTree.setFrame(breezingTree.treeLevel);
 //                }
-            }
-        }
-    }
-
-    private void updateWateringCan() {
-        wateringCan.updateWateringCan(waterFountain);
-    }
-
-    private void updateTrees() {
-        ordinaryTree.updateTree(ordinarySapling, wateringCan);
-//        blazingTree.updateTree(blazingSapling, wateringCan);
-        breezingTree.updateTree(breezingSapling, wateringCan);
-        iceTree.updateTree(iceSapling, wateringCan);
-        voltaicTree.updateTree(voltaicSapling, wateringCan);
-    }
+//                else if (iceTree.treeLevel == IceTree.TreeStage.FLAG.ordinal()
+//                    && iceTree.getCollisionRect().overlaps(shovel.getCollisionRect())
+//                    && breezingTree.isMatureTree) {
+//
+//                    iceTree.treeLevel = IceTree.TreeStage.HOLE.ordinal();
+//                    iceTree.diggingSound();
+//
+//                    iceTree.setFrame(iceTree.treeLevel);
+//                }
+//                else if (voltaicTree.treeLevel == VoltaicTree.TreeStage.FLAG.ordinal()
+//                    && voltaicTree.getCollisionRect().overlaps(shovel.getCollisionRect())
+//                    && ordinaryTree.isMatureTree) {
+//
+//                    voltaicTree.treeLevel = VoltaicTree.TreeStage.HOLE.ordinal();
+//                    voltaicTree.diggingSound();
+//
+//                    voltaicTree.setFrame(voltaicTree.treeLevel);
+//                }
+//
+////                for (Worm worm : worms) {
+////                    if (worm.getCollisionRect().overlaps(shovel.getCollisionRect())) {
+////                        isShovelReleased = true; //set to true when shovel is used
+////                    }
+////                }
+//            }
+//        }
+//    }
+//
+//    private void updateWateringCan() {
+//        wateringCan.updateWateringCan(waterFountain);
+//    }
+//
+//    private void updateTrees() {
+//        ordinaryTree.updateTree(ordinarySapling, wateringCan);
+////        blazingTree.updateTree(blazingSapling, wateringCan);
+//        breezingTree.updateTree(breezingSapling, wateringCan);
+//        iceTree.updateTree(iceSapling, wateringCan);
+//        voltaicTree.updateTree(voltaicSapling, wateringCan);
+//    }
 
     private void updateEnemyAnimationMovement() {
         for (Worm worm : worms) {

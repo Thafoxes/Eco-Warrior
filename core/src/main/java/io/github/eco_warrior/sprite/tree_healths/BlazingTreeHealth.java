@@ -9,7 +9,7 @@ public class BlazingTreeHealth extends TreeHealth {
     public BlazingTreeHealth(BlazingTree blazingTree) {
         super("atlas/tree_health/blazing_tree_health.atlas",
             "BzHP",
-            blazingTree.adjustedPosition);
+            blazingTree.middlePosition);
 
         this.blazingTree = blazingTree;
     }

@@ -2,7 +2,6 @@ package io.github.eco_warrior.sprite.tree_healths;
 
 import io.github.eco_warrior.entity.TreeHealth;
 import io.github.eco_warrior.sprite.tree_variant.IceTree;
-import io.github.eco_warrior.sprite.tree_variant.OrdinaryTree;
 
 public class IceTreeHealth extends TreeHealth {
     IceTree iceTree;
@@ -10,7 +9,7 @@ public class IceTreeHealth extends TreeHealth {
     public IceTreeHealth(IceTree iceTree) {
         super("atlas/tree_health/ice_tree_health.atlas",
             "IHP",
-            iceTree.adjustedPosition);
+            iceTree.middlePosition);
 
         this.iceTree = iceTree;
     }

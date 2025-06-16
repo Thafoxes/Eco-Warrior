@@ -3,15 +3,12 @@ package io.github.eco_warrior.lwjgl3;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import io.github.eco_warrior.tests.WormTestScreen;
-import io.github.eco_warrior.tests.BlazingTreeControllerTest;
-
-import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_WIDTH;
+import io.github.eco_warrior.tests.TreeControllerTest;
 
 public class TestLauncher extends Game {
     @Override
     public void create() {
-        setScreen(new BlazingTreeControllerTest());
+        setScreen(new TreeControllerTest());
     }
 
     public static void main(String[] args) {

@@ -9,7 +9,7 @@ public class OrdinaryTreeHealth extends TreeHealth {
     public OrdinaryTreeHealth(OrdinaryTree ordinaryTree) {
         super("atlas/tree_health/tree_health.atlas",
             "HP",
-            ordinaryTree.adjustedPosition);
+            ordinaryTree.middlePosition);
 
         this.ordinaryTree = ordinaryTree;
     }

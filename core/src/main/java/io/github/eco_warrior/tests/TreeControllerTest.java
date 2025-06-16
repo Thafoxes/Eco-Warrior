@@ -7,15 +7,19 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.controller.Trees.BlazingTreeController;
+import io.github.eco_warrior.controller.Trees.IceTreeController;
+import io.github.eco_warrior.controller.Trees.OrdinaryTreeController;
+import io.github.eco_warrior.controller.Trees.VoltaicTreeController;
 import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
-import io.github.eco_warrior.sprite.tree_variant.BlazingTree;
+import io.github.eco_warrior.sprite.tree_variant.IceTree;
+import io.github.eco_warrior.sprite.tree_variant.OrdinaryTree;
+import io.github.eco_warrior.sprite.tree_variant.VoltaicTree;
 
-public class BlazingTreeControllerTest implements Screen {
+public class TreeControllerTest implements Screen {
     private SpriteBatch batch;
     private OrthographicCamera camera;
-    private BlazingTreeController treeController;
+    private VoltaicTreeController treeController;
     private WateringCan wateringCan;
     private GameSprite sapling;
     private Vector2 wateringCanPosition;
@@ -23,13 +27,13 @@ public class BlazingTreeControllerTest implements Screen {
 
 
 
-    public BlazingTreeControllerTest() {
+    public TreeControllerTest() {
         this.batch = new SpriteBatch();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         // Initialize game objects
-        BlazingTree blazingTree = new BlazingTree(
+        VoltaicTree tree = new VoltaicTree(
             new Vector2(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f),
             0.5f
         );
@@ -46,7 +50,7 @@ public class BlazingTreeControllerTest implements Screen {
             1f
         );
 
-        treeController = new BlazingTreeController(blazingTree, wateringCan);
+        treeController = new VoltaicTreeController(tree, wateringCan);
 
         wateringCanPosition = wateringCan.getPosition();
         saplingPosition = sapling.getPosition();
@@ -72,25 +76,37 @@ public class BlazingTreeControllerTest implements Screen {
         sapling.setPosition(saplingPosition);
 
         // Test controls
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.V)) {
+            System.out.println("Current Tree Stage: " + treeController.getTree().getStage());
             treeController.handleWatering();
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+            System.out.println("Planting sapling at position: " + sapling.getPosition());
             treeController.handleSaplingPlanting(sapling);
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
+            System.out.println("Reviving the tree");
+            treeController.reviveTree();
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
+            System.out.println("Reseting");
+            treeController.reset();
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
+            System.out.println("Filling watering can");
             wateringCan.waterLevel = WateringCan.WateringCanState.FILLED.ordinal();
             wateringCan.setFrame(wateringCan.waterLevel);
         }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.C)){
+        if(Gdx.input.isKeyJustPressed(Input.Keys.Z)){
             //should have a check for shovel
             treeController.digHole();
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
-            treeController.handleDamage(1);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
+            System.out.println("Handling damage to the tree");
+            treeController.takeDamage(1);
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-            System.out.println("Current Tree Stage: " + treeController.getBlazingTree().getStage());
+        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            System.out.println("Current Tree Stage: " + treeController.getTree().getStage());
 //            treeController.getBlazingTree().getStage();
         }
 
