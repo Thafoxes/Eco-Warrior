@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import io.github.eco_warrior.entity.gameSprite;
+import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.sprite.Bins.BinBase;
 import io.github.eco_warrior.sprite.Characters.Racoon;
 import io.github.eco_warrior.sprite.tools.FlipFlop;
@@ -133,7 +133,7 @@ public class BinController {
         // Choose a random bin from available bins
         int randomIndex = MathUtils.random(availableBinIndices.size - 1);
         int binIndex = availableBinIndices.get(randomIndex);
-        gameSprite bin = backgroundBins.get(binIndex);
+        GameSprite bin = backgroundBins.get(binIndex);
 
         // Calculate spawn position (center of the bin)
         Vector2 spawnPos = new Vector2(
@@ -191,7 +191,7 @@ public class BinController {
     }
     public void draw(SpriteBatch batch) {
         // Draw in layers: background bins, raccoons, foreground bins
-        for (gameSprite bin : backgroundBins) {
+        for (GameSprite bin : backgroundBins) {
             bin.draw(batch);
         }
 
@@ -199,7 +199,7 @@ public class BinController {
             raccoon.draw(batch);
         }
 
-        for (gameSprite bin : foregroundBins) {
+        for (GameSprite bin : foregroundBins) {
             bin.draw(batch);
         }
 
@@ -264,11 +264,11 @@ public class BinController {
     }
 
     public void dispose() {
-        for (gameSprite bin : backgroundBins) {
+        for (GameSprite bin : backgroundBins) {
             bin.dispose();
         }
 
-        for (gameSprite bin : foregroundBins) {
+        for (GameSprite bin : foregroundBins) {
             bin.dispose();
         }
 

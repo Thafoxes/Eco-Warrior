@@ -19,7 +19,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.animation.WaterExplosion;
 import io.github.eco_warrior.controller.WaterSystemManager;
 import io.github.eco_warrior.controller.FontGenerator;
-import io.github.eco_warrior.entity.gameSprite;
+import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.enums.BucketState;
 import io.github.eco_warrior.enums.textEnum;
 import io.github.eco_warrior.screen.ResultScreen;
@@ -59,7 +59,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
     private float stateTime;
 
     //tools
-    private Map<String, gameSprite> tools = new HashMap<>();
+    private Map<String, GameSprite> tools = new HashMap<>();
     private BucketState bucketState;
     private float startY;
 
@@ -68,7 +68,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
     private Vector2 lastTouchPos;
     private boolean isDragging = false;
     private boolean isReturning = false;
-    private gameSprite draggingTool;
+    private GameSprite draggingTool;
 
 
     //music
@@ -222,7 +222,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
 
 
     private void resetBucket(){
-        gameSprite waterBucket = tools.get("water_bucket");
+        GameSprite waterBucket = tools.get("water_bucket");
         if(waterBucket != null){
             waterBucket.resetFrame();
             bucketState = bucketState.EMPTY;
@@ -410,7 +410,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
 
             //check if pressed the tools
             if (Gdx.input.justTouched()) {
-                for (gameSprite tool : tools.values()) {
+                for (GameSprite tool : tools.values()) {
                     //if is touched the tools
                     if (tool.getCollisionRect().contains(currentTouchPos)) {
                         draggingTool = tool;
@@ -571,8 +571,8 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
         }
     }
 
-    private String getToolKeyForTool(gameSprite draggingTool) {
-        for (Map.Entry<String, gameSprite> entry : tools.entrySet()) {
+    private String getToolKeyForTool(GameSprite draggingTool) {
+        for (Map.Entry<String, GameSprite> entry : tools.entrySet()) {
             if (entry.getValue().equals(draggingTool)) {
                 return entry.getKey();
             }
@@ -615,7 +615,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
         waterResevior.drawWithWaterCount(batch, camera);
 
         //display tools
-        for (gameSprite tool : tools.values()) {
+        for (GameSprite tool : tools.values()) {
             tool.draw(batch);
         }
 
@@ -654,7 +654,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.GREEN);
 
-        for(gameSprite tool: tools.values()){
+        for(GameSprite tool: tools.values()){
             tool.drawDebug(shapeRenderer);
         }
 //        debugSpawnArea();
@@ -719,7 +719,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
         batch.dispose();
         maprenderer.dispose();
         map.dispose();
-        for (gameSprite tool : tools.values()) {
+        for (GameSprite tool : tools.values()) {
             tool.dispose();
         }
         for(SpiderSprite spiders: activeSpiders){

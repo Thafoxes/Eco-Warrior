@@ -7,10 +7,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.controller.FontGenerator;
-import io.github.eco_warrior.entity.gameSprite;
+import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.enums.textEnum;
 
-public class WaterResevior extends gameSprite {
+public class WaterResevior extends GameSprite {
 
     private static final String ATLAS_PATH = "atlas/water_resevior_funnel/water_resevoir.atlas";
     private static final String REGION_NAME = "resevior_pipe";

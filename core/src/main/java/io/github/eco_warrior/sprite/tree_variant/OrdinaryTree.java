@@ -5,7 +5,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
 import io.github.eco_warrior.entity.Trees;
-import io.github.eco_warrior.entity.gameSprite;
+import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
 
 public class OrdinaryTree extends Trees {
@@ -42,7 +42,7 @@ public class OrdinaryTree extends Trees {
         saplingSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/sapling_placement.mp3"));
     }
 
-    public void updateTree(gameSprite sapling, WateringCan wateringCan) {
+    public void updateTree(GameSprite sapling, WateringCan wateringCan) {
         if (treeLevel == TreeStage.HOLE.ordinal() && getCollisionRect().overlaps(sapling.getCollisionRect())) {
             saplingSound.play(1.5f);
             treeLevel = TreeStage.SAPLING.ordinal();
@@ -70,7 +70,7 @@ public class OrdinaryTree extends Trees {
                     }
 
                     growthSound.play(1.5f);
-                    health = 4; // Reset health for the next tree stage
+//                    health = 4; // Reset health for the next tree stage
                     setFrame(treeLevel);
                     isStageTransitionScheduled = false;
                 }
@@ -83,21 +83,5 @@ public class OrdinaryTree extends Trees {
 
     @Override
     public void treeObliteration() {
-        if (health == 0) {
-            if (growTask != null) {
-                growTask.cancel();
-                growTask = null;
-            }
-
-            if (treeLevel == TreeStage.SAPLING.ordinal()) {
-                treeLevel = TreeStage.DEAD_SAPLING.ordinal();
-            } else if (treeLevel == TreeStage.YOUNG_TREE.ordinal()) {
-                treeLevel = TreeStage.DEAD_YOUNG_TREE.ordinal();
-            } else if (treeLevel == TreeStage.MATURE_TREE.ordinal()) {
-                treeLevel = TreeStage.DEAD_MATURE_TREE.ordinal();
-            }
-
-            setFrame(treeLevel);
-        }
     }
 }

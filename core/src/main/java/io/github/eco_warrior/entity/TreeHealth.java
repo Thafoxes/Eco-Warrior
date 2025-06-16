@@ -2,7 +2,7 @@ package io.github.eco_warrior.entity;
 
 import com.badlogic.gdx.math.Vector2;
 
-public class TreeHealth extends gameSprite {
+public class TreeHealth extends GameSprite {
 
     public enum TreeHealthAnimation {
         HP_MAX,

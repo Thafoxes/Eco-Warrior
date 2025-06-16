@@ -4,9 +4,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.animation.RedExplosion;
-import io.github.eco_warrior.entity.gameSprite;
+import io.github.eco_warrior.entity.GameSprite;
 
-public class Racoon extends gameSprite {
+public class Racoon extends GameSprite {
     private boolean isFreeze;
     private boolean isHit;
     private boolean isDying;

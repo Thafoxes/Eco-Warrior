@@ -3,9 +3,9 @@ package io.github.eco_warrior.sprite.gardening_equipments;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.entity.gameSprite;
+import io.github.eco_warrior.entity.GameSprite;
 
-public class WateringCan extends gameSprite {
+public class WateringCan extends GameSprite {
 
     public enum WateringCanState {
         EMPTY,
@@ -30,7 +30,7 @@ public class WateringCan extends gameSprite {
     }
 
     //update the watering can state when it interacts with a water fountain
-    public void updateWateringCan(gameSprite waterFountain) {
+    public void updateWateringCan(GameSprite waterFountain) {
         if (waterLevel == WateringCanState.EMPTY.ordinal() && getCollisionRect().overlaps(waterFountain.getCollisionRect())) {
             if (Math.random() < 0.5) {
                 fillSound1.play(1f);

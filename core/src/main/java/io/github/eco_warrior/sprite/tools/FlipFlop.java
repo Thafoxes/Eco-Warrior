@@ -1,9 +1,9 @@
 package io.github.eco_warrior.sprite.tools;
 
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.entity.gameSprite;
+import io.github.eco_warrior.entity.GameSprite;
 
-public class FlipFlop extends gameSprite {
+public class FlipFlop extends GameSprite {
 
     private static String slapSoundEffectPath = "sound_effects/hard_slap.mp3";
 

@@ -7,10 +7,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.entity.gameSprite;
+import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.enums.ToolType;
 
-public class SpiderSprite extends gameSprite {
+public class SpiderSprite extends GameSprite {
     public enum SpiderState {
         ALIVE,
         DYING,

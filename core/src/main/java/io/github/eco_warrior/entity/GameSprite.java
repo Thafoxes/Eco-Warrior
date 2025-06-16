@@ -9,10 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class gameSprite extends spriteGenerator {
+public class GameSprite extends spriteGenerator {
     private Sprite sprite;
     private Rectangle collisionRect;
     private Sound correctSoundFX;
@@ -32,7 +29,7 @@ public class gameSprite extends spriteGenerator {
     /**
      * No frame to worried about, just a single sprite.
      */
-    public gameSprite(String atlasPath, String regionName, Vector2 position, float scale , String correctSoundPath, String wrongSoundPath, String hittingSoundPath) {
+    public GameSprite(String atlasPath, String regionName, Vector2 position, float scale , String correctSoundPath, String wrongSoundPath, String hittingSoundPath) {
         this.atlasPath = atlasPath;
         TextureAtlas atlas = new TextureAtlas(Gdx.files.internal(this.atlasPath));
         TextureRegion region;
@@ -71,7 +68,7 @@ public class gameSprite extends spriteGenerator {
      * @param position
      * @param scale
      */
-    public gameSprite(String atlasPath, String regionBaseName, int frameCount, Vector2 position, float scale) {
+    public GameSprite(String atlasPath, String regionBaseName, int frameCount, Vector2 position, float scale) {
 
         this.frameCount = frameCount;
         TextureAtlas atlas = new TextureAtlas(Gdx.files.internal(atlasPath));
@@ -97,28 +94,28 @@ public class gameSprite extends spriteGenerator {
     /**
      * Default scale with correct and wrong sound effects.
      * */
-    public gameSprite(String atlasPath, String regionName, Vector2 position , String correctSoundPath, String wrongSoundPath) {
+    public GameSprite(String atlasPath, String regionName, Vector2 position , String correctSoundPath, String wrongSoundPath) {
        this(atlasPath, regionName, position, 1f, correctSoundPath, wrongSoundPath, null);
     }
 
     /**
      * Default scale with no sound effects.
      * */
-    public gameSprite(String atlasPath, String regionName, Vector2 position) {
+    public GameSprite(String atlasPath, String regionName, Vector2 position) {
         this(atlasPath, regionName, position, 1f, null, null, null);
     }
 
     /**
      * Custom scale with no sound effects.
      * */
-    public gameSprite(String atlasPath, String regionName, Vector2 position, float scale) {
+    public GameSprite(String atlasPath, String regionName, Vector2 position, float scale) {
         this(atlasPath, regionName, position, scale, null, null, null);
     }
 
     /**
      * Default scale with only correct sound effects.
      * */
-    public gameSprite(String atlasPath, String regionName, Vector2 position, float scale, String correctSoundPath) {
+    public GameSprite(String atlasPath, String regionName, Vector2 position, float scale, String correctSoundPath) {
         this(atlasPath, regionName, position, scale, correctSoundPath, null, null);
     }
 
@@ -249,6 +246,14 @@ public class gameSprite extends spriteGenerator {
 
     }
 
+    public Vector2 getPosition(){
+        return new Vector2(this.sprite.getX(), this.sprite.getY());
+    }
+
+    public void setPosition(Vector2 newPosition){
+        this.sprite.setPosition(newPosition.x, newPosition.y);
+        this.collisionRect.setPosition(newPosition.x, newPosition.y);
+    }
 
     public Rectangle getCollisionRect(){
         return this.collisionRect;

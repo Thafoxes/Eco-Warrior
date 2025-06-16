@@ -2,11 +2,16 @@ package io.github.eco_warrior.sprite.tree_variant;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.Tree;
 import com.badlogic.gdx.utils.Timer;
 import io.github.eco_warrior.entity.Trees;
-import io.github.eco_warrior.entity.gameSprite;
-import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class BlazingTree extends Trees {
 
@@ -14,19 +19,14 @@ public class BlazingTree extends Trees {
         FLAG,
         HOLE,
         SAPLING,
-        YOUNG_TREE,
-        ANIMATED_MATURE_TREE_1,
-        ANIMATED_MATURE_TREE_2,
-        ANIMATED_MATURE_TREE_3,
-        ANIMATED_MATURE_TREE_4,
-        ANIMATED_MATURE_TREE_5,
+        GROWING_TREE,
+        MATURED_TREE,
         DEAD_SAPLING,
         DEAD_YOUNG_TREE,
         DEAD_MATURE_TREE
     }
 
-
-    public int treeLevel = TreeStage.FLAG.ordinal();
+    public TreeStage treeStage = TreeStage.FLAG;
 
     private final Sound growthSound;
     private final Sound waterPourSound;
@@ -36,101 +36,134 @@ public class BlazingTree extends Trees {
     public Timer.Task growTask;
     public Timer.Task animationTask;
 
+    private TextureAtlas atlas;
+    private final Map<TreeStage, Animation<TextureRegion>> animationMap = new HashMap<>();
+
+    private boolean isMaturedTree = false;
+    private float stateTime = 0;
+    private final String filePath = "atlas/tree_variant_stages/BlazingTree.atlas";
+
     public BlazingTree(Vector2 position, float scale) {
-        super("atlas/tree_variant_stages/blazing_tree_stages.atlas",
-            "blazing_tree",
-            12,
+
+        super("atlas/tree_variant_stages/BlazingTree.atlas",
+            "flag",
+            1,
             position,
             scale);
 
         growthSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/fireball.mp3"));
         waterPourSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/pour_watering_can.mp3"));
         saplingSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/sapling_placement.mp3"));
+        loadAnimation();
     }
 
-    public void updateTree(gameSprite sapling, WateringCan wateringCan) {
-        if (treeLevel == TreeStage.HOLE.ordinal() && getCollisionRect().overlaps(sapling.getCollisionRect())) {
-            saplingSound.play(1.5f);
-            treeLevel = TreeStage.SAPLING.ordinal();
+    private void loadAnimation() {
+        // Load animations directly here
+        atlas = new TextureAtlas(Gdx.files.internal(filePath));
 
-            setFrame(treeLevel);
-        }
 
-        if ((treeLevel == TreeStage.SAPLING.ordinal() || treeLevel == TreeStage.YOUNG_TREE.ordinal())
-            && getCollisionRect().overlaps(wateringCan.getCollisionRect())
-            && wateringCan.waterLevel == WateringCan.WateringCanState.FILLED.ordinal()
-            && !isStageTransitionScheduled) {
-
-            wateringCan.waterLevel = WateringCan.WateringCanState.EMPTY.ordinal();
-            wateringCan.setFrame(wateringCan.waterLevel);
-            isStageTransitionScheduled = true;
-            waterPourSound.play(1f);
-
-            growTask = new Timer.Task() {
-                @Override
-                public void run() {
-                    if (treeLevel == TreeStage.SAPLING.ordinal()) {
-                        treeLevel = TreeStage.YOUNG_TREE.ordinal();
-                    } else if (treeLevel == TreeStage.YOUNG_TREE.ordinal()) {
-                        treeLevel = TreeStage.ANIMATED_MATURE_TREE_1.ordinal();
-                        isMatureTree = true;
-                    }
-
-                    growthSound.play(1.5f);
-                    health = 4; // Reset health for the next tree stage
-                    setFrame(treeLevel);
-                    isStageTransitionScheduled = false;
-                }
-            };
-            Timer.schedule(growTask, 2); // 2 seconds delay
-        }
-
-        // Handle the animated mature tree stages
-        if (treeLevel >= TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
-            && treeLevel <= TreeStage.ANIMATED_MATURE_TREE_5.ordinal()
-            && !isStageTransitionScheduled) {
-            isStageTransitionScheduled = true;
-
-            animationTask = new Timer.Task() {
-                @Override
-                public void run() {
-                    int nextFrame = treeLevel + 1;
-                    if (nextFrame > TreeStage.ANIMATED_MATURE_TREE_5.ordinal()) {
-                        nextFrame = TreeStage.ANIMATED_MATURE_TREE_1.ordinal();
-                    }
-                    setFrame(nextFrame);
-                    treeLevel = nextFrame;
-                    isStageTransitionScheduled = false;
-                }
-            };
-            Timer.schedule(animationTask, .3f); // 0.3 seconds delay
-        }
-
-        treeObliteration();
+        animationMap.put(TreeStage.FLAG, new Animation<>(0.1f, atlas.findRegions("flag"), Animation.PlayMode.NORMAL));
+        animationMap.put(TreeStage.HOLE, new Animation<>(0.1f, atlas.findRegions("hole"), Animation.PlayMode.NORMAL));
+        animationMap.put(TreeStage.SAPLING, new Animation<>(0.1f, atlas.findRegions("sapling"), Animation.PlayMode.NORMAL));
+        animationMap.put(TreeStage.GROWING_TREE, new Animation<>(0.1f, atlas.findRegions("growing_phase"), Animation.PlayMode.NORMAL));
+        animationMap.put(TreeStage.MATURED_TREE, new Animation<>(0.1f, atlas.findRegions("matured"), Animation.PlayMode.NORMAL));
+        animationMap.put(TreeStage.DEAD_SAPLING, new Animation<>(0.1f, atlas.findRegions("dead_sapling"), Animation.PlayMode.NORMAL));
+        animationMap.put(TreeStage.DEAD_YOUNG_TREE, new Animation<>(0.1f, atlas.findRegions("dead_young_tree"), Animation.PlayMode.NORMAL));
+        animationMap.put(TreeStage.DEAD_MATURE_TREE, new Animation<>(0.1f, atlas.findRegions("dead_mature_tree"), Animation.PlayMode.NORMAL));
     }
 
-    @Override
-    public void treeObliteration() {
-        if (health == 0) {
+
+    /**
+     * Water the tree to promote growth.
+     * This method will only work if the tree is in a stage that allows watering.
+     */
+    public void water(){
+        if( treeStage == TreeStage.SAPLING || treeStage == TreeStage.GROWING_TREE) {
+            waterPourSound.play(0.5f);
+            setStage(TreeStage.GROWING_TREE);
             if (growTask != null) {
                 growTask.cancel();
-                growTask = null;
             }
-            if (animationTask != null) {
-                animationTask.cancel();
-                animationTask = null;
-            }
-
-            if (treeLevel == TreeStage.SAPLING.ordinal()) {
-                treeLevel = TreeStage.DEAD_SAPLING.ordinal();
-            } else if (treeLevel == TreeStage.YOUNG_TREE.ordinal()) {
-                treeLevel = TreeStage.DEAD_YOUNG_TREE.ordinal();
-            } else if (treeLevel >= TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
-                && treeLevel <= TreeStage.ANIMATED_MATURE_TREE_5.ordinal()) {
-                treeLevel = TreeStage.DEAD_MATURE_TREE.ordinal();
-            }
-
-            setFrame(treeLevel);
+            growTask = Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    setStage(TreeStage.MATURED_TREE);
+                    growthSound.play(0.5f);
+                }
+            }, 3f); // Adjust the delay as needed
         }
+    }
+
+    /**
+     * Plant a sapling in the dug hole.
+     * This method will only work if the tree is in the HOLE stage.
+     */
+    public void plantSapling() {
+        if (treeStage == TreeStage.HOLE) {
+            saplingSound.play(1.5f);
+            setStage(TreeStage.SAPLING);
+        }else{
+            System.out.println("Cannot plant sapling at this stage: " + treeStage);
+        }
+    }
+
+    /**
+     * Dig a hole for planting a sapling.
+     */
+    public void digHole() {
+        if (treeStage == TreeStage.FLAG) {
+            diggingSound();
+            setStage(TreeStage.HOLE);
+//            System.out.println(treeStage);
+
+        }else{
+            System.out.println("Cannot dig a hole at this stage: " + treeStage);
+        }
+    }
+
+    public void die(){
+        TreeStage deadStage;
+        switch (treeStage) {
+            case SAPLING:
+                deadStage = TreeStage.DEAD_SAPLING;
+                break;
+            case MATURED_TREE:
+                deadStage = TreeStage.DEAD_MATURE_TREE;
+                break;
+            default:
+                deadStage = treeStage; // No change for FLAG or HOLE
+                break;
+        };
+        setStage(deadStage);
+    }
+
+    private void setStage(TreeStage stage) {
+        treeStage = stage;
+        stateTime = 0;
+        if (animationMap.containsKey(stage)) {
+            // Reset animation and update sprite
+            Animation<TextureRegion> animation = animationMap.get(stage);
+            getSprite().setRegion(animation.getKeyFrame(0));
+        }
+    }
+
+    public TreeStage getStage() {
+        return treeStage;
+    }
+
+
+    @Override
+    public void update(float delta) {
+        stateTime += delta;
+//        if (treeStage == TreeStage.MATURED_TREE) {
+//            Animation<TextureRegion> animation = animationMap.get(treeStage);
+//            getSprite().setRegion(animation.getKeyFrame(delta, true));
+//        }
+        if (animationMap.containsKey(treeStage)) {
+            Animation<TextureRegion> animation = animationMap.get(treeStage);
+            TextureRegion currentFrame = animation.getKeyFrame(stateTime, true);
+            getSprite().setRegion(currentFrame);
+        }
+        super.update(delta);
     }
 }

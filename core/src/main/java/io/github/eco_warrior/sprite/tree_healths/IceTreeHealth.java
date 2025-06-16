@@ -17,22 +17,22 @@ public class IceTreeHealth extends TreeHealth {
 
     @Override
     public void updateHealth() {
-        switch (iceTree.health) {
-            case 4:
-                setFrame(TreeHealthAnimation.HP_MAX.ordinal());
-                break;
-            case 3:
-                setFrame(TreeHealthAnimation.HP_3.ordinal());
-                break;
-            case 2:
-                setFrame(TreeHealthAnimation.HP_2.ordinal());
-                break;
-            case 1:
-                setFrame(TreeHealthAnimation.HP_1.ordinal());
-                break;
-            default:
-                setFrame(TreeHealthAnimation.HP_0.ordinal());
-                break;
-        }
+//        switch (iceTree.health) {
+//            case 4:
+//                setFrame(TreeHealthAnimation.HP_MAX.ordinal());
+//                break;
+//            case 3:
+//                setFrame(TreeHealthAnimation.HP_3.ordinal());
+//                break;
+//            case 2:
+//                setFrame(TreeHealthAnimation.HP_2.ordinal());
+//                break;
+//            case 1:
+//                setFrame(TreeHealthAnimation.HP_1.ordinal());
+//                break;
+//            default:
+//                setFrame(TreeHealthAnimation.HP_0.ordinal());
+//                break;
+//        }
     }
 }

@@ -4,9 +4,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.entity.gameSprite;
+import io.github.eco_warrior.entity.GameSprite;
 
-public class WaterDrop extends gameSprite {
+public class WaterDrop extends GameSprite {
     private static final float GRAVITY = 200f;
     private Vector2 velocity;
     private float volume; // in liters

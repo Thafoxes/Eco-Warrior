@@ -4,9 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.entity.gameSprite;
+import io.github.eco_warrior.entity.GameSprite;
 
-public class WaterBucket extends gameSprite {
+public class WaterBucket extends GameSprite {
 
     private enum WaterBucketState {
         EMPTY,
@@ -83,7 +83,7 @@ public class WaterBucket extends gameSprite {
      * @param reservoir The water reservoir sprite
      * @return true if successfully emptied
      */
-    public boolean emptyIntoReservoir(gameSprite reservoir) {
+    public boolean emptyIntoReservoir(GameSprite reservoir) {
 
         if (getCollisionRect().overlaps(reservoir.getCollisionRect()) && waterDropCount > 0) {
             // Reset water level

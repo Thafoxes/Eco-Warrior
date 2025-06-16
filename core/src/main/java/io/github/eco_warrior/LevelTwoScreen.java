@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.entity.TreeHealth;
 import io.github.eco_warrior.entity.Trees;
-import io.github.eco_warrior.entity.gameSprite;
+import io.github.eco_warrior.entity.GameSprite;
 import java.util.Random;
 import io.github.eco_warrior.sprite.*;
 import io.github.eco_warrior.sprite.Enemy.Worm;
@@ -45,12 +45,12 @@ public class LevelTwoScreen implements Screen {
     private ShapeRenderer shapeRenderer;
 
     //tools
-    private Map<gameSpriteType, gameSprite> tools = new HashMap<>();
+    private Map<gameSpriteType, GameSprite> tools = new HashMap<>();
     private float manipulatorX;
     private float startY;
 
     //water fountain
-    private Map<String, gameSprite> liquids;
+    private Map<String, GameSprite> liquids;
 
     //trees
     private Map<treesType, Trees> trees;
@@ -93,7 +93,7 @@ public class LevelTwoScreen implements Screen {
     private Vector2 lastTouchPos;
     private boolean isDragging = false;
     private boolean isReturning = false;
-    private gameSprite draggingTool;
+    private GameSprite draggingTool;
 
     //enemies
     private Array<Worm> worms;
@@ -348,7 +348,7 @@ public class LevelTwoScreen implements Screen {
 
     private void drawTools() {
         //draw tools that are not saplings to be unlocked
-        for (gameSprite tool : tools.values()) {
+        for (GameSprite tool : tools.values()) {
 
             if(!(tool instanceof BaseSapling) || tool == tools.get(gameSpriteType.ORDINARY_SAPLING)) {
                 tool.draw(batch);
@@ -439,11 +439,11 @@ public class LevelTwoScreen implements Screen {
         }
 
         //remove blazing sapling upon planting
-        if ((blazingTree.treeLevel == BlazingTree.TreeStage.HOLE.ordinal())
-            && blazingTree.getCollisionRect().overlaps(blazingSapling.getCollisionRect())) {
-            tools.remove(gameSpriteType.BLAZING_SAPLING);
-            isBlazingSaplingUsed = true; //set to true when blazing sapling is used
-        }
+//        if ((blazingTree.treeLevel == BlazingTree.TreeStage.HOLE.ordinal())
+//            && blazingTree.getCollisionRect().overlaps(blazingSapling.getCollisionRect())) {
+//            tools.remove(gameSpriteType.BLAZING_SAPLING);
+//            isBlazingSaplingUsed = true; //set to true when blazing sapling is used
+//        }
     }
 
     private void input(){
@@ -453,9 +453,9 @@ public class LevelTwoScreen implements Screen {
 
             //check if pressed the tools
             if (Gdx.input.justTouched()) {
-                for (Map.Entry<gameSpriteType, gameSprite> entry : tools.entrySet()){
+                for (Map.Entry<gameSpriteType, GameSprite> entry : tools.entrySet()){
                     gameSpriteType type = entry.getKey();
-                    gameSprite tool = entry.getValue();
+                    GameSprite tool = entry.getValue();
 
                     if(!tool.getCollisionRect().contains(currentTouchPos)){
                         continue; //skip if the tool is not touched
@@ -620,15 +620,15 @@ public class LevelTwoScreen implements Screen {
 
                     ordinaryTree.setFrame(ordinaryTree.treeLevel);
                 }
-                else if (blazingTree.treeLevel == BlazingTree.TreeStage.FLAG.ordinal()
-                    && blazingTree.getCollisionRect().overlaps(shovel.getCollisionRect())
-                    && iceTree.isMatureTree) {
-
-                    blazingTree.treeLevel = BlazingTree.TreeStage.HOLE.ordinal();
-                    blazingTree.diggingSound();
-
-                    blazingTree.setFrame(blazingTree.treeLevel);
-                }
+//                else if (blazingTree.treeLevel == BlazingTree.TreeStage.FLAG.ordinal()
+//                    && blazingTree.getCollisionRect().overlaps(shovel.getCollisionRect())
+//                    && iceTree.isMatureTree) {
+//
+//                    blazingTree.treeLevel = BlazingTree.TreeStage.HOLE.ordinal();
+//                    blazingTree.diggingSound();
+//
+//                    blazingTree.setFrame(blazingTree.treeLevel);
+//                }
                 else if (breezingTree.treeLevel == BreezingTree.TreeStage.FLAG.ordinal()
                     && breezingTree.getCollisionRect().overlaps(shovel.getCollisionRect())
                     && voltaicTree.isMatureTree) {
@@ -672,7 +672,7 @@ public class LevelTwoScreen implements Screen {
 
     private void updateTrees() {
         ordinaryTree.updateTree(ordinarySapling, wateringCan);
-        blazingTree.updateTree(blazingSapling, wateringCan);
+//        blazingTree.updateTree(blazingSapling, wateringCan);
         breezingTree.updateTree(breezingSapling, wateringCan);
         iceTree.updateTree(iceSapling, wateringCan);
         voltaicTree.updateTree(voltaicSapling, wateringCan);
@@ -711,7 +711,7 @@ public class LevelTwoScreen implements Screen {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.GREEN);
 
-        for(gameSprite tool: tools.values()){
+        for(GameSprite tool: tools.values()){
             tool.drawDebug(shapeRenderer);
         }
 
@@ -741,7 +741,7 @@ public class LevelTwoScreen implements Screen {
         backgroundTexture.dispose();
         shapeRenderer.dispose();
 
-        for (gameSprite tool : tools.values()) {
+        for (GameSprite tool : tools.values()) {
             tool.dispose();
         }
 
@@ -749,7 +749,7 @@ public class LevelTwoScreen implements Screen {
             tree.dispose();
         }
 
-        for(gameSprite worm: worms){
+        for(GameSprite worm: worms){
             worm.dispose();
         }
 

@@ -87,9 +87,9 @@ atlas/tree_health/tree_health.atlas
 atlas/tree_health/tree_health.png
 atlas/tree_health/voltaic_tree_health.atlas
 atlas/tree_health/voltaic_tree_health.png
-atlas/tree_variant_stages/blazing_tree_stages.atlas
-atlas/tree_variant_stages/blazing_tree_stages.png
-atlas/tree_variant_stages/blazing_tree_stages2.png
+atlas/tree_variant_stages/BlazingTree.atlas
+atlas/tree_variant_stages/BlazingTree.png
+atlas/tree_variant_stages/BlazingTree2.png
 atlas/tree_variant_stages/breezing_tree_stages.atlas
 atlas/tree_variant_stages/breezing_tree_stages.png
 atlas/tree_variant_stages/breezing_tree_stages2.png

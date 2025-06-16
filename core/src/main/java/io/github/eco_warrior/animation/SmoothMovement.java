@@ -2,7 +2,7 @@ package io.github.eco_warrior.animation;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.entity.gameSprite;
+import io.github.eco_warrior.entity.GameSprite;
 
 public class SmoothMovement {
 
@@ -16,7 +16,7 @@ public class SmoothMovement {
      * @param snapDistance Distance threshold to snap to target position
      * @return True if movement is complete, false if still moving
      */
-    public static boolean moveLerpToPosition(gameSprite sprite, Vector2 targetPosition, float speed, float snapDistance) {
+    public static boolean moveLerpToPosition(GameSprite sprite, Vector2 targetPosition, float speed, float snapDistance) {
         float deltaTime = Gdx.graphics.getDeltaTime();
 
         // Current position

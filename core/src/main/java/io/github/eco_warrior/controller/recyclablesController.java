@@ -6,11 +6,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import io.github.eco_warrior.entity.gameSprite;
+import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.sprite.Recyables.*;
 
 public class recyclablesController {
-    private Array<gameSprite> recyclables;
+    private Array<GameSprite> recyclables;
     private Recyclables draggingItem;
 
     // Spawn parameters
@@ -24,7 +24,7 @@ public class recyclablesController {
     private boolean isReturning = false;
 
     // Recyclable types
-    private final Class<? extends gameSprite>[] recyclableClasses = new Class[] {
+    private final Class<? extends GameSprite>[] recyclableClasses = new Class[] {
         PlasticBottle.class,
         Newspaper.class,
         TinCans.class,
@@ -47,7 +47,7 @@ public class recyclablesController {
 
         // Update recyclables
         for(int i = recyclables.size - 1; i >= 0; i--) {
-            gameSprite item = recyclables.get(i);
+            GameSprite item = recyclables.get(i);
             item.update(delta);
 
             if(item.isOffScreen()) {
@@ -65,10 +65,10 @@ public class recyclablesController {
         int index = MathUtils.random(recyclableClasses.length - 1);
 
         Class<?> selectedClass = recyclableClasses[index];
-        gameSprite newItem = null;
+        GameSprite newItem = null;
 
         try {
-            newItem = (gameSprite) selectedClass.getConstructor(Vector2.class)
+            newItem = (GameSprite) selectedClass.getConstructor(Vector2.class)
                 .newInstance(new Vector2(startX, startY));
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,7 +80,7 @@ public class recyclablesController {
     }
 
     public boolean checkItemTouched(Vector2 touchPos) {
-        for(gameSprite item : recyclables) {
+        for(GameSprite item : recyclables) {
             if(item.getCollisionRect().contains(touchPos)) {
                 draggingItem = (Recyclables) item;
                 isDragging = true;
@@ -141,19 +141,19 @@ public class recyclablesController {
     }
 
     public void draw(SpriteBatch batch) {
-        for(gameSprite item : recyclables) {
+        for(GameSprite item : recyclables) {
             item.draw(batch);
         }
     }
 
     public void drawDebug(ShapeRenderer shapeRenderer) {
-        for(gameSprite item : recyclables) {
+        for(GameSprite item : recyclables) {
             item.drawDebug(shapeRenderer);
         }
     }
 
     public void dispose() {
-        for(gameSprite item : recyclables) {
+        for(GameSprite item : recyclables) {
             item.dispose();
         }
         recyclables.clear();

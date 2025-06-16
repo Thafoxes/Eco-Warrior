@@ -3,7 +3,7 @@ package io.github.eco_warrior.sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.entity.gameSprite;
+import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.enums.CrackType;
 import io.github.eco_warrior.enums.ToolType;
 
@@ -15,7 +15,7 @@ enum CrackState {
 }
 
 @Deprecated
-public class PipeCrack extends gameSprite {
+public class PipeCrack extends GameSprite {
 
     // Crack states
     private float leakRateOptions[] = {0.5f, 1.0f};

@@ -1,10 +1,10 @@
 package io.github.eco_warrior.sprite.Recyables;
 
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.entity.gameSprite;
+import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.enums.ERecycleMap;
 
-public class Recyclables extends gameSprite {
+public class Recyclables extends GameSprite {
     private ERecycleMap categoryPile = ERecycleMap.glass_bottle;
     private float speed = 150f;
 

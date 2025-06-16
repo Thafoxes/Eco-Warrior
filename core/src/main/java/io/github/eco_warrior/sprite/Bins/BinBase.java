@@ -3,10 +3,10 @@ package io.github.eco_warrior.sprite.Bins;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.entity.gameSprite;
+import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.enums.ERecycleMap;
 
-public abstract class BinBase extends gameSprite {
+public abstract class BinBase extends GameSprite {
     //animation
     private float animationTimer = 0f;
     private boolean isAnimating = false;

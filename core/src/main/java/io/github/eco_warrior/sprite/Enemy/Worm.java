@@ -6,19 +6,15 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
-import io.github.eco_warrior.LevelTwoScreen.WormPath;
-import io.github.eco_warrior.entity.Trees;
-import io.github.eco_warrior.entity.gameSprite;
+import io.github.eco_warrior.entity.GameSprite;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimerTask;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
 
-public class Worm extends gameSprite {
+public class Worm extends GameSprite {
     private static Vector2 originalPos;
     private WormState currentState;
     private WormState previousState;
