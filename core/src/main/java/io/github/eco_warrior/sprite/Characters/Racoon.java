@@ -3,7 +3,7 @@ package io.github.eco_warrior.sprite.Characters;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.animation.RedExplosion;
+import io.github.eco_warrior.animation.Explosion.RedExplosion;
 import io.github.eco_warrior.entity.GameSprite;
 
 public class Racoon extends GameSprite {

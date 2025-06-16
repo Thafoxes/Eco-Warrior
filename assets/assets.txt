@@ -126,9 +126,17 @@ effects/explosion_effect.atlas
 effects/explosion_effect.png
 effects/explosion_effect2.png
 effects/explosion_effect3.png
+effects/fire_burn.atlas
+effects/fire_burn.png
 effects/red_explosion.atlas
 effects/red_explosion.png
 effects/red_explosion2.png
+effects/smoke_explosion.atlas
+effects/smoke_explosion.png
+effects/water_splash.atlas
+effects/water_splash.png
+effects/water_splash2.png
+effects/water_splash3.png
 enemy/spider.atlas
 enemy/spider.png
 fonts/DigitalDisco.ttf

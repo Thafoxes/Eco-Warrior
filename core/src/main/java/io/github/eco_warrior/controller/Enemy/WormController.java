@@ -2,7 +2,7 @@ package io.github.eco_warrior.controller.Enemy;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.animation.RedExplosion;
+import io.github.eco_warrior.animation.Explosion.RedExplosion;
 import io.github.eco_warrior.sprite.Enemy.Worm;
 
 public class WormController {

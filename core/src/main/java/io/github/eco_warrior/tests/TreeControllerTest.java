@@ -3,9 +3,11 @@ package io.github.eco_warrior.tests;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.controller.Trees.*;
@@ -13,6 +15,7 @@ import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.entity.Trees;
 import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
 import io.github.eco_warrior.sprite.gardening_equipments.sapling_variant.BreezingSapling;
+import io.github.eco_warrior.sprite.gardening_equipments.sapling_variant.OrdinarySapling;
 import io.github.eco_warrior.sprite.tree_variant.BreezingTree;
 import io.github.eco_warrior.sprite.tree_variant.IceTree;
 import io.github.eco_warrior.sprite.tree_variant.OrdinaryTree;
@@ -27,6 +30,8 @@ public class TreeControllerTest implements Screen {
     private Vector2 wateringCanPosition;
     private Vector2 saplingPosition;
 
+    private ShapeRenderer shapeRenderer;
+
 
 
     public TreeControllerTest() {
@@ -35,7 +40,7 @@ public class TreeControllerTest implements Screen {
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         // Initialize game objects
-        BreezingTree tree = new BreezingTree(
+        OrdinaryTree tree = new OrdinaryTree(
             new Vector2(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f),
             0.5f
         );
@@ -45,15 +50,16 @@ public class TreeControllerTest implements Screen {
             1f
         );
 
-        sapling = new BreezingSapling(
+        sapling = new OrdinarySapling(
             new Vector2(200, 200),
             1f
         );
 
-        treeController = new BreezingTreeController(tree, wateringCan);
+        treeController = new OrdinaryTreeController(tree, wateringCan);
 
         wateringCanPosition = wateringCan.getPosition();
         saplingPosition = sapling.getPosition();
+        this.shapeRenderer = new ShapeRenderer();
     }
 
     private void handleInput(float delta) {
@@ -132,6 +138,32 @@ public class TreeControllerTest implements Screen {
         wateringCan.draw(batch);
         sapling.draw(batch);
         batch.end();
+
+        drawDebug();
+    }
+
+    private void drawDebug() {
+        // Draw debug outlines
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.RED);
+
+        // Draw tree bounds
+        GameSprite tree = treeController.getTree();
+        shapeRenderer.rect(tree.getPosition().x, tree.getPosition().y,
+            tree.getSprite().getWidth(), tree.getSprite().getHeight());
+
+        // Draw watering can bounds
+        shapeRenderer.setColor(Color.BLUE);
+        shapeRenderer.rect(wateringCan.getPosition().x, wateringCan.getPosition().y,
+            wateringCan.getSprite().getWidth(), wateringCan.getSprite().getHeight());
+
+        // Draw sapling bounds
+        shapeRenderer.setColor(Color.GREEN);
+        shapeRenderer.rect(sapling.getPosition().x, sapling.getPosition().y,
+            sapling.getSprite().getWidth(), sapling.getSprite().getHeight());
+
+        shapeRenderer.end();
     }
 
     @Override
@@ -159,5 +191,6 @@ public class TreeControllerTest implements Screen {
     public void dispose() {
         batch.dispose();
         treeController.dispose();
+        shapeRenderer.dispose();
     }
 }

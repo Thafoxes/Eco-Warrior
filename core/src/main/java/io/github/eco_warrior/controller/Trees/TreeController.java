@@ -1,7 +1,10 @@
 package io.github.eco_warrior.controller.Trees;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+import io.github.eco_warrior.animation.FireBurningAnim;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
+import io.github.eco_warrior.entity.BaseExplosion;
 import io.github.eco_warrior.entity.BaseTreeHealth;
 import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.entity.Trees;
@@ -12,16 +15,26 @@ public abstract class TreeController <T extends Trees> {
     protected T tree;
     protected final WateringCan wateringCan;
     protected final BaseTreeHealth treeHealth;
+    protected BaseExplosion deadAnim;
     protected boolean isInteractionEnabled = true;
     protected final float interactionCooldown = 0.5f;
     protected float cooldownTimer = 0;
     protected int health = 4;
     protected boolean isDead = false;
+    protected Vector2 animPosition;
 
     public TreeController(T tree, WateringCan wateringCan, BaseTreeHealth treeHealth) {
         this.tree = tree;
         this.wateringCan = wateringCan;
         this.treeHealth = treeHealth;
+        setDeadAnimation();
+    }
+
+    private void setDeadAnimation() {
+        float xPos = tree.getInitPosition().x + (tree.getSprite().getWidth() * tree.getScale() /2);
+        float yPos = tree.getInitPosition().y + (tree.getSprite().getHeight() * tree.getScale()/2);
+        animPosition = new Vector2(xPos, yPos);
+        this.deadAnim = new FireBurningAnim(animPosition, 0.5f);
     }
 
     public void update(float delta){
@@ -33,8 +46,13 @@ public abstract class TreeController <T extends Trees> {
             }
         }
         tree.update(delta);
-        treeHealth.update(delta);
-        treeHealth.updateHealth(health);
+        treeHealth.update(delta, health);
+
+        if(isDead && !deadAnim.isFinished()) {
+            deadAnim.update(delta);
+        } else if (isDead) {
+            isDead = false; // Reset isDead after the animation finishes
+        }
     }
 
     public void handleSaplingPlanting(BaseSaplingController sapling){
@@ -58,6 +76,11 @@ public abstract class TreeController <T extends Trees> {
         tree.digHole();
     }
 
+    /**
+     * Handles the watering interaction with the tree.
+     * If the watering can is filled and overlaps with the tree, it waters the tree.
+     * Interaction is disabled after watering to prevent multiple interactions in quick succession.
+     */
     public void handleWatering(){
         if (isInteractionEnabled && wateringCan.waterLevel == WateringCan.WateringCanState.FILLED) {
             if (tree.getCollisionRect().overlaps(wateringCan.getCollisionRect())) {
@@ -72,6 +95,7 @@ public abstract class TreeController <T extends Trees> {
             health -= damage;
             if (health <= 0) {
                 tree.die();
+                deadAnim.reset(animPosition);
                 isDead = true;
                 health = 0;
             }
@@ -88,8 +112,12 @@ public abstract class TreeController <T extends Trees> {
     }
 
     public void draw(SpriteBatch batch) {
+        if(isDead && !deadAnim.isFinished()) {
+            deadAnim.draw(batch);
+        }
         tree.draw(batch);
         treeHealth.draw(batch);
+
     }
 
     public boolean isInteractionEnabled() {
@@ -102,6 +130,7 @@ public abstract class TreeController <T extends Trees> {
 
     public void dispose() {
         tree.dispose();
+        deadAnim.dispose();
     }
 
     public void reset() {
@@ -110,6 +139,7 @@ public abstract class TreeController <T extends Trees> {
         cooldownTimer = 0;
         health = 4;
         isDead = false;
+        deadAnim.reset(tree.getPosition());
     }
 
     public void setMaturedStateDebug() {

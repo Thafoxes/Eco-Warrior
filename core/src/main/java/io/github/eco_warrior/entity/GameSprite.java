@@ -179,6 +179,7 @@ public class GameSprite extends spriteGenerator {
     }
 
 
+
     /**
      * for manual frame get index
      *

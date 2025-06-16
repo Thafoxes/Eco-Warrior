@@ -24,12 +24,18 @@ public class BaseTreeHealth extends GameSprite {
         setPosition(new Vector2(xPos, yPos));
     }
 
+    public void update(float delta, int health) {
+        super.update(delta);
+        updatePosition();
+        updateHealth(health);
+    }
+
     /**
      * Updates the health bar frame based on the current health.
      * Assumes that the health is represented as a percentage of the maximum health.
      * @param health The current health value.
      */
-    public void updateHealth(int health) {
+    private void updateHealth(int health) {
         if(health < 0) {
             health = getFrameCount() - 1;
         }else if(health >= getFrameCount()){
