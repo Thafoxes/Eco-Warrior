@@ -1,7 +1,9 @@
 package io.github.eco_warrior.controller.Trees;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.entity.GameSprite;
+import io.github.eco_warrior.enums.SaplingType;
 import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
 import io.github.eco_warrior.sprite.tree_variant.BlazingTree;
 
@@ -16,50 +18,10 @@ public class BlazingTreeController extends TreeController<BlazingTree> {
         super(blazingTree, wateringCan);
     }
 
-
-    public void update(float delta) {
-        // Update cooldown timer
-        if (!isInteractionEnabled) {
-            cooldownTimer += delta;
-            if (cooldownTimer >= interactionCooldown) {
-                isInteractionEnabled = true;
-                cooldownTimer = 0;
-            }
-        }
-
-        // Update tree animation
-        tree.update(delta);
-    }
-
-    public void handleSaplingPlanting(GameSprite sapling) {
-        if (isInteractionEnabled && tree.getCollisionRect().overlaps(sapling.getCollisionRect())) {
-            tree.plantSapling();
-            isInteractionEnabled = false;
-        }
-    }
-
-    public void digHole(){
-        tree.digHole();
-    }
-
-
-    public void handleWatering() {
-        if (isInteractionEnabled && wateringCan.waterLevel == WateringCan.WateringCanState.FILLED.ordinal()) {
-            if (tree.getCollisionRect().overlaps(wateringCan.getCollisionRect())) {
-                tree.water();
-                isInteractionEnabled = false;
-            }
-        }
-    }
-
-    public void takeDamage(int damage) {
-        if (isInteractionEnabled) {
-            health -= damage;
-            if (health <= 0) {
-                tree.die();
-            }
-            isInteractionEnabled = false;
-        }
+    @Override
+    protected boolean canPlantSapling(BaseSaplingController sapling) {
+        return super.canPlantSapling(sapling) &&
+            sapling.getSaplingType() == SaplingType.BLAZING;
     }
 
 

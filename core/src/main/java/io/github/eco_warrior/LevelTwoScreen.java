@@ -1,7 +1,6 @@
 package io.github.eco_warrior;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.*;
@@ -12,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.entity.TreeHealth;
 import io.github.eco_warrior.entity.Trees;
 import io.github.eco_warrior.entity.GameSprite;
@@ -350,7 +350,7 @@ public class LevelTwoScreen implements Screen {
         //draw tools that are not saplings to be unlocked
         for (GameSprite tool : tools.values()) {
 
-            if(!(tool instanceof BaseSapling) || tool == tools.get(gameSpriteType.ORDINARY_SAPLING)) {
+            if(!(tool instanceof BaseSaplingController) || tool == tools.get(gameSpriteType.ORDINARY_SAPLING)) {
                 tool.draw(batch);
             }
         }

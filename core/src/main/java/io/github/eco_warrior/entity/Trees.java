@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Tree;
 import com.badlogic.gdx.utils.Timer;
+import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
+import io.github.eco_warrior.enums.SaplingType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +36,8 @@ public abstract class Trees extends GameSprite {
     public Vector2 middlePosition;
     protected boolean isStageTransitionScheduled = false;
     public boolean isMatureTree = false;
+    protected SaplingType saplingType;
+
 
     protected Sound digSound;
     protected Sound growthSound;
@@ -42,13 +46,14 @@ public abstract class Trees extends GameSprite {
 
     protected float growingTime = 3f;
 
-    public Trees(String atlasPath, String regionBaseName, int frameCount, Vector2 position, float scale) {
+    public Trees(String atlasPath, String regionBaseName, int frameCount, Vector2 position, float scale, SaplingType saplingType) {
         super(atlasPath,
             regionBaseName,
             frameCount,
             position,
             scale);
 
+        this.saplingType = saplingType;
         this.filePath = atlasPath;
         this.middlePosition = new Vector2(position.x + getSprite().getWidth()/2, position.y + getSprite().getHeight()/2);
 
@@ -194,7 +199,9 @@ public abstract class Trees extends GameSprite {
         isMatureTree = false;
     }
 
-
+    public SaplingType getSaplingType() {
+        return saplingType;
+    }
 
     public void diggingSound() {
         digSound.play();

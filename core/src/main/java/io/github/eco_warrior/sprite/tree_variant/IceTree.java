@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
 import io.github.eco_warrior.entity.Trees;
 import io.github.eco_warrior.entity.GameSprite;
+import io.github.eco_warrior.enums.SaplingType;
 import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
 
 public class IceTree extends Trees {
@@ -17,7 +18,9 @@ public class IceTree extends Trees {
             "flag",
             1,
             position,
-            scale);
+            scale,
+            SaplingType.ICE
+            );
 
     }
 

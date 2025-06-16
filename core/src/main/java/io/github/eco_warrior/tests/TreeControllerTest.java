@@ -7,11 +7,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.controller.Trees.IceTreeController;
-import io.github.eco_warrior.controller.Trees.OrdinaryTreeController;
-import io.github.eco_warrior.controller.Trees.VoltaicTreeController;
+import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
+import io.github.eco_warrior.controller.Trees.*;
 import io.github.eco_warrior.entity.GameSprite;
+import io.github.eco_warrior.entity.Trees;
 import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
+import io.github.eco_warrior.sprite.gardening_equipments.sapling_variant.BreezingSapling;
+import io.github.eco_warrior.sprite.tree_variant.BreezingTree;
 import io.github.eco_warrior.sprite.tree_variant.IceTree;
 import io.github.eco_warrior.sprite.tree_variant.OrdinaryTree;
 import io.github.eco_warrior.sprite.tree_variant.VoltaicTree;
@@ -19,9 +21,9 @@ import io.github.eco_warrior.sprite.tree_variant.VoltaicTree;
 public class TreeControllerTest implements Screen {
     private SpriteBatch batch;
     private OrthographicCamera camera;
-    private VoltaicTreeController treeController;
+    private TreeController treeController;
     private WateringCan wateringCan;
-    private GameSprite sapling;
+    private BaseSaplingController sapling;
     private Vector2 wateringCanPosition;
     private Vector2 saplingPosition;
 
@@ -33,7 +35,7 @@ public class TreeControllerTest implements Screen {
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         // Initialize game objects
-        VoltaicTree tree = new VoltaicTree(
+        BreezingTree tree = new BreezingTree(
             new Vector2(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f),
             0.5f
         );
@@ -43,14 +45,12 @@ public class TreeControllerTest implements Screen {
             1f
         );
 
-        sapling = new GameSprite(
-            "atlas/saplings/saplings.atlas",
-            "blazing_sapling",
-            new Vector2(200, 100),
+        sapling = new BreezingSapling(
+            new Vector2(200, 200),
             1f
         );
 
-        treeController = new VoltaicTreeController(tree, wateringCan);
+        treeController = new BreezingTreeController(tree, wateringCan);
 
         wateringCanPosition = wateringCan.getPosition();
         saplingPosition = sapling.getPosition();

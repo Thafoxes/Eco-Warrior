@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.entity.Trees;
+import io.github.eco_warrior.enums.SaplingType;
 
 public class BlazingTree extends Trees {
 
@@ -15,7 +16,9 @@ public class BlazingTree extends Trees {
             "flag",
             1,
             position,
-            scale);
+            scale,
+            SaplingType.BLAZING
+        );
 
     }
 

@@ -1,6 +1,7 @@
 package io.github.eco_warrior.controller.Trees;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.entity.Trees;
 import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
@@ -31,11 +32,21 @@ public abstract class TreeController <T extends Trees> {
         tree.update(delta);
     }
 
-    public void handleSaplingPlanting(GameSprite sapling){
+    public void handleSaplingPlanting(BaseSaplingController sapling){
+        if(!isInteractionEnabled || !canPlantSapling(sapling)) {
+            System.out.println("Cannot plant sapling: either interaction is disabled or sapling type does not match.");
+            return;
+        }
         if (isInteractionEnabled && tree.getCollisionRect().overlaps(sapling.getCollisionRect())) {
             tree.plantSapling();
             isInteractionEnabled = false;
         }
+    }
+
+    protected boolean canPlantSapling(BaseSaplingController sapling) {
+        return sapling != null
+            && tree.getSaplingType() == sapling.getSaplingType()
+            && sapling.getCollisionRect().overlaps(tree.getCollisionRect());
     }
 
     public void digHole(){
