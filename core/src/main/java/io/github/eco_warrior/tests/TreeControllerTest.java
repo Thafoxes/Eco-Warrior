@@ -90,12 +90,12 @@ public class TreeControllerTest implements Screen {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
             System.out.println("Reseting");
-            treeController.reset();
+            treeController.setMaturedStateDebug();
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
             System.out.println("Filling watering can");
-            wateringCan.waterLevel = WateringCan.WateringCanState.FILLED.ordinal();
-            wateringCan.setFrame(wateringCan.waterLevel);
+            wateringCan.waterLevel = WateringCan.WateringCanState.FILLED;
+            wateringCan.setFrame(wateringCan.waterLevel.ordinal());
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.Z)){
             //should have a check for shovel
@@ -107,7 +107,6 @@ public class TreeControllerTest implements Screen {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             System.out.println("Current Tree Stage: " + treeController.getTree().getStage());
-//            treeController.getBlazingTree().getStage();
         }
 
     }

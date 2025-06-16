@@ -5,9 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.ui.Tree;
 import com.badlogic.gdx.utils.Timer;
-import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.enums.SaplingType;
 
 import java.util.HashMap;
@@ -33,7 +31,7 @@ public abstract class Trees extends GameSprite {
     protected final Map<TreeStage, Animation<TextureRegion>> animationMap = new HashMap<>();
     protected float stateTime = 0;
     protected Timer.Task growTask;
-    public Vector2 middlePosition;
+    public Vector2 labelPosition;
     protected boolean isStageTransitionScheduled = false;
     public boolean isMatureTree = false;
     protected SaplingType saplingType;
@@ -55,7 +53,7 @@ public abstract class Trees extends GameSprite {
 
         this.saplingType = saplingType;
         this.filePath = atlasPath;
-        this.middlePosition = new Vector2(position.x + getSprite().getWidth()/2, position.y + getSprite().getHeight()/2);
+        this.labelPosition = new Vector2(position.x , position.y - 20f);
 
 
         digSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/Gravel_dig1.mp3"));
@@ -192,6 +190,19 @@ public abstract class Trees extends GameSprite {
      */
     public void reset() {
         setStage(TreeStage.SAPLING);
+        if (growTask != null) {
+            growTask.cancel();
+        }
+        stateTime = 0;
+        isMatureTree = false;
+    }
+
+    /**
+     * Reset the tree to its initial state.
+     * This method can be used to reset the tree for testing or reinitialization purposes.
+     */
+    public void MaturedStateDebug() {
+        setStage(TreeStage.MATURED_TREE);
         if (growTask != null) {
             growTask.cancel();
         }

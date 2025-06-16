@@ -2,6 +2,7 @@ package io.github.eco_warrior.controller.Trees;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
+import io.github.eco_warrior.entity.BaseTreeHealth;
 import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.entity.Trees;
 import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
@@ -10,15 +11,17 @@ public abstract class TreeController <T extends Trees> {
 
     protected T tree;
     protected final WateringCan wateringCan;
+    protected final BaseTreeHealth treeHealth;
     protected boolean isInteractionEnabled = true;
     protected final float interactionCooldown = 0.5f;
     protected float cooldownTimer = 0;
     protected int health = 4;
     protected boolean isDead = false;
 
-    public TreeController(T tree, WateringCan wateringCan) {
+    public TreeController(T tree, WateringCan wateringCan, BaseTreeHealth treeHealth) {
         this.tree = tree;
         this.wateringCan = wateringCan;
+        this.treeHealth = treeHealth;
     }
 
     public void update(float delta){
@@ -30,6 +33,8 @@ public abstract class TreeController <T extends Trees> {
             }
         }
         tree.update(delta);
+        treeHealth.update(delta);
+        treeHealth.updateHealth(health);
     }
 
     public void handleSaplingPlanting(BaseSaplingController sapling){
@@ -54,7 +59,7 @@ public abstract class TreeController <T extends Trees> {
     }
 
     public void handleWatering(){
-        if (isInteractionEnabled && wateringCan.waterLevel == WateringCan.WateringCanState.FILLED.ordinal()) {
+        if (isInteractionEnabled && wateringCan.waterLevel == WateringCan.WateringCanState.FILLED) {
             if (tree.getCollisionRect().overlaps(wateringCan.getCollisionRect())) {
                 tree.water();
                 isInteractionEnabled = false;
@@ -84,6 +89,7 @@ public abstract class TreeController <T extends Trees> {
 
     public void draw(SpriteBatch batch) {
         tree.draw(batch);
+        treeHealth.draw(batch);
     }
 
     public boolean isInteractionEnabled() {
@@ -100,6 +106,14 @@ public abstract class TreeController <T extends Trees> {
 
     public void reset() {
         tree.reset();
+        isInteractionEnabled = true;
+        cooldownTimer = 0;
+        health = 4;
+        isDead = false;
+    }
+
+    public void setMaturedStateDebug() {
+        tree.MaturedStateDebug();
         isInteractionEnabled = true;
         cooldownTimer = 0;
         health = 4;

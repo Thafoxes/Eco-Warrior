@@ -60,6 +60,13 @@ public class GameSprite extends spriteGenerator {
         shapeRenderer = new ShapeRenderer();
     }
 
+    /**
+     * No frame to worried about, just a single sprite. No sound effects.
+     */
+    public GameSprite(String atlasPath,  Vector2 position, float scale) {
+        this(atlasPath, "", position, scale, null, null, null);
+    }
+
     /**manual animation sprite design
      *
      * @param atlasPath

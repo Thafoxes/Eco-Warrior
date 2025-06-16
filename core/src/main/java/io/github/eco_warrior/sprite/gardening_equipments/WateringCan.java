@@ -15,7 +15,7 @@ public class WateringCan extends GameSprite {
     private final Sound fillSound1;
     private final Sound fillSound2;
 
-    public int waterLevel = WateringCanState.EMPTY.ordinal();
+    public WateringCanState waterLevel = WateringCanState.EMPTY;
 
     public WateringCan(Vector2 position, float scale) {
         super(
@@ -30,16 +30,15 @@ public class WateringCan extends GameSprite {
     }
 
     //update the watering can state when it interacts with a water fountain
-    public void updateWateringCan(GameSprite waterFountain) {
-        if (waterLevel == WateringCanState.EMPTY.ordinal() && getCollisionRect().overlaps(waterFountain.getCollisionRect())) {
+    public void updateWateringCan() {
+        if (waterLevel == WateringCanState.EMPTY) {
             if (Math.random() < 0.5) {
                 fillSound1.play(1f);
             } else {
                 fillSound2.play(1f);
             }
-            waterLevel = WateringCanState.FILLED.ordinal();
-
-            setFrame(waterLevel);
+            waterLevel = WateringCanState.FILLED;
+            setFrame(waterLevel.ordinal());
         }
     }
 }
