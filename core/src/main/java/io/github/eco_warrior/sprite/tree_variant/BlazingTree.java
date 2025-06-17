@@ -27,14 +27,14 @@ public class BlazingTree extends Trees {
         // Load animations directly here
         atlas = new TextureAtlas(Gdx.files.internal(filePath));
         // For growing phase - distribute frames evenly across growingTime
-        int growingFrameCount = atlas.findRegions("growing_phase").size;
-        float frameDuration = growingTime / growingFrameCount;
+//        int growingFrameCount = atlas.findRegions("growing_phase").size;
+        float frameDuration = 0.1f;
 
         animationMap.put(TreeStage.FLAG, new Animation<>(0.1f, atlas.findRegions("flag"), Animation.PlayMode.NORMAL));
         animationMap.put(TreeStage.HOLE, new Animation<>(0.1f, atlas.findRegions("hole"), Animation.PlayMode.NORMAL));
         animationMap.put(TreeStage.SAPLING, new Animation<>(0.1f, atlas.findRegions("sapling"), Animation.PlayMode.NORMAL));
 
-        animationMap.put(TreeStage.GROWING_TREE, new Animation<>(frameDuration, atlas.findRegions("growing_phase"), Animation.PlayMode.NORMAL));
+        animationMap.put(TreeStage.YOUNG_TREE, new Animation<>(frameDuration, atlas.findRegions("young_tree"), Animation.PlayMode.NORMAL));
 
         animationMap.put(TreeStage.MATURED_TREE, new Animation<>(0.3f, atlas.findRegions("matured"), Animation.PlayMode.NORMAL));
         animationMap.put(TreeStage.DEAD_SAPLING, new Animation<>(0.1f, atlas.findRegions("dead_sapling"), Animation.PlayMode.NORMAL));

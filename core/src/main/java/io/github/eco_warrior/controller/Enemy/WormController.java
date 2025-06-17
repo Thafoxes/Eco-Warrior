@@ -55,6 +55,11 @@ public class WormController {
         }
     }
 
+    public void attack(){
+
+    }
+
+
 
     public void draw(SpriteBatch batch) {
         worm.draw(batch);

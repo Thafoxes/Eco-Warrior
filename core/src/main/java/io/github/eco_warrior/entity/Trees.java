@@ -18,7 +18,7 @@ public abstract class Trees extends GameSprite {
         FLAG,
         HOLE,
         SAPLING,
-        GROWING_TREE,
+        YOUNG_TREE,
         MATURED_TREE,
         DEAD_SAPLING,
         DEAD_YOUNG_TREE,
@@ -108,17 +108,17 @@ public abstract class Trees extends GameSprite {
      * This method will only work if the tree is in the FLAG stage.
      */
     public void water() {
-        if (treeStage == TreeStage.SAPLING || treeStage == TreeStage.GROWING_TREE) {
+        if (treeStage == TreeStage.SAPLING) {
             waterPourSound.play(0.5f);
-            setStage(TreeStage.GROWING_TREE);
+            setStage(TreeStage.YOUNG_TREE);
             if (growTask != null) {
                 growTask.cancel();
             }
             growTask = Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
-                    setStage(TreeStage.MATURED_TREE);
                     growthSound.play(0.5f);
+                    setStage(TreeStage.MATURED_TREE);
                     isMatureTree = true;
                 }
             }, growingTime);
@@ -142,7 +142,7 @@ public abstract class Trees extends GameSprite {
                 setStage(TreeStage.SAPLING);
                 break;
             case DEAD_YOUNG_TREE:
-                setStage(TreeStage.GROWING_TREE);
+                setStage(TreeStage.YOUNG_TREE);
                 break;
                 case DEAD_MATURE_TREE:
                 setStage(TreeStage.MATURED_TREE);

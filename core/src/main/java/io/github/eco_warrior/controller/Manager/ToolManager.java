@@ -127,7 +127,7 @@ public class ToolManager {
     }
 
     public void cycleNextSapling() {
-        if (saplingControllers.size() > 0) {
+        if (!saplingControllers.isEmpty()) {
             saplingIndex = (saplingIndex + 1) % saplingControllers.size();
         }
     }

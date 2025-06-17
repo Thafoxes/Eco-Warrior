@@ -18,8 +18,6 @@ import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.controller.Trees.*;
 import io.github.eco_warrior.entity.GameSprite;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import io.github.eco_warrior.entity.Trees;
@@ -167,11 +165,6 @@ public class LevelTwoScreen implements Screen {
         toolManager.addTool(GardeningEnums.FERTILIZER, fertilizer);
 
         initializeSapling(spacing, toolScale);
-//
-//        wormPool = new Array<>(WORM_BUFFER_CAPACITY);
-//        for (int i = 0; i < WORM_BUFFER_CAPACITY; i++) {
-//            wormPool.add(new Worm(startWormPosition));
-//        }
     }
 
     private void initializeSapling(float spacing, float toolScale) {
