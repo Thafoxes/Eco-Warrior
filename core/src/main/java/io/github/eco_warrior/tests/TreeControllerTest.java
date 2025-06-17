@@ -158,12 +158,7 @@ public class TreeControllerTest implements Screen {
         shapeRenderer.rect(wateringCan.getPosition().x, wateringCan.getPosition().y,
             wateringCan.getSprite().getWidth(), wateringCan.getSprite().getHeight());
 
-        // Draw sapling bounds
-        shapeRenderer.setColor(Color.GREEN);
-        shapeRenderer.rect(sapling.getPosition().x, sapling.getPosition().y,
-            sapling.getSprite().getWidth(), sapling.getSprite().getHeight());
-        shapeRenderer.rect(sapling.getCollisionRect().x, sapling.getCollisionRect().y,
-            sapling.getCollisionRect().getWidth(), sapling.getCollisionRect().getHeight());
+       sapling.debug(shapeRenderer);
 
         shapeRenderer.end();
     }

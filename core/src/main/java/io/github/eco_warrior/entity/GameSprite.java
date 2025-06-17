@@ -18,10 +18,6 @@ public class GameSprite extends spriteGenerator {
     private String atlasPath;
     private float scale = 1f;
     private Vector2 initPosition;
-    private float stateTime;
-
-    //debug method
-    private ShapeRenderer shapeRenderer;
 
     //for manual frame
     private int frameCount;
@@ -56,8 +52,10 @@ public class GameSprite extends spriteGenerator {
             this.hittingSFX = Gdx.audio.newSound(Gdx.files.internal(hittingSoundPath));
         }
 
-        //debug method
-        shapeRenderer = new ShapeRenderer();
+        System.out.println("Sprite position: " + position.x + ", " + position.y);
+        System.out.println("Collision Rect: " + collisionRect.x + ", " + collisionRect.y + ", " + collisionRect.width + ", " + collisionRect.height);
+
+
     }
 
     /**
@@ -259,7 +257,8 @@ public class GameSprite extends spriteGenerator {
     }
 
     public Vector2 getPosition(){
-        return new Vector2(this.sprite.getX(), this.sprite.getY());
+        Vector2 spritePosition = new Vector2(this.sprite.getX(), this.sprite.getY());
+        return spritePosition;
     }
 
     public void setPosition(Vector2 newPosition){
@@ -270,14 +269,6 @@ public class GameSprite extends spriteGenerator {
     public Rectangle getCollisionRect(){
         return this.collisionRect;
     }
-
-    public Rectangle setCollisionRect(Rectangle newCollisionRect){
-        this.collisionRect = newCollisionRect;
-        this.sprite.setPosition(newCollisionRect.x, newCollisionRect.y);
-        this.sprite.setSize(newCollisionRect.width, newCollisionRect.height);
-        return this.collisionRect;
-    }
-
 
     public Sprite getSprite(){
         return this.sprite;

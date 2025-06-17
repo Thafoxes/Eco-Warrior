@@ -1,6 +1,8 @@
 package io.github.eco_warrior.controller.Sapling;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -33,7 +35,21 @@ public class BaseSaplingController extends Tool {
     @Override
     public void update(float delta) {
         super.update(delta);
+
         // Update logic specific to sapling can be added here
+    }
+
+    @Override
+    public void draw(SpriteBatch batch) {
+        Sprite sprite = getSprite();
+        if (sprite != null) {
+            //TODO - FIX ALIGNMENT ISSUE
+            float centerX = sprite.getX();
+            float centerY = sprite.getY();
+            sprite.setPosition(centerX, centerY);
+            sprite.setScale(getScale());
+            sprite.draw(batch);
+        }
     }
 
     public SaplingType getSaplingType() {
@@ -42,23 +58,24 @@ public class BaseSaplingController extends Tool {
 
 
     public Rectangle getCollisionRect() {
+        Sprite sprite = getSprite();
         return new Rectangle(
-            getPosition().x - getSprite().getWidth() / 2,
-            getPosition().y - getSprite().getHeight() / 2,
-            getSprite().getWidth(),
-            getSprite(). getHeight()
+            sprite.getX(),
+            sprite.getY(),
+            sprite.getWidth() * getScale(),
+            sprite.getHeight() * getScale()
         );
     }
 
     @Override
-    public void drawDebug(ShapeRenderer shapeRenderer) {
+    public void debug(ShapeRenderer shapeRenderer) {
         // Draw sprite bounds in green
         shapeRenderer.setColor(Color.GREEN);
         shapeRenderer.rect(
-            getSprite().getX(),
-            getSprite().getY(),
-            getSprite().getWidth(),
-            getSprite().getHeight()
+            getSprite().getX() - 10f,
+              getSprite().getY() - 10f,
+            getSprite().getWidth() + 20f,
+            getSprite().getHeight() + 20f
         );
 
         // Draw collision rectangle in yellow
