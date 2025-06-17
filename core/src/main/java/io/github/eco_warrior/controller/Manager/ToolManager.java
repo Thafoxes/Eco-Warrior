@@ -52,17 +52,22 @@ public class ToolManager {
 
 
             if(saplingController.getSprite().equals(sapling.getSprite()))  {
-                //If sapling is already planted, move to next sapling
-                if(saplingIndex < saplingControllers.size() - 1) {
-                    saplingIndex = i + 1;
-                }
+                saplingControllers.remove(saplingController);
+//                If sapling is already planted, move to next sapling
             }
         }
 
     }
 
     public void render(SpriteBatch batch) {
-        saplingControllers.get(saplingIndex).render(batch);
+        // Only draw saplings if there are any left
+        if (saplingControllers.size() > 0) {
+            // Draw current sapling at the tool position
+            BaseSaplingController currentSapling = saplingControllers.get(saplingIndex);
+            if (currentSapling != null) {
+                currentSapling.draw(batch);
+            }
+        }
 
         for (Tool tool : tools.values()) {
             tool.render(batch);
@@ -85,8 +90,12 @@ public class ToolManager {
 
     private GameSprite getSaplingAt(Vector2 position) {
 
-        if(saplingControllers.get(saplingIndex).getCollisionRect().contains(position)) {
+        // Check if there are any saplings
+        if(saplingControllers.isEmpty()) {
+            return null;
+        }
 
+        if(saplingControllers.get(saplingIndex).getCollisionRect().contains(position)) {
             return saplingControllers.get(saplingIndex);
         }else{
         }
