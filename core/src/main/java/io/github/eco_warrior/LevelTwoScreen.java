@@ -18,6 +18,7 @@ import io.github.eco_warrior.entity.gameSprite;
 import java.util.Random;
 import io.github.eco_warrior.sprite.*;
 import io.github.eco_warrior.sprite.Enemy.Worm;
+import io.github.eco_warrior.sprite.UI.GunElementUI;
 import io.github.eco_warrior.sprite.gardening_equipments.*;
 import io.github.eco_warrior.sprite.gardening_equipments.sapling_variant.*;
 import io.github.eco_warrior.sprite.tree_healths.*;
@@ -105,6 +106,9 @@ public class LevelTwoScreen implements Screen {
     private float stateTime;
     private static final int WORM_BUFFER_CAPACITY = 10;
 
+
+    private GunElementUI gunElementUI;
+
     //enemy path
     private final Random rand = new Random();
     public enum WormPath {
@@ -167,6 +171,9 @@ public class LevelTwoScreen implements Screen {
         liquids = new HashMap<>();
         trees = new HashMap<>();
         treeHealths = new HashMap<>();
+
+
+        gunElementUI = new GunElementUI("GunElement.atlas" , "Lighting.atlas" , "Fire.atlas","Wind.atlas" , "Ice.atlas");
 
         initializeEntities();
     }
@@ -327,6 +334,28 @@ public class LevelTwoScreen implements Screen {
         }
     }
 
+
+    public class TreeElementState {
+        public boolean visible = true;
+        public long hiddenUntil = 0; // in millis
+        public float iconX, iconY, iconWidth, iconHeight;
+
+        public void updatePosition(float x, float y, float w, float h) {
+            iconX = x; iconY = y; iconWidth = w; iconHeight = h;
+        }
+
+        public boolean isPointInside(float sx, float sy) {
+            return visible &&
+                sx >= iconX && sx <= iconX + iconWidth &&
+                sy >= iconY && sy <= iconY + iconHeight;
+        }
+    }
+    private TreeElementState blazingElementState = new TreeElementState();
+    private TreeElementState breezingElementState = new TreeElementState();
+    private TreeElementState iceElementState = new TreeElementState();
+    private TreeElementState voltaicElementState = new TreeElementState();
+    private static final long ELEMENT_HIDE_MS = 5000; // 5 seconds
+
     private void draw() {
         camera.update();
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
@@ -338,6 +367,7 @@ public class LevelTwoScreen implements Screen {
         batch.begin();
         backgroundSprite.draw(batch);
 
+        long now = System.currentTimeMillis();
 
         drawWorm();
         drawTrees();
@@ -345,6 +375,71 @@ public class LevelTwoScreen implements Screen {
         drawToolFiltering();
         drawTools();
 
+        // When the tree is dead, hide the element icon
+        if (voltaicTree.treeLevel == VoltaicTree.TreeStage.DEAD_MATURE_TREE.ordinal()){
+            voltaicElementState.visible = false;
+        }
+        if (breezingTree.treeLevel == BreezingTree.TreeStage.DEAD_MATURE_TREE.ordinal()){
+            breezingElementState.visible = false;
+        }
+        if (iceTree.treeLevel == IceTree.TreeStage.DEAD_MATURE_TREE.ordinal()){
+            iceElementState.visible = false;
+        }
+        if (blazingTree.treeLevel == BlazingTree.TreeStage.DEAD_MATURE_TREE.ordinal()){
+            blazingElementState.visible = false;
+        }
+
+        // Draw the element icons based on tree stages
+        if (voltaicTree.treeLevel >= VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+            && voltaicTree.treeLevel <= VoltaicTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()) {
+            if (now > voltaicElementState.hiddenUntil) voltaicElementState.visible = true; // show if time expired
+            float iconX = voltaicTree.getSprite().getX() + voltaicTree.getSprite().getWidth() / 2f + 5;
+            float iconY = voltaicTree.getSprite().getY() + voltaicTree.getSprite().getHeight() - 20;
+            voltaicElementState.updatePosition(iconX, iconY, 80, 80);
+            if (voltaicElementState.visible)
+                gunElementUI.renderElementIcon(batch, GunElementUI.ElementType.LIGHTING, iconX, iconY, 40, 40, Gdx.graphics.getDeltaTime());
+        } else {
+            voltaicElementState.visible = false; // Hide if not in valid stage
+
+        }
+
+        if (breezingTree.treeLevel >= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+            && breezingTree.treeLevel <= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal()) {
+            if (now > breezingElementState.hiddenUntil) breezingElementState.visible = true; // show if time expired
+            float iconX = breezingTree.getSprite().getX() + breezingTree.getSprite().getWidth() / 2f + 5;
+            float iconY = breezingTree.getSprite().getY() + breezingTree.getSprite().getHeight() - 20;
+            breezingElementState.updatePosition(iconX, iconY, 80, 80);
+            if (breezingElementState.visible)
+                gunElementUI.renderElementIcon(batch, GunElementUI.ElementType.WIND, iconX, iconY, 55, 55, Gdx.graphics.getDeltaTime());
+        } else {
+            breezingElementState.visible = false; // Hide if not in valid stage
+
+        }
+
+        if (iceTree.treeLevel >= IceTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+            && iceTree.treeLevel <= IceTree.TreeStage.ANIMATED_MATURE_TREE_4.ordinal()) {
+            if (now > iceElementState.hiddenUntil) iceElementState.visible = true; // show if time expired
+            float iconX = iceTree.getSprite().getX() + iceTree.getSprite().getWidth() / 2f + 5;
+            float iconY = iceTree.getSprite().getY() + iceTree.getSprite().getHeight() + 10;
+            iceElementState.updatePosition(iconX, iconY, 80, 80);
+            if (iceElementState.visible)
+                gunElementUI.renderElementIcon(batch, GunElementUI.ElementType.ICE, iconX, iconY, 40, 40, Gdx.graphics.getDeltaTime());
+        } else {
+            iceElementState.visible = false; // Hide if not in valid stage
+
+        }
+
+        if (blazingTree.treeLevel >= BlazingTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
+            && blazingTree.treeLevel <= BlazingTree.TreeStage.ANIMATED_MATURE_TREE_5.ordinal()) {
+            if (now > blazingElementState.hiddenUntil) blazingElementState.visible = true; // show if time expired
+            float iconX = blazingTree.getSprite().getX() + blazingTree.getSprite().getWidth() / 2f + 5;
+            float iconY = blazingTree.getSprite().getY() + blazingTree.getSprite().getHeight() - 20;
+            blazingElementState.updatePosition(iconX, iconY, 80, 80);
+            if (blazingElementState.visible)
+                gunElementUI.renderElementIcon(batch, GunElementUI.ElementType.FIRE, iconX, iconY, 40, 40, Gdx.graphics.getDeltaTime());
+        } else {
+            blazingElementState.visible = false; // Hide if not in valid stage
+        }
 
         batch.end();
 
@@ -432,8 +527,8 @@ public class LevelTwoScreen implements Screen {
         if(!isIceSaplingUsed) {
             //included ANIMATED_MATURE_TREE_1 - 3
             if (breezingTree.treeLevel >= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_1.ordinal()
-            && breezingTree.treeLevel <= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal()
-            || breezingTree.treeLevel == BreezingTree.TreeStage.DEAD_MATURE_TREE.ordinal()) {
+                && breezingTree.treeLevel <= BreezingTree.TreeStage.ANIMATED_MATURE_TREE_3.ordinal()
+                || breezingTree.treeLevel == BreezingTree.TreeStage.DEAD_MATURE_TREE.ordinal()) {
                 tools.get(gameSpriteType.ICE_SAPLING).draw(batch);
             }
         }
@@ -592,6 +687,30 @@ public class LevelTwoScreen implements Screen {
             returnOriginalPosition();
         }
 
+        if (Gdx.input.justTouched()) {
+            float sx = Gdx.input.getX();
+            float sy = Gdx.graphics.getHeight() - Gdx.input.getY();
+
+            long now = System.currentTimeMillis();
+
+            if (blazingElementState.isPointInside(sx, sy)) {
+                blazingElementState.visible = false;
+                blazingElementState.hiddenUntil = now + ELEMENT_HIDE_MS;
+            }
+            if (breezingElementState.isPointInside(sx, sy)) {
+                breezingElementState.visible = false;
+                breezingElementState.hiddenUntil = now + ELEMENT_HIDE_MS;
+            }
+            if (iceElementState.isPointInside(sx, sy)) {
+                iceElementState.visible = false;
+                iceElementState.hiddenUntil = now + ELEMENT_HIDE_MS;
+            }
+            if (voltaicElementState.isPointInside(sx, sy)) {
+                voltaicElementState.visible = false;
+                voltaicElementState.hiddenUntil = now + ELEMENT_HIDE_MS;
+            }
+        }
+
     }
 
     private void returnOriginalPosition() {
@@ -630,7 +749,7 @@ public class LevelTwoScreen implements Screen {
             if (draggingTool.equals(tools.get(gameSpriteType.SHOVEL))) {
 
                 if (ordinaryTree.treeLevel == OrdinaryTree.TreeStage.FLAG.ordinal()
-                && ordinaryTree.getCollisionRect().overlaps(shovel.getCollisionRect())) {
+                    && ordinaryTree.getCollisionRect().overlaps(shovel.getCollisionRect())) {
 
                     ordinaryTree.treeLevel = OrdinaryTree.TreeStage.HOLE.ordinal();
                     ordinaryTree.diggingSound();
