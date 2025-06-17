@@ -162,6 +162,8 @@ public class TreeControllerTest implements Screen {
         shapeRenderer.setColor(Color.GREEN);
         shapeRenderer.rect(sapling.getPosition().x, sapling.getPosition().y,
             sapling.getSprite().getWidth(), sapling.getSprite().getHeight());
+        shapeRenderer.rect(sapling.getCollisionRect().x, sapling.getCollisionRect().y,
+            sapling.getCollisionRect().getWidth(), sapling.getCollisionRect().getHeight());
 
         shapeRenderer.end();
     }

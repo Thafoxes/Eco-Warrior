@@ -14,5 +14,10 @@ public class BlazingTreeController extends TreeController<BlazingTree> {
         super(blazingTree, wateringCan , new BlazingTreeHealth(blazingTree));
     }
 
+    @Override
+    protected boolean canPlantSapling(BaseSaplingController sapling) {
+        return super.canPlantSapling(sapling) &&
+            sapling.getSaplingType() == SaplingType.BLAZING;
+    }
 
 }
