@@ -92,6 +92,9 @@ public abstract class TreeController <T extends Trees> {
      * Interaction is disabled after watering to prevent multiple interactions in quick succession.
      */
     public void handleWatering(){
+        if(tree.getStage() != Trees.TreeStage.SAPLING){
+            return;
+        }
         if (isInteractionEnabled && wateringCan.waterLevel == WateringCan.WateringCanState.FILLED) {
             if (tree.getCollisionRect().overlaps(wateringCan.getCollisionRect())) {
                 tree.water();

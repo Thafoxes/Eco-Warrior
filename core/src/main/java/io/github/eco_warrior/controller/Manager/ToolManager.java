@@ -55,15 +55,6 @@ public class ToolManager {
                 saplingIndex = Math.min(saplingIndex, saplingControllers.size() - 1);
             }
         }
-//        for (int i = 0; i < saplingControllers.size(); i++) {
-//            BaseSaplingController saplingController = saplingControllers.get(i);
-//
-//
-//            if(saplingController.getSprite().equals(sapling.getSprite()))  {
-//                saplingControllers.remove(saplingController);
-////                If sapling is already planted, move to next sapling
-//            }
-//        }
 
     }
 

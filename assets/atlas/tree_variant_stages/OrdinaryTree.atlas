@@ -12,12 +12,12 @@ bounds:516,2,512,512
 growing_phase
 index:1
 bounds:2,2,512,512
+growing_phase
+index:2
+bounds:1030,2,512,512
 hole
 bounds:1030,516,512,512
 matured
-bounds:2,1030,512,512
-growing_phase
-index:2
 bounds:2,1030,512,512
 sapling
 bounds:1030,1030,512,512
