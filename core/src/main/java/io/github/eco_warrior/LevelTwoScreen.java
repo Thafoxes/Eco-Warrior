@@ -181,12 +181,13 @@ public class LevelTwoScreen implements Screen {
         BaseSaplingController iceSapling = new IceSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
         BaseSaplingController voltaicSapling = new VoltaicSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
 
-        
-        toolManager.addSaplingController(voltaicSapling);
+
         toolManager.addSaplingController(ordinarySapling);
+        toolManager.addSaplingController(voltaicSapling);
         toolManager.addSaplingController(blazingSapling);
         toolManager.addSaplingController(breezingSapling);
         toolManager.addSaplingController(iceSapling);
+
 
     }
 
@@ -287,18 +288,23 @@ public class LevelTwoScreen implements Screen {
         }else if(isDragging){
             //on mouse release, check for interaction
             if(draggingTool != null){
-                // Check if the tool is a sapling and if it can be planted
-                if(treeControllerManager.interactWithTrees(draggingTool)){
-                    // If a sapling was successfully planted, handle the planting logic
-                    System.out.println("Is planted");
-                    toolManager.handleSaplingPlanting(draggingTool);
-                }
-                // Check if the tool is a watering can and if it can water a fountain
-                toolManager.isWaterCansCollide(waterFountain);
+                //handle tool interactions
+                handleToolInteractions(draggingTool);
             }
             isDragging = false;
             isReturning = true;
         }
+    }
+
+    private void handleToolInteractions(GameSprite draggingTool) {
+        // Check if the tool is a sapling and if it can be planted
+        if (treeControllerManager.interactWithTrees(draggingTool)) {
+            // If a sapling was successfully planted, handle the planting logic
+            System.out.println("Is planted");
+            toolManager.handleSaplingPlanting(draggingTool);
+        }
+        // Check if the tool is a watering can and if it can water a fountain
+        toolManager.isWaterCansCollide(waterFountain);
     }
 
     private void returnOriginalPosition() {

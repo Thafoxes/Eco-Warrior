@@ -16,7 +16,7 @@ import java.util.Map;
 public class ToolManager {
     private Map<GardeningEnums, Tool> tools = new HashMap<>();
     private ArrayList<BaseSaplingController> saplingControllers = new ArrayList<>();
-    private static int saplingIndex = 0;
+    private int saplingIndex = 0;
 
     public void addTool(GardeningEnums type, Tool tool) {
         tools.put(type, tool);
@@ -47,21 +47,29 @@ public class ToolManager {
     }
 
     public void handleSaplingPlanting(GameSprite sapling) {
-        for (int i = 0; i < saplingControllers.size(); i++) {
-            BaseSaplingController saplingController = saplingControllers.get(i);
+        if(sapling instanceof BaseSaplingController){
+            saplingControllers.remove(sapling);
 
-
-            if(saplingController.getSprite().equals(sapling.getSprite()))  {
-                saplingControllers.remove(saplingController);
-//                If sapling is already planted, move to next sapling
+            if(saplingControllers.size() > 0) {
+                // Update current index if needed
+                saplingIndex = Math.min(saplingIndex, saplingControllers.size() - 1);
             }
         }
+//        for (int i = 0; i < saplingControllers.size(); i++) {
+//            BaseSaplingController saplingController = saplingControllers.get(i);
+//
+//
+//            if(saplingController.getSprite().equals(sapling.getSprite()))  {
+//                saplingControllers.remove(saplingController);
+////                If sapling is already planted, move to next sapling
+//            }
+//        }
 
     }
 
     public void render(SpriteBatch batch) {
         // Only draw saplings if there are any left
-        if (saplingControllers.size() > 0) {
+        if (!saplingControllers.isEmpty()) {
             // Draw current sapling at the tool position
             BaseSaplingController currentSapling = saplingControllers.get(saplingIndex);
             if (currentSapling != null) {
@@ -75,6 +83,7 @@ public class ToolManager {
     }
 
     public GameSprite getToolAt(Vector2 position) {
+        // Check if the position is within the bounds of any tool
         GameSprite sapling = getSaplingAt(position);
         if (sapling != null) {
             return sapling;
@@ -119,6 +128,16 @@ public class ToolManager {
         }
         for( BaseSaplingController saplingController : saplingControllers) {
             saplingController.drawDebug(shapeRenderer);
+        }
+    }
+
+    public boolean hasSaplingsRemaining() {
+        return saplingControllers.size() > 0;
+    }
+
+    public void cycleNextSapling() {
+        if (saplingControllers.size() > 0) {
+            saplingIndex = (saplingIndex + 1) % saplingControllers.size();
         }
     }
 
