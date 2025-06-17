@@ -48,6 +48,7 @@ public class VoltaicTree extends Trees {
 
     public void updateTree(gameSprite sapling, WateringCan wateringCan) {
         if (treeLevel == TreeStage.HOLE.ordinal() && getCollisionRect().overlaps(sapling.getCollisionRect())) {
+            isSaplingPlanted = true;
             saplingSound.play(1.5f);
             treeLevel = TreeStage.SAPLING.ordinal();
 

@@ -4,11 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
-import io.github.eco_warrior.LevelTwoScreen.WormPath;
+import io.github.eco_warrior.LevelTwoScreen.Path;
 import io.github.eco_warrior.entity.Trees;
-import io.github.eco_warrior.entity.gameSprite;
 
-public class Worm extends gameSprite {
+public class Worm extends LandEnemies {
     private static Vector2 originalPos;
 
     public enum WormState {
@@ -35,11 +34,11 @@ public class Worm extends gameSprite {
         DEATH_16
     }
 
-    private WormPath path;
+    private Path path;
     private Trees tree;
 
     public float speed = 100f; // Speed of the worm
-    private int wormLevel = WormAnimation.MOVE_1.ordinal(); // Current level of the worm
+    private int enemyLevel; // Current level of the worm
     private boolean isStoppingScheduled = false;
     private boolean isMoveTransitionScheduled = false;
     public boolean isDeathTransition = false;
@@ -106,12 +105,12 @@ public class Worm extends gameSprite {
     }
 
     // Set worm path
-    public void setPath(WormPath path) {
+    public void setPath(Path path) {
         this.path = path;
     }
 
     // Get worm path
-    public WormPath getPath() {
+    public Path getPath() {
         return path;
     }
 
@@ -121,7 +120,7 @@ public class Worm extends gameSprite {
 
     private void runAttackFrame(final int frame) {
         setFrame(frame);
-        wormLevel = frame;
+        enemyLevel = frame;
 
         if (!isDeathTransition) {
             if (frame < WormAnimation.ATTACK_9.ordinal()) {
@@ -163,7 +162,7 @@ public class Worm extends gameSprite {
 
     private void runDeathFrame(final int frame) {
         setFrame(frame);
-        wormLevel = frame;
+        enemyLevel = frame;
 
         if (frame < WormAnimation.DEATH_16.ordinal()) {
             deathTask = new Timer.Task() {
@@ -179,7 +178,7 @@ public class Worm extends gameSprite {
     }
 
     // Handle the animated worm movement
-    public void updateWormAnimationMovement() {
+    public void updateEnemyAnimationMovement() {
         if (!isMoveTransitionScheduled
             && !isStoppingScheduled
             && !isDeathTransition) {
@@ -189,12 +188,12 @@ public class Worm extends gameSprite {
                 @Override
                 public void run() {
 //                    System.out.println("Worm moving to next frame: " + wormLevel);
-                    int nextFrame = wormLevel + 1;
+                    int nextFrame = enemyLevel + 1;
                     if (nextFrame > WormAnimation.MOVE_4.ordinal()) {
                         nextFrame = WormAnimation.MOVE_1.ordinal();
                     }
                     setFrame(nextFrame);
-                    wormLevel = nextFrame;
+                    enemyLevel = nextFrame;
                     isMoveTransitionScheduled = false;
                 }
             };

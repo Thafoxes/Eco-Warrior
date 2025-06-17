@@ -7,6 +7,7 @@ public class Trees extends gameSprite {
     private final Sound digSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/Gravel_dig1.mp3"));;
     protected boolean isStageTransitionScheduled = false;
     public boolean isMatureTree = false;
+    public boolean isSaplingPlanted = false;
     public int health = 4;
     public Vector2 adjustedPosition;
 

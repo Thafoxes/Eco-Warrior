@@ -107,31 +107,22 @@ public class LevelTwoScreen implements Screen {
 
     //enemy path
     private final Random rand = new Random();
-    public enum WormPath {
-        PATH_1(1),
-        PATH_2(2),
-        PATH_3(3),
-        PATH_4(4),
-        PATH_5(5),
+    public enum Path {
+        PATH_1,
+        PATH_2,
+        PATH_3,
+        PATH_4,
+        PATH_5,
         ;
-
-        private final int number;
-
-        WormPath(int number) {
-            this.number = number;
-        }
-
-        public int getNumber() {
-            return number;
-        }
 
         public Vector2 getWormStartPosition() {
             switch (this) {
-                case PATH_1: return new Vector2(wormStartX, 25);
-                case PATH_2: return new Vector2(wormStartX, 100);
+
+                case PATH_1: return new Vector2(wormStartX, 100);
+                case PATH_2: return new Vector2(wormStartX, 300);
                 case PATH_3: return new Vector2(wormStartX, 175);
-                case PATH_4: return new Vector2(wormStartX, 250);
-                case PATH_5: return new Vector2(wormStartX, 300);
+                case PATH_4: return new Vector2(wormStartX, 25);
+                case PATH_5: return new Vector2(wormStartX, 250);
                 default: return new Vector2(0, 0); // Default case, should not happen
             }
         }
@@ -269,8 +260,12 @@ public class LevelTwoScreen implements Screen {
         draw();
         updateWateringCan();
         updateTrees();
-        spawnWorm(delta);
+
         updateEnemyAnimationMovement();
+
+        if (ordinaryTree.isSaplingPlanted) {
+            spawnWorm(delta);
+        }
 
         for (TreeHealth treeHealth : treeHealths.values()) {
             treeHealth.updateHealth();
@@ -285,7 +280,10 @@ public class LevelTwoScreen implements Screen {
                 wormSpawnTimer = 0; // Reset the timer
             } else {
                 Worm worm;
-                WormPath path = WormPath.values()[rand.nextInt(WormPath.values().length)];
+                Path[] availablePaths = getWormPaths();
+
+                Path path = availablePaths[rand.nextInt(availablePaths.length)];
+                System.out.println(path);
 
                 startWormPosition = path.getWormStartPosition();
                 long startTime = System.nanoTime();
@@ -301,21 +299,21 @@ public class LevelTwoScreen implements Screen {
                 worms.add(worm);
 
                 // Assign tree target based on path
-                switch(path.getNumber()) {
-                    case 1:
-                        worm.treeTarget(iceTree);
-                        break;
-                    case 2:
+                switch(path) {
+                    case PATH_1:
                         worm.treeTarget(ordinaryTree);
                         break;
-                    case 3:
+                    case PATH_2:
+                        worm.treeTarget(voltaicTree);
+                        break;
+                    case PATH_3:
                         worm.treeTarget(breezingTree);
                         break;
-                    case 4:
-                        worm.treeTarget(blazingTree);
+                    case PATH_4:
+                        worm.treeTarget(iceTree);
                         break;
-                    case 5:
-                        worm.treeTarget(voltaicTree);
+                    case PATH_5:
+                        worm.treeTarget(blazingTree);
                         break;
                 }
 
@@ -325,6 +323,23 @@ public class LevelTwoScreen implements Screen {
                 System.out.println("Worms in pool: " + wormPool.size + ", Worms in game: " + worms.size);
             }
         }
+    }
+
+    private Path[] getWormPaths() {
+        Path[] availablePaths;
+
+        if (blazingTree.isSaplingPlanted) {
+            availablePaths = new Path[] {Path.PATH_1, Path.PATH_2, Path.PATH_3, Path.PATH_4, Path.PATH_5};
+        } else if (iceTree.isSaplingPlanted) {
+            availablePaths = new Path[] {Path.PATH_1, Path.PATH_2, Path.PATH_3, Path.PATH_4};
+        } else if (breezingTree.isSaplingPlanted) {
+            availablePaths = new Path[] {Path.PATH_1, Path.PATH_2, Path.PATH_3};
+        } else if (voltaicTree.isSaplingPlanted) {
+            availablePaths = new Path[] {Path.PATH_1, Path.PATH_2};
+        } else {
+            availablePaths = new Path[] {Path.PATH_1};
+        }
+        return availablePaths;
     }
 
     private void draw() {
@@ -697,7 +712,7 @@ public class LevelTwoScreen implements Screen {
 
     private void updateEnemyAnimationMovement() {
         for (Worm worm : worms) {
-            worm.updateWormAnimationMovement();
+            worm.updateEnemyAnimationMovement();
         }
     }
 

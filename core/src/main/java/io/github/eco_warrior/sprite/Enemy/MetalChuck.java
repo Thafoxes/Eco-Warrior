@@ -1,15 +1,208 @@
 package io.github.eco_warrior.sprite.Enemy;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.entity.gameSprite;
+import com.badlogic.gdx.utils.Timer;
+import io.github.eco_warrior.LevelTwoScreen.Path;
+import io.github.eco_warrior.entity.Trees;
 
-public class MetalChuck extends gameSprite {
+public class MetalChuck extends LandEnemies {
+    private static Vector2 originalPos;
 
-    public MetalChuck(String atlasPath, String regionBaseName, int frameCount, Vector2 position, float scale) {
-        super(atlasPath,
-            regionBaseName,
-            frameCount,
+    public enum MetalChuckAnimation {
+        MOVE_1,
+        MOVE_2,
+        MOVE_3,
+        MOVE_4,
+        ATTACK_5,
+        ATTACK_6,
+        ATTACK_7,
+        ATTACK_8,
+        ATTACK_9,
+        ATTACK_10,
+        DEATH_11,
+        DEATH_12,
+        DEATH_13,
+        DEATH_14,
+        DEATH_15,
+        DEATH_16,
+        DEATH_17
+    }
+
+    private Path path;
+    private Trees tree;
+
+    public float speed = 100f; // Speed of the worm
+    private int enemyLevel; // Current level of the worm
+    private boolean isStoppingScheduled = false;
+    private boolean isMoveTransitionScheduled = false;
+    public boolean isDeathTransition = false;
+    public boolean isDead = false; // Flag to check if the worm is dead
+
+    // References to scheduled tasks
+    public Timer.Task attackTask;
+    private Timer.Task moveTask;
+    private Timer.Task stopTask;
+    private Timer.Task deathTask;
+
+    //sound effects
+    private final Sound attackSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/whip.mp3"));
+
+    public MetalChuck(Vector2 position, float scale) {
+        super("atlas/mobs/metalchuck.atlas",
+            "metalchuck",
+            17,
             position,
             scale);
+        originalPos = position;
+    }
+
+    public MetalChuck(Vector2 position) {
+        this(position, .2f);
+    }
+
+    public void reset() {
+        speed = 100f;
+        setFrame(MetalChuckAnimation.MOVE_1.ordinal());
+        isStoppingScheduled = false;
+        isMoveTransitionScheduled = false;
+        isDeathTransition = false;
+        isDead = false;
+
+        // Cancel any scheduled tasks
+        if (attackTask != null) {
+            attackTask.cancel();
+            attackTask = null;
+        }
+        if (moveTask != null) {
+            moveTask.cancel();
+            moveTask = null;
+        }
+        if (stopTask != null) {
+            stopTask.cancel();
+            stopTask = null;
+        }
+        if (deathTask != null) {
+            deathTask.cancel();
+            deathTask = null;
+        }
+
+        getSprite().setPosition(originalPos.x, originalPos.y);
+        getCollisionRect().setPosition(originalPos.x, originalPos.y);
+        System.out.println("Worm reset to original position: " + originalPos);
+    }
+
+    //move from right to left
+    @Override
+    public void update(float delta){
+        getSprite().setX(getSprite().getX() - speed * delta);
+        getCollisionRect().setX(getSprite().getX());
+    }
+
+    private void startAttackAnimationLoop() {
+        runAttackFrame(MetalChuckAnimation.ATTACK_5.ordinal());
+    }
+
+    private void runAttackFrame(final int frame) {
+        setFrame(frame);
+        enemyLevel = frame;
+
+        if (!isDeathTransition) {
+            if (frame < MetalChuckAnimation.ATTACK_10.ordinal()) {
+                // Cycle to next attack frame after 0.2s
+                attackTask = new Timer.Task() {
+                    @Override
+                    public void run() {
+                        runAttackFrame(frame + 1);
+
+                        if (frame == MetalChuckAnimation.ATTACK_6.ordinal()) {
+                            attackSound.play(.5f);
+                            if (tree.health > 0) {
+                                tree.health--; // Decrease tree health
+                                System.out.println("Tree health:" + tree.health);
+                            } else {
+                                System.out.println("Tree health:" + tree.health);
+                            }
+                        }
+                    }
+                };
+                Timer.schedule(attackTask, 0.2f);
+            } else {
+                // Hold ATTACK_9 for 3s, then restart at ATTACK_5
+                attackTask = new Timer.Task() {
+                    @Override
+                    public void run() {
+                        runAttackFrame(MetalChuckAnimation.ATTACK_5.ordinal());
+                    }
+                };
+                Timer.schedule(attackTask, 3f);
+            }
+        }
+    }
+
+    public void startDeathAnimation() {
+        runDeathFrame(MetalChuckAnimation.DEATH_11.ordinal());
+    }
+
+    private void runDeathFrame(final int frame) {
+        setFrame(frame);
+        enemyLevel = frame;
+
+        if (frame < MetalChuckAnimation.DEATH_17.ordinal()) {
+            deathTask = new Timer.Task() {
+                @Override
+                public void run() {
+                    runDeathFrame(frame + 1);
+                }
+            };
+            Timer.schedule(deathTask, 0.3f);
+        } else {
+            isDead = true;
+        }
+    }
+
+    // Handle the animated worm movement
+    public void updateEnemyAnimationMovement() {
+        if (!isMoveTransitionScheduled
+            && !isStoppingScheduled
+            && !isDeathTransition) {
+            isMoveTransitionScheduled = true;
+
+            moveTask = new Timer.Task() {
+                @Override
+                public void run() {
+//                    System.out.println("Worm moving to next frame: " + wormLevel);
+                    int nextFrame = enemyLevel + 1;
+                    if (nextFrame > MetalChuckAnimation.MOVE_4.ordinal()) {
+                        nextFrame = MetalChuckAnimation.MOVE_1.ordinal();
+                    }
+                    setFrame(nextFrame);
+                    enemyLevel = nextFrame;
+                    isMoveTransitionScheduled = false;
+                }
+            };
+            Timer.schedule(moveTask, .3f); // 0.3 seconds delay
+        }
+
+        if (getCollisionRect().overlaps(tree.getCollisionRect())
+            && speed != 0
+            && !isStoppingScheduled) {
+            isStoppingScheduled = true;
+
+            stopTask = new Timer.Task() {
+                @Override
+                public void run() {
+//                    System.out.println("Stop");
+                    speed = 0; // Stop the worm after 0.3s
+                    startAttackAnimationLoop();
+                }
+            };
+            Timer.schedule(stopTask, .3f);
+        }
+    }
+
+    public void treeTarget(Trees tree) {
+        this.tree = tree;
     }
 }
