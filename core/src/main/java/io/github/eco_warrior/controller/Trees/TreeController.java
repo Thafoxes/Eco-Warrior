@@ -71,6 +71,7 @@ public abstract class TreeController <T extends Trees> {
         return false;
     }
 
+
     protected boolean canPlantSapling(BaseSaplingController sapling) {
         return sapling != null
             && tree.getSaplingType() == sapling.getSaplingType()
@@ -79,6 +80,10 @@ public abstract class TreeController <T extends Trees> {
 
     public void digHole(){
         tree.digHole();
+    }
+
+    public Trees.TreeStage getStage(){
+        return tree.getStage();
     }
 
     /**

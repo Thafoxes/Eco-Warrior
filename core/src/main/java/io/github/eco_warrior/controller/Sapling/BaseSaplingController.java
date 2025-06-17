@@ -43,11 +43,9 @@ public class BaseSaplingController extends Tool {
     public void draw(SpriteBatch batch) {
         Sprite sprite = getSprite();
         if (sprite != null) {
-            //TODO - FIX ALIGNMENT ISSUE
             float centerX = sprite.getX();
             float centerY = sprite.getY();
             sprite.setPosition(centerX, centerY);
-            sprite.setScale(getScale());
             sprite.draw(batch);
         }
     }
@@ -56,16 +54,6 @@ public class BaseSaplingController extends Tool {
         return saplingType;
     }
 
-
-    public Rectangle getCollisionRect() {
-        Sprite sprite = getSprite();
-        return new Rectangle(
-            sprite.getX(),
-            sprite.getY(),
-            sprite.getWidth() * getScale(),
-            sprite.getHeight() * getScale()
-        );
-    }
 
     @Override
     public void debug(ShapeRenderer shapeRenderer) {

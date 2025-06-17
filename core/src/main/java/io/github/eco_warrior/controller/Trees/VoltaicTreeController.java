@@ -15,6 +15,6 @@ public class VoltaicTreeController extends TreeController<VoltaicTree> {
     @Override
     protected boolean canPlantSapling(BaseSaplingController sapling) {
         return super.canPlantSapling(sapling) &&
-            sapling.getSaplingType() == SaplingType.ORDINARY;
+            sapling.getSaplingType() == SaplingType.VOLTAIC;
     }
 }

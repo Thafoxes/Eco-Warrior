@@ -21,8 +21,6 @@ public class VoltaicTree extends Trees {
             scale,
             SaplingType.VOLTAIC
             );
-
-
     }
     @Override
     protected void loadAnimation() throws RuntimeException {

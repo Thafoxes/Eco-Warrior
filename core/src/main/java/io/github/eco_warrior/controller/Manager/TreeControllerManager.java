@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.controller.Trees.TreeController;
 import io.github.eco_warrior.entity.GameSprite;
+import io.github.eco_warrior.entity.Trees;
 import io.github.eco_warrior.sprite.gardening_equipments.Fertilizer;
 import io.github.eco_warrior.sprite.gardening_equipments.Shovel;
 import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
@@ -52,14 +53,8 @@ public class TreeControllerManager {
 
         for (TreeController<?> treeController : treeControllers) {
             if(treeController.getTree().getCollisionRect().overlaps(draggingTool.getCollisionRect())){
-                if(draggingTool instanceof BaseSaplingController){
-                    // If the dragging tool is a sapling, handle planting
-                    BaseSaplingController sapling = (BaseSaplingController) draggingTool;
-                    planted = treeController.handleSaplingPlanting(sapling);
-                    if(planted) {
-                        return true; // Return true if a sapling was successfully planted
-                    }
-                }
+
+
                 if (draggingTool instanceof WateringCan) {
                     treeController.handleWatering();
                 }
@@ -68,6 +63,17 @@ public class TreeControllerManager {
                 }
                 if(draggingTool instanceof Shovel){
                     treeController.digHole();
+                }
+                //if the tree is not hole Condition, return
+                if(treeController.getStage() == Trees.TreeStage.HOLE) {
+                    if(draggingTool instanceof BaseSaplingController){
+                        // If the dragging tool is a sapling, handle planting
+                        BaseSaplingController sapling = (BaseSaplingController) draggingTool;
+                        planted = treeController.handleSaplingPlanting(sapling);
+                        if(planted) {
+                            return true; // Return true if a sapling was successfully planted
+                        }
+                    }
                 }
             }
         }

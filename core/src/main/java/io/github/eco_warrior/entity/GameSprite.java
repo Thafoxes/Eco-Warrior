@@ -52,9 +52,6 @@ public class GameSprite extends spriteGenerator {
             this.hittingSFX = Gdx.audio.newSound(Gdx.files.internal(hittingSoundPath));
         }
 
-        System.out.println("Sprite position: " + position.x + ", " + position.y);
-        System.out.println("Collision Rect: " + collisionRect.x + ", " + collisionRect.y + ", " + collisionRect.width + ", " + collisionRect.height);
-
 
     }
 
@@ -130,13 +127,23 @@ public class GameSprite extends spriteGenerator {
      * @param shapeRenderer
      */
     public void drawDebug(ShapeRenderer shapeRenderer) {
-        if (collisionRect != null) {
-            shapeRenderer.setColor(Color.GREEN);
+//        if (collisionRect != null) {
+//            shapeRenderer.setColor(Color.GREEN);
+//            shapeRenderer.rect(
+//                collisionRect.x - 20f,
+//                collisionRect.y - 20f,
+//                collisionRect.width + 40f,
+//                collisionRect.height + 40f
+//            );
+//        }
+
+        if (sprite != null) {
+            shapeRenderer.setColor(Color.RED);
             shapeRenderer.rect(
-                collisionRect.x,
-                collisionRect.y,
-                collisionRect.width,
-                collisionRect.height
+                sprite.getX(),
+                sprite.getY(),
+                sprite.getWidth(),
+                sprite.getHeight()
             );
         }
     }
@@ -203,7 +210,6 @@ public class GameSprite extends spriteGenerator {
     }
 
     public void update(float delta){
-
         this.sprite.setPosition(this.collisionRect.x, this.collisionRect.y);
     }
 

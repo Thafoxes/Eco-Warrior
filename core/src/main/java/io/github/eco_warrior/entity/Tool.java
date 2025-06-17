@@ -34,9 +34,6 @@ public class Tool extends GameSprite {
             position,
             scale);
 
-        System.out.println("Tool created");
-        System.out.println("Sprite position: " + getSprite().getX() + ", " + getSprite().getY());
-        System.out.println("Collision Rect: " + getCollisionRect().x + ", " + getCollisionRect().y + ", " + getCollisionRect().width + ", " + getCollisionRect().height);
     }
 
 

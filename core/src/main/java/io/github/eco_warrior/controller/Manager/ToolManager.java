@@ -30,7 +30,10 @@ public class ToolManager {
         for (Tool tool : tools.values()) {
             tool.update(delta);
         }
-        saplingControllers.get(saplingIndex).update(delta);
+
+        for(BaseSaplingController saplingController : saplingControllers) {
+            saplingController.update(delta);
+        }
     }
 
     public boolean isWaterCansCollide(GameSprite waterPool) {
@@ -46,6 +49,8 @@ public class ToolManager {
     public void handleSaplingPlanting(GameSprite sapling) {
         for (int i = 0; i < saplingControllers.size(); i++) {
             BaseSaplingController saplingController = saplingControllers.get(i);
+
+
             if(saplingController.getSprite().equals(sapling.getSprite()))  {
                 //If sapling is already planted, move to next sapling
                 if(saplingIndex < saplingControllers.size() - 1) {
@@ -58,27 +63,34 @@ public class ToolManager {
 
     public void render(SpriteBatch batch) {
         saplingControllers.get(saplingIndex).render(batch);
+
         for (Tool tool : tools.values()) {
             tool.render(batch);
         }
     }
 
     public GameSprite getToolAt(Vector2 position) {
+        GameSprite sapling = getSaplingAt(position);
+        if (sapling != null) {
+            return sapling;
+        }
+
         for (GameSprite tool : tools.values()) {
             if (tool.getCollisionRect().contains(position)) {
                 return tool;
             }
         }
-
-        return getSaplingAt(position);
+        return null;
     }
 
     private GameSprite getSaplingAt(Vector2 position) {
-        for (BaseSaplingController saplingController : saplingControllers) {
-            if (saplingController.getCollisionRect().contains(position)) {
-                return saplingController;
-            }
+
+        if(saplingControllers.get(saplingIndex).getCollisionRect().contains(position)) {
+
+            return saplingControllers.get(saplingIndex);
+        }else{
         }
+
         return null;
     }
 
@@ -99,5 +111,10 @@ public class ToolManager {
         for( BaseSaplingController saplingController : saplingControllers) {
             saplingController.drawDebug(shapeRenderer);
         }
+    }
+
+    public ArrayList<BaseSaplingController> getSaplingSize() {
+        return saplingControllers;
+
     }
 }

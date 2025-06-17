@@ -181,11 +181,12 @@ public class LevelTwoScreen implements Screen {
         BaseSaplingController iceSapling = new IceSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
         BaseSaplingController voltaicSapling = new VoltaicSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
 
+        //TODO- Remove the sapling after planting the last sapling in.
+        toolManager.addSaplingController(voltaicSapling);
         toolManager.addSaplingController(ordinarySapling);
-//        toolManager.addSaplingController(blazingSapling);
-//        toolManager.addSaplingController(breezingSapling);
-//        toolManager.addSaplingController(iceSapling);
-//        toolManager.addSaplingController(voltaicSapling);
+        toolManager.addSaplingController(blazingSapling);
+        toolManager.addSaplingController(breezingSapling);
+        toolManager.addSaplingController(iceSapling);
 //        ordinarySapling = new OrdinarySapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
 //        blazingSapling = new BlazingSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
 //        breezingSapling = new BreezingSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
@@ -222,6 +223,7 @@ public class LevelTwoScreen implements Screen {
         treeControllerManager.addTreeController(breezingTreeController);
         treeControllerManager.addTreeController(iceTreeController);
         treeControllerManager.addTreeController(voltaicTreeController);
+
     }
 
 
@@ -292,6 +294,7 @@ public class LevelTwoScreen implements Screen {
                 // Check if the tool is a sapling and if it can be planted
                 if(treeControllerManager.interactWithTrees(draggingTool)){
                     // If a sapling was successfully planted, handle the planting logic
+                    System.out.println("Is planted");
                     toolManager.handleSaplingPlanting(draggingTool);
                 }
                 // Check if the tool is a watering can and if it can water a fountain
