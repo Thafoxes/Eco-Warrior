@@ -24,6 +24,7 @@ public class IceTreeIceElementDrawer {
     private final GunElementUI gunElementUI;
     private final ElementIconState iceIconState = new ElementIconState();
     private final long hideMs;
+    private boolean lastClicked = false;
 
     public IceTreeIceElementDrawer(TreeControllerManager treeControllerManager, GunElementUI gunElementUI, long hideMs) {
         this.treeControllerManager = treeControllerManager;
@@ -64,6 +65,12 @@ public class IceTreeIceElementDrawer {
         if (iceIconState.isPointInside(screenX, screenY)) {
             iceIconState.visible = false;
             iceIconState.hiddenUntil = now + hideMs;
+            lastClicked = true;
+        } else {
+            lastClicked = false;
         }
+    }
+    public boolean wasLastIconClicked() {
+        return lastClicked;
     }
 }

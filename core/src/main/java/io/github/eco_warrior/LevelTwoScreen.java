@@ -87,6 +87,8 @@ public class LevelTwoScreen implements Screen {
     private BreezingTreeWindElementDrawer breezingTreeWindElementDrawer;
     private IceTreeIceElementDrawer iceTreeIceElementDrawer;
     private VoltaicTreeLightningElementDrawer voltaicTreeLightningDrawer;
+
+    private RayGun rayGun;
     //enemy path
     private final Random rand = new Random();
     public enum WormPath {
@@ -174,7 +176,7 @@ public class LevelTwoScreen implements Screen {
         waterFountain = new WaterFountain(new Vector2(1, 180), lakeScale);
 
 
-        RayGun rayGun = new RayGun(new Vector2(spacing - manipulatorX, startY), toolScale);
+        rayGun = new RayGun(new Vector2(spacing - manipulatorX, startY), toolScale);
         wateringCan = new WateringCan(new Vector2(spacing * 2 - manipulatorX, startY), toolScale);
         Shovel shovel = new Shovel(new Vector2(spacing * 3 - manipulatorX, startY), toolScale);
         Fertilizer fertilizer = new Fertilizer(new Vector2(spacing * 4 - manipulatorX, startY), toolScale);
@@ -326,7 +328,19 @@ public class LevelTwoScreen implements Screen {
             breezingTreeWindElementDrawer.handleClick(sx, sy);
             iceTreeIceElementDrawer.handleClick(sx, sy);
             voltaicTreeLightningDrawer.handleClick(sx, sy);
-            // ... (rest unchanged for wind, ice, lightning if you still use them)
+            //when the gun element is clicked, set the rayGun mode
+            if (blazingTreeFireElementDrawer.wasLastIconClicked()) {
+                rayGun.setMode(RayGun.RayGunMode.BLAZING);
+            } else if (breezingTreeWindElementDrawer.wasLastIconClicked()) {
+                rayGun.setMode(RayGun.RayGunMode.BREEZING);
+            } else if (iceTreeIceElementDrawer.wasLastIconClicked()) {
+                rayGun.setMode(RayGun.RayGunMode.ICE);
+            } else if (voltaicTreeLightningDrawer.wasLastIconClicked()) {
+                rayGun.setMode(RayGun.RayGunMode.VOLTAIC);
+            }
+            // to set back to useless mode
+            //rayGun.setMode(RayGun.RayGunMode.USELESS);
+
         }
 
     }

@@ -79,6 +79,8 @@ atlas/heart/hearts.atlas
 atlas/heart/hearts.png
 atlas/lake_hitbox/lake_hitbox.atlas
 atlas/lake_hitbox/lake_hitbox.png
+atlas/ray_gun/ray_gun.atlas
+atlas/ray_gun/ray_gun.png
 atlas/recyclables/recyclables.atlas
 atlas/recyclables/recyclables.png
 atlas/recyclables/trash.atlas

@@ -12,9 +12,14 @@ public class VoltaicTreeLightningElementDrawer {
         public float x, y, width, height;
         public boolean visible = true;
         public long hiddenUntil = 0L;
+
         public void updatePosition(float x, float y, float w, float h) {
-            this.x = x; this.y = y; this.width = w; this.height = h;
+            this.x = x;
+            this.y = y;
+            this.width = w;
+            this.height = h;
         }
+
         public boolean isPointInside(float px, float py) {
             return visible && px >= x && px <= x + width && py >= y && py <= y + height;
         }
@@ -24,6 +29,7 @@ public class VoltaicTreeLightningElementDrawer {
     private final GunElementUI gunElementUI;
     private final ElementIconState lightningIconState = new ElementIconState();
     private final long hideMs;
+    private boolean lastClicked = false;
 
     public VoltaicTreeLightningElementDrawer(TreeControllerManager treeControllerManager, GunElementUI gunElementUI, long hideMs) {
         this.treeControllerManager = treeControllerManager;
@@ -64,6 +70,13 @@ public class VoltaicTreeLightningElementDrawer {
         if (lightningIconState.isPointInside(screenX, screenY)) {
             lightningIconState.visible = false;
             lightningIconState.hiddenUntil = now + hideMs;
+            lastClicked = true;
+        } else {
+            lastClicked = false;
         }
+    }
+
+    public boolean wasLastIconClicked() {
+        return lastClicked;
     }
 }

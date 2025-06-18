@@ -24,6 +24,7 @@ public class BreezingTreeWindElementDrawer {
     private final GunElementUI gunElementUI;
     private final ElementIconState windIconState = new ElementIconState();
     private final long hideMs;
+    private boolean lastClicked = false;
 
     public BreezingTreeWindElementDrawer(TreeControllerManager treeControllerManager, GunElementUI gunElementUI, long hideMs) {
         this.treeControllerManager = treeControllerManager;
@@ -64,6 +65,13 @@ public class BreezingTreeWindElementDrawer {
         if (windIconState.isPointInside(screenX, screenY)) {
             windIconState.visible = false;
             windIconState.hiddenUntil = now + hideMs;
+            lastClicked = true;
+        } else {
+            lastClicked = false;
         }
+    }
+
+    public boolean wasLastIconClicked() {
+        return lastClicked;
     }
 }
