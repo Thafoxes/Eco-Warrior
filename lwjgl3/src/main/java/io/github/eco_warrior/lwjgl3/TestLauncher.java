@@ -4,11 +4,12 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import io.github.eco_warrior.tests.TreeControllerTest;
+import io.github.eco_warrior.tests.WormTestScreen;
 
 public class TestLauncher extends Game {
     @Override
     public void create() {
-        setScreen(new TreeControllerTest());
+        setScreen(new WormTestScreen());
     }
 
     public static void main(String[] args) {

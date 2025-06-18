@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.controller.Enemy.WormController;
+import io.github.eco_warrior.entity.Enemies;
 import io.github.eco_warrior.sprite.Enemy.Worm;
 
 public class WormTestScreen implements Screen {
@@ -50,7 +51,7 @@ public class WormTestScreen implements Screen {
             worm.setDirection(false);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
-            worm.setState(Worm.WormState.MOVING);
+            worm.setState(Enemies.EnemyState.MOVING);
         }
     }
 

@@ -7,34 +7,14 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
-import io.github.eco_warrior.entity.GameSprite;
+import io.github.eco_warrior.entity.Enemies;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
 
-public class Worm extends GameSprite {
-    private static Vector2 originalPos;
-    private WormState currentState;
-    private WormState previousState;
-    private float stateTime;
-    private boolean isMovingRight;
-    private float movementSpeed = 50f;
-    private float attackCooldown = 1.5f;
-    private float timeSinceLastAttack = 0f;
-    private boolean canAttack = true;
-
-    private TextureAtlas atlas;
-    private Map<WormState, Animation<TextureRegion>> animationMap = new HashMap<>();
-
-
-    public enum WormState {
-        MOVING,
-        IDLE,
-        ATTACKING,
-        DEAD
-    }
+public class Worm extends Enemies {
 
     //sound effects
     private final Sound attackSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/whip.mp3"));
@@ -46,11 +26,11 @@ public class Worm extends GameSprite {
             position,
             scale);
         originalPos = position;
-        currentState = WormState.MOVING;
-        previousState = WormState.MOVING;
+        currentState = EnemyState.MOVING;
+        previousState = EnemyState.MOVING;
 
         stateTime = 0f;
-        isMovingRight = true;
+        isMoving = true;
 
         loadAnimations();
     }
@@ -63,53 +43,40 @@ public class Worm extends GameSprite {
         this(position, .2f);
     }
 
-    private void loadAnimations() {
+    @Override
+    protected void loadAnimations() {
         // Load animations directly here
         atlas = new TextureAtlas(Gdx.files.internal("atlas/worm/worm.atlas"));
 
         // Create animations for different states
-        animationMap.put(WormState.MOVING, new Animation<>(0.1f, atlas.findRegions("moving"), Animation.PlayMode.LOOP));
-        animationMap.put(WormState.ATTACKING, new Animation<>(0.1f, atlas.findRegions("attack"), Animation.PlayMode.NORMAL));
-        animationMap.put(WormState.DEAD, new Animation<>(0.15f, atlas.findRegions("death"), Animation.PlayMode.NORMAL));
-        animationMap.put(WormState.IDLE, new Animation<>(0.15f, atlas.findRegions("idle"), Animation.PlayMode.LOOP));
+        animationMap.put(EnemyState.MOVING, new Animation<>(0.1f, atlas.findRegions("moving"), Animation.PlayMode.LOOP));
+        animationMap.put(EnemyState.ATTACKING, new Animation<>(0.1f, atlas.findRegions("attack"), Animation.PlayMode.NORMAL));
+        animationMap.put(EnemyState.DEAD, new Animation<>(0.15f, atlas.findRegions("death"), Animation.PlayMode.NORMAL));
+        animationMap.put(EnemyState.IDLE, new Animation<>(0.15f, atlas.findRegions("idle"), Animation.PlayMode.LOOP));
 
-        currentState = WormState.MOVING;
+        currentState = EnemyState.MOVING;
 
     }
 
-
-
-    public void update(float delta) {
-        timeSinceLastAttack += delta;
-
-        updateState(delta);
-
-        if(currentState == WormState.MOVING){
-            float moveAmount = movementSpeed * delta;
-           moveBy(isMovingRight? moveAmount : -moveAmount, 0);
-
-        }
-    }
-
-
-    private void updateState(float delta) {
+    @Override
+    protected void updateState(float delta) {
         if(previousState != currentState) {
             stateTime = 0;
         }
 
        Animation<TextureRegion> currentAnimation = animationMap.get(currentState);
        if(currentAnimation != null){
-           TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, currentState == WormState.MOVING);
+           TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, currentState == EnemyState.MOVING);
            getSprite().setRegion(currentFrame);
-           getSprite().flip(isMovingRight, false);
+           getSprite().flip(isMoving, false);
 
            // Play sound if attacking
-           if(currentState ==WormState.ATTACKING && previousState != currentState ){
+           if(currentState ==EnemyState.ATTACKING && previousState != currentState){
                attackSound.play(0.5f);
            }
 
-           if(currentState == WormState.ATTACKING && currentAnimation.isAnimationFinished(stateTime)){
-               setState(WormState.IDLE);
+           if(currentState == EnemyState.ATTACKING && currentAnimation.isAnimationFinished(stateTime)){
+               setState(EnemyState.IDLE);
                stateTime = 0f;
                canAttack = false;
 
@@ -127,56 +94,4 @@ public class Worm extends GameSprite {
         previousState = currentState;
         stateTime += delta;
     }
-
-    public void setState(WormState newState) {
-        if (currentState != WormState.DEAD) { // Can't change state if dead
-            this.currentState = newState;
-        }
-    }
-
-    public void setDirection(boolean movingRight) {
-        this.isMovingRight = movingRight;
-    }
-
-    public void attack() {
-        if (timeSinceLastAttack >= attackCooldown && currentState != WormState.DEAD) {
-            setState(WormState.ATTACKING);
-            timeSinceLastAttack = 0;
-        }
-    }
-
-    public void die() {
-        setState(WormState.DEAD);
-    }
-
-    public boolean isDead() {
-        return currentState == WormState.DEAD;
-    }
-
-    public WormState getCurrentState() {
-        return currentState;
-    }
-
-    public void dispose() {
-        attackSound.dispose();
-    }
-
-    public Vector2 getPosition() {
-        return new Vector2(getSprite().getX(), getSprite().getY());
-    }
-
-    public boolean isMovingRight() {
-        return isMovingRight;
-    }
-
-    public void setPosition(Vector2 position) {
-        getSprite().setPosition(position.x, position.y);
-        //originalPos = position; // Update original position
-    }
-
-
-    private void addAnimation(String moving, float v) {
-    }
-
-
 }
