@@ -7,10 +7,7 @@ import io.github.eco_warrior.animation.FireBurningAnim;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.entity.BaseExplosion;
 import io.github.eco_warrior.entity.BaseTreeHealth;
-import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.entity.Trees;
-import io.github.eco_warrior.sprite.gardening_equipments.Fertilizer;
-import io.github.eco_warrior.sprite.gardening_equipments.Shovel;
 import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
 
 public abstract class TreeController <T extends Trees> {
@@ -25,6 +22,8 @@ public abstract class TreeController <T extends Trees> {
     protected int health = 4;
     protected boolean isDead = false;
     protected Vector2 animPosition;
+    protected int wateringTime = 0;
+    protected boolean isGrowing = false;
 
     public TreeController(T tree, WateringCan wateringCan, BaseTreeHealth treeHealth) {
         this.tree = tree;
@@ -59,11 +58,13 @@ public abstract class TreeController <T extends Trees> {
     }
 
     public boolean handleSaplingPlanting(BaseSaplingController sapling){
-        if(!isInteractionEnabled || !canPlantSapling(sapling)) {
-            System.out.println("Cannot plant sapling: either interaction is disabled or sapling type does not match.");
+        if(!isInteractionEnabled || !canPlantSapling(sapling) || isGrowing) {
+            System.out.println("Tree Controller - Cannot plant sapling: either interaction is disabled or sapling type" +
+                " does not match or current tree is growing.");
             return false;
         }
         if (isInteractionEnabled && tree.getCollisionRect().overlaps(sapling.getCollisionRect())) {
+            isGrowing = true;
             tree.plantSapling();
             isInteractionEnabled = false;
             return true;
@@ -92,10 +93,9 @@ public abstract class TreeController <T extends Trees> {
      * Interaction is disabled after watering to prevent multiple interactions in quick succession.
      */
     public void handleWatering(){
-        if(tree.getStage() != Trees.TreeStage.SAPLING){
-            return;
-        }
+
         if (isInteractionEnabled && wateringCan.waterLevel == WateringCan.WateringCanState.FILLED) {
+            wateringTime ++;
             if (tree.getCollisionRect().overlaps(wateringCan.getCollisionRect())) {
                 tree.water();
                 isInteractionEnabled = false;
@@ -161,6 +161,10 @@ public abstract class TreeController <T extends Trees> {
         cooldownTimer = 0;
         health = 4;
         isDead = false;
+    }
+
+    public boolean isMatured() {
+        return tree.isMatured();
     }
 
     public void drawDebug(ShapeRenderer shapeRenderer) {
