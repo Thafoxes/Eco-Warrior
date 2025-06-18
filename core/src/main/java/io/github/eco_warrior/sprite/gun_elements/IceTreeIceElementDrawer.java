@@ -5,6 +5,7 @@ import io.github.eco_warrior.controller.Manager.TreeControllerManager;
 import io.github.eco_warrior.controller.Trees.TreeController;
 import io.github.eco_warrior.entity.Trees;
 import io.github.eco_warrior.sprite.UI.GunElementUI;
+import io.github.eco_warrior.sprite.gardening_equipments.RayGun;
 import io.github.eco_warrior.sprite.tree_variant.IceTree;
 
 public class IceTreeIceElementDrawer {
@@ -32,7 +33,7 @@ public class IceTreeIceElementDrawer {
         this.hideMs = hideMs;
     }
 
-    public void draw(SpriteBatch batch, float delta) {
+    public void draw(SpriteBatch batch, float delta, RayGun.RayGunMode currentMode) {
         for (TreeController<?> controller : treeControllerManager.treeControllers) {
             Trees tree = controller.getTree();
             if (tree instanceof IceTree) {
@@ -42,7 +43,7 @@ public class IceTreeIceElementDrawer {
                     || tree.getStage() == IceTree.TreeStage.DEAD_SAPLING;
 
                 long now = System.currentTimeMillis();
-                if (!isMature || isDead) {
+                if (!isMature || isDead || currentMode == RayGun.RayGunMode.ICE) {
                     iceIconState.visible = false;
                     return;
                 }
@@ -72,5 +73,13 @@ public class IceTreeIceElementDrawer {
     }
     public boolean wasLastIconClicked() {
         return lastClicked;
+    }
+
+    public void showIcon() {
+        iceIconState.visible = true;
+    }
+
+    public void hideIcon() {
+        iceIconState.visible = false;
     }
 }

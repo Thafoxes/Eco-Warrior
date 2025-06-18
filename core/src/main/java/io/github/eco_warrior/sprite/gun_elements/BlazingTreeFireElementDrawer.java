@@ -5,6 +5,7 @@ import io.github.eco_warrior.controller.Manager.TreeControllerManager;
 import io.github.eco_warrior.controller.Trees.TreeController;
 import io.github.eco_warrior.entity.Trees;
 import io.github.eco_warrior.sprite.UI.GunElementUI;
+import io.github.eco_warrior.sprite.gardening_equipments.RayGun;
 import io.github.eco_warrior.sprite.tree_variant.BlazingTree;
 
 public class BlazingTreeFireElementDrawer {
@@ -38,7 +39,7 @@ public class BlazingTreeFireElementDrawer {
         this.hideMs = hideMs;
     }
 
-    public void draw(SpriteBatch batch, float delta) {
+    public void draw(SpriteBatch batch, float delta, RayGun.RayGunMode currentMode) {
         for (TreeController<?> controller : treeControllerManager.treeControllers) {
             Trees tree = controller.getTree();
             if (tree instanceof BlazingTree) {
@@ -48,7 +49,7 @@ public class BlazingTreeFireElementDrawer {
                     || tree.getStage() == BlazingTree.TreeStage.DEAD_SAPLING;
 
                 long now = System.currentTimeMillis();
-                if (!isMature || isDead) {
+                if (!isMature || isDead || currentMode == RayGun.RayGunMode.BLAZING) {
                     fireIconState.visible = false;
                     return;
                 }
@@ -78,5 +79,13 @@ public class BlazingTreeFireElementDrawer {
 
     public boolean wasLastIconClicked() {
         return lastClicked;
+    }
+
+    public void showIcon() {
+        fireIconState.visible = true;
+    }
+
+    public void hideIcon() {
+        fireIconState.visible = false;
     }
 }

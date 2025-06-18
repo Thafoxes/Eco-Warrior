@@ -5,6 +5,7 @@ import io.github.eco_warrior.controller.Manager.TreeControllerManager;
 import io.github.eco_warrior.controller.Trees.TreeController;
 import io.github.eco_warrior.entity.Trees;
 import io.github.eco_warrior.sprite.UI.GunElementUI;
+import io.github.eco_warrior.sprite.gardening_equipments.RayGun;
 import io.github.eco_warrior.sprite.tree_variant.VoltaicTree;
 
 public class VoltaicTreeLightningElementDrawer {
@@ -37,7 +38,7 @@ public class VoltaicTreeLightningElementDrawer {
         this.hideMs = hideMs;
     }
 
-    public void draw(SpriteBatch batch, float delta) {
+    public void draw(SpriteBatch batch, float delta, RayGun.RayGunMode currentMode) {
         for (TreeController<?> controller : treeControllerManager.treeControllers) {
             Trees tree = controller.getTree();
             if (tree instanceof VoltaicTree) {
@@ -47,7 +48,7 @@ public class VoltaicTreeLightningElementDrawer {
                     || tree.getStage() == VoltaicTree.TreeStage.DEAD_SAPLING;
 
                 long now = System.currentTimeMillis();
-                if (!isMature || isDead) {
+                if (!isMature || isDead || currentMode == RayGun.RayGunMode.VOLTAIC) {
                     lightningIconState.visible = false;
                     return;
                 }
@@ -55,6 +56,7 @@ public class VoltaicTreeLightningElementDrawer {
                 if (!lightningIconState.visible && now > lightningIconState.hiddenUntil) {
                     lightningIconState.visible = true;
                 }
+
                 float iconX = tree.getSprite().getX() + tree.getSprite().getWidth() / 2f;
                 float iconY = tree.getSprite().getY() + tree.getSprite().getHeight() - 20;
                 lightningIconState.updatePosition(iconX, iconY, 40, 40);
@@ -78,5 +80,13 @@ public class VoltaicTreeLightningElementDrawer {
 
     public boolean wasLastIconClicked() {
         return lastClicked;
+    }
+
+    public void showIcon() {
+        lightningIconState.visible = true;
+    }
+
+    public void hideIcon() {
+        lightningIconState.visible = false;
     }
 }

@@ -281,11 +281,11 @@ public class LevelTwoScreen implements Screen {
         toolManager.render(batch);
         treeControllerManager.draw(batch);
 
-        //draw the elements
-        blazingTreeFireElementDrawer.draw(batch, stateTime);
-        voltaicTreeLightningDrawer.draw(batch, stateTime);
-        breezingTreeWindElementDrawer.draw(batch, stateTime);
-        iceTreeIceElementDrawer.draw(batch, stateTime);
+        //draw the elements for gun
+        blazingTreeFireElementDrawer.draw(batch, stateTime, rayGun.getMode());
+        voltaicTreeLightningDrawer.draw(batch, stateTime, rayGun.getMode());
+        breezingTreeWindElementDrawer.draw(batch, stateTime, rayGun.getMode());
+        iceTreeIceElementDrawer.draw(batch, stateTime, rayGun.getMode());
 
         batch.end();
         debugSprite();
