@@ -172,15 +172,9 @@ public class FontGenerator {
      */
     public void fontDraw(SpriteBatch uiBatch, String text , OrthographicCamera camera, Vector2 position){
         GlyphLayout layout = new GlyphLayout(font, text);
-        uiBatch.begin();
         uiBatch.setProjectionMatrix(camera.combined);
-
         position.x = position.x - layout.width;
-
-
         font.draw(uiBatch, text , position.x, position.y);
-
-        uiBatch.end();
     }
 
     /***
