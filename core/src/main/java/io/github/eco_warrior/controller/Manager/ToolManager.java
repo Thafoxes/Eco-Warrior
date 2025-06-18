@@ -7,6 +7,7 @@ import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.entity.Tool;
 import io.github.eco_warrior.enums.GardeningEnums;
+import io.github.eco_warrior.sprite.gardening_equipments.Shovel;
 import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
 
 import java.util.ArrayList;
@@ -88,6 +89,16 @@ public class ToolManager {
         }
 
     }
+
+    // This method is special for Shovel as it has hit sound custom made.
+    public void shovelHitSound(){
+        for(Tool tool : tools.values()) {
+            if (tool instanceof Shovel) {
+                ((Shovel) tool).playSound();
+            }
+        }
+    }
+
 
 
     public GameSprite getToolAt(Vector2 position) {

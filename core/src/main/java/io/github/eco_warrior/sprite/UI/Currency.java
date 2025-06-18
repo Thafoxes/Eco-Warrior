@@ -49,7 +49,7 @@ public class Currency {
         }
 
         // Smooth number interpolation
-        displayedMoney += (moneyAmount - displayedMoney) * 5 * delta;
+        displayedMoney = moneyAmount;
     }
 
     public void draw(SpriteBatch batch) {

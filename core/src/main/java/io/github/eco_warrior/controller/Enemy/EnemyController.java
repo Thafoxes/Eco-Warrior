@@ -12,10 +12,11 @@ import io.github.eco_warrior.enums.EnemyType;
 
 public class EnemyController {
     private Enemies enemy;
-    private float moveSpeed = 100f;
+    private static float moveSpeed = 50f;
     private BaseExplosion deathEffect;
     private boolean isExploding = false;
     private EnemyType enemyType;
+    protected Vector2 velocity = new Vector2();
 
     /***
      * This is where you add effects for the worm, such as explosion effects.
@@ -36,16 +37,18 @@ public class EnemyController {
     }
 
     public void update(float delta) {
-
         //update worm animation state
         enemy.update(delta);
 
+        //TODO - ISSUE ON MOVEMENT GOING THROUGH WALLS AND TOO FAST
         // Handle movement
         if (enemy.getCurrentState() == Enemies.EnemyState.MOVING) {
             float direction = enemy.isRightDirection() ? 1 : -1;
-            Vector2 position = enemy.getPosition();
-            position.x += direction * moveSpeed * delta;
-            enemy.setPosition(position);
+            velocity.x = direction * moveSpeed * delta;
+
+            Vector2 position = new Vector2(velocity.x,0);
+            enemy.setTranslationPos(position);
+            //enemy.getSprite().translate(velocity.x * delta, 0);
         }
 
         // Handle death effect
@@ -74,9 +77,25 @@ public class EnemyController {
         enemy.move();
     }
 
+    public void resetState() {
+
+        enemy.resetState();
+    }
+
+    public void setState(Enemies.EnemyState state) {
+        enemy.setState(state);
+    }
+
+    public boolean isDoneAttacking() {
+        return enemy.isDoneAttacking();
+    }
 
     public Sprite getSprite() {
         return enemy.getSprite();
+    }
+
+    public Rectangle getCollisionRect() {
+        return enemy.getCollisionRect();
     }
 
     public void draw(SpriteBatch batch) {
@@ -90,7 +109,7 @@ public class EnemyController {
         enemy.setDirection();
     }
 
-    public void changeDirection(boolean isRightDirection) {
+    public void setRightDirection(boolean isRightDirection) {
         enemy.setDirection(isRightDirection);
     }
 

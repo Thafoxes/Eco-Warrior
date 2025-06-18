@@ -262,6 +262,13 @@ public class GameSprite extends spriteGenerator {
         this.collisionRect.setPosition(newPosition.x, newPosition.y);
     }
 
+    public void setTranslationPos(Vector2 newPosition){
+        System.out.println();
+        this.sprite.translate(newPosition.x, newPosition.y);
+        this.collisionRect.setPosition(sprite.getX(), sprite.getY());
+    }
+
+
     public Rectangle getCollisionRect(){
         return this.collisionRect;
     }

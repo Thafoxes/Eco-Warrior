@@ -43,10 +43,10 @@ public class MetalChuck extends Enemies {
     @Override
     protected void loadAnimations() {
         // Load animations directly here
-        atlas = new TextureAtlas(Gdx.files.internal("atlas/worm/worm.atlas"));
+        atlas = new TextureAtlas(Gdx.files.internal("atlas/metal_chuck/MetalChuck.atlas"));
 
         // Create animations for different states
-        animationMap.put(EnemyState.MOVING, new Animation<>(0.1f, atlas.findRegions("moving"), Animation.PlayMode.LOOP));
+        animationMap.put(EnemyState.MOVING, new Animation<>(0.1f, atlas.findRegions("move"), Animation.PlayMode.LOOP));
         animationMap.put(EnemyState.ATTACKING, new Animation<>(0.1f, atlas.findRegions("attack"), Animation.PlayMode.NORMAL));
         animationMap.put(EnemyState.DEAD, new Animation<>(0.15f, atlas.findRegions("death"), Animation.PlayMode.NORMAL));
         animationMap.put(EnemyState.IDLE, new Animation<>(0.15f, atlas.findRegions("idle"), Animation.PlayMode.LOOP));
@@ -60,22 +60,6 @@ public class MetalChuck extends Enemies {
         super.attackSound = attackSound;
     }
 
-    @Override
-    public void update(float delta) {
-
-        updateState(delta);
-
-        if(currentState == EnemyState.MOVING){
-            float moveAmount = movementSpeed * delta;
-            moveBy(isRightDirection ? moveAmount : -moveAmount, 0);
-
-        }
-    }
-
-    @Override
-    public void updateState(float delta) {
-        super.updateState(delta);
-    }
 
 }
 

@@ -71,6 +71,9 @@ atlas/heart/hearts.atlas
 atlas/heart/hearts.png
 atlas/lake_hitbox/lake_hitbox.atlas
 atlas/lake_hitbox/lake_hitbox.png
+atlas/metal_chuck/MetalChuck.atlas
+atlas/metal_chuck/MetalChuck.png
+atlas/metal_chuck/MetalChuck2.png
 atlas/recyclables/recyclables.atlas
 atlas/recyclables/recyclables.png
 atlas/recyclables/trash.atlas

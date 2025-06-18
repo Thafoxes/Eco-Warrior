@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import io.github.eco_warrior.controller.Enemy.EnemyController;
 import io.github.eco_warrior.controller.Enemy.WormController;
+import io.github.eco_warrior.entity.Enemies;
 import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.enums.EnemyType;
 
@@ -42,6 +43,8 @@ public class EnemyManager {
         }
 
         for(EnemyController enemy : enemiesToRemove) {
+            //reset back to IDLE state before removing
+            enemy.setState(Enemies.EnemyState.IDLE);
             enemies.remove(enemy);
         }
     }
@@ -65,6 +68,13 @@ public class EnemyManager {
             Sprite sprite = enemy.getSprite();
             shapeRenderer.setColor(1, 0, 0, 1); // Set color for debug
             shapeRenderer.rect(sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
+
+            shapeRenderer.setColor(1, 1, 1, 1);
+            System.out.println("Collision Rect: " + enemy.getCollisionRect());
+            shapeRenderer.rect(enemy.getCollisionRect().x,
+                               enemy.getCollisionRect().y,
+                               enemy.getCollisionRect().width,
+                               enemy.getCollisionRect().height);
         }
     }
 

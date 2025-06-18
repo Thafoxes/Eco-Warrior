@@ -1,7 +1,9 @@
 package io.github.eco_warrior.controller.Trees;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.animation.FireBurningAnim;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
@@ -35,8 +37,8 @@ public abstract class TreeController <T extends Trees> {
     private void setDeadAnimation() {
         float xPos = tree.getInitPosition().x + (tree.getSprite().getWidth() * tree.getScale() /2);
         float yPos = tree.getInitPosition().y + (tree.getSprite().getHeight() * tree.getScale()/2);
-        animPosition = new Vector2(xPos, yPos);
-        this.deadAnim = new FireBurningAnim(animPosition, 0.5f);
+        animPosition = new Vector2(xPos + 50f, yPos);
+        this.deadAnim = new FireBurningAnim(animPosition, 0.1f);
     }
 
     public void update(float delta){
@@ -161,6 +163,14 @@ public abstract class TreeController <T extends Trees> {
         cooldownTimer = 0;
         health = 4;
         isDead = false;
+    }
+
+    public Sprite getSprite() {
+        return tree.getSprite();
+    }
+
+    public Rectangle getCollisionRect() {
+        return tree.getCollisionRect();
     }
 
     public boolean isMatured() {

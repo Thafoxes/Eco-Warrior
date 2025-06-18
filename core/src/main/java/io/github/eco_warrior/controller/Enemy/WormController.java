@@ -10,11 +10,6 @@ public class WormController extends EnemyController {
         super(new Worm(position), EnemyType.WORM);
     }
 
-    @Override
-    public void update(float delta) {
-        super.update(delta);
-        // Additional worm-specific logic can be added here
-    }
 
     @Override
     public void attack() {

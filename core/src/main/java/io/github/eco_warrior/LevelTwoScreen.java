@@ -2,26 +2,30 @@ package io.github.eco_warrior;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import io.github.eco_warrior.controller.Enemy.EnemyController;
+import io.github.eco_warrior.controller.Enemy.WormController;
+import io.github.eco_warrior.controller.Manager.EnemyManager;
 import io.github.eco_warrior.controller.Manager.ToolManager;
 import io.github.eco_warrior.controller.Manager.TreeControllerManager;
+import io.github.eco_warrior.controller.Pools.WormPool;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.controller.Trees.*;
 import io.github.eco_warrior.entity.GameSprite;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import io.github.eco_warrior.enums.GardeningEnums;
 import io.github.eco_warrior.sprite.*;
-import io.github.eco_warrior.sprite.Enemy.Worm;
 import io.github.eco_warrior.sprite.gardening_equipments.*;
 import io.github.eco_warrior.sprite.gardening_equipments.sapling_variant.*;
 import io.github.eco_warrior.sprite.tree_variant.*;
@@ -68,49 +72,17 @@ public class LevelTwoScreen implements Screen {
     private GameSprite draggingTool;
 
     //enemies
-    private Array<Worm> worms;
-    private Array<Worm> wormPool;
-    private static final float wormStartX = WINDOW_WIDTH + 50f;
-    private static final float wormStartY = 100f; //default value, will be set based on random path
-    private Vector2 startWormPosition = new Vector2(wormStartX, wormStartY);
-    private float wormSpawnTimer;
-    private float stateTime;
-    private static final int WORM_BUFFER_CAPACITY = 10;
+    private EnemyManager enemyManager;
+    private WormPool wormPool;
+    private ArrayList<EnemyController> enemyControllersToBeRemove;
+    private float spawnTimer = 0f;
+    private float spawnInterval = 4f;
 
-    //enemy path
     private final Random rand = new Random();
-    public enum WormPath {
-        PATH_1(1),
-        PATH_2(2),
-        PATH_3(3),
-        PATH_4(4),
-        PATH_5(5),
-        ;
 
-        private final int number;
+    private float stateTime = 0f;
+    private Map<String, Vector2> treePositions = new HashMap<>();
 
-        WormPath(int number) {
-            this.number = number;
-        }
-
-        public int getNumber() {
-            return number;
-        }
-
-        public Vector2 getWormStartPosition() {
-            switch (this) {
-                case PATH_1: return new Vector2(wormStartX, 25);
-                case PATH_2: return new Vector2(wormStartX, 100);
-                case PATH_3: return new Vector2(wormStartX, 175);
-                case PATH_4: return new Vector2(wormStartX, 250);
-                case PATH_5: return new Vector2(wormStartX, 300);
-                default: return new Vector2(0, 0); // Default case, should not happen
-            }
-        }
-    }
-
-    //sound effects
-    private final Sound shovelSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/pan.mp3"));
 
     public LevelTwoScreen(Main main) {
         this.game = main;
@@ -135,15 +107,19 @@ public class LevelTwoScreen implements Screen {
         //setup camera to middle
         camera.position.set(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0);
 
-        worms = new Array<>();
         initializeTools();
         initializeTrees();
-
+        initializeEnemyManager();
 
         currency = new Currency(new Vector2(20, WINDOW_HEIGHT - 60), 0.5f, camera);
     }
 
+    private void initializeEnemyManager() {
+        enemyManager = new EnemyManager();
+        enemyControllersToBeRemove = new ArrayList<>();
+        wormPool = new WormPool(enemyManager);
 
+    }
 
     private void initializeTools() {
         int toolCount = 5;
@@ -189,26 +165,32 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void initializeTrees() {
-        float treeScale = 0.25f;
+        float treeScale = 0.20f;
+
+        treePositions.put("ordinary", new Vector2(763, 92));
+        treePositions.put("blazing", new Vector2(1048, 256));
+        treePositions.put("breezing", new Vector2(920, 183));
+        treePositions.put("ice", new Vector2(1023, 25));
+        treePositions.put("voltaic", new Vector2(781, 299));
 
         TreeController<OrdinaryTree> ordinaryTreeController = new OrdinaryTreeController(
-            new OrdinaryTree(new Vector2(763, 92), treeScale),
+            new OrdinaryTree(treePositions.get("ordinary"), treeScale),
             wateringCan
         );
         TreeController<BlazingTree> blazingTreeController = new BlazingTreeController(
-            new BlazingTree(new Vector2(1048, 256), treeScale),
+            new BlazingTree(treePositions.get("blazing"), treeScale),
                 wateringCan
         );
         TreeController<BreezingTree> breezingTreeController = new BreezingTreeController(
-            new BreezingTree(new Vector2(920, 183), treeScale),
+            new BreezingTree(treePositions.get("breezing"), treeScale),
             wateringCan
         );
         TreeController<IceTree> iceTreeController = new IceTreeController(
-            new IceTree(new Vector2(1023, 25), treeScale),
+            new IceTree(treePositions.get("ice"), treeScale),
             wateringCan
         );
         TreeController<VoltaicTree> voltaicTreeController = new VoltaicTreeController(
-            new VoltaicTree(new Vector2(781, 299), treeScale),
+            new VoltaicTree(treePositions.get("voltaic"), treeScale),
             wateringCan
         );
 
@@ -221,20 +203,81 @@ public class LevelTwoScreen implements Screen {
     }
 
 
+
     @Override
     public void render(float delta) {
         input();
         draw(delta);
         returnOriginalPosition();
+
         updateToolManager(delta);
         updateTreeManager(delta);
-//        spawnWorm(delta);
-//        updateEnemyAnimationMovement();
-//
-//        for (TreeHealth treeHealth : treeHealths.values()) {
-//            treeHealth.updateHealth();
-//        }
+        updateEnemyManager(delta);
+        updateEnemyTreeLogic(delta);
     }
+
+    private void updateEnemyTreeLogic(float delta) {
+        for(EnemyController enemy: enemyManager.getEnemies()){
+            if(enemy instanceof WormController){
+                WormController worm = (WormController) enemy;
+                // Check if the worm is colliding with any tree
+                for(TreeController<?> treeController : treeControllerManager.getTreeControllers()){
+                    if(treeController instanceof OrdinaryTreeController){
+                        if(treeController.getCollisionRect().overlaps(enemy.getCollisionRect())){
+                            // If it collides, set the worm to idle state
+                            worm.attack();
+                            if(worm.isDoneAttacking()){
+                                treeController.takeDamage(1); // Assuming the worm deals 1 damage
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    private void updateEnemyManager(float delta) {
+        spawnWorm(delta);
+        enemyManager.update(delta);
+
+        for(EnemyController enemy : enemyManager.getEnemies()) {
+            if(enemy instanceof WormController){
+                if(enemy.isDead()){
+                    enemyControllersToBeRemove.add(enemy);
+                }
+            }
+        }
+
+        if(!enemyControllersToBeRemove.isEmpty()){
+            for(EnemyController enemy : enemyControllersToBeRemove) {
+                wormPool.returnEnemy((WormController) enemy);
+            }
+            enemyControllersToBeRemove.clear();
+        }
+
+    }
+
+    private void spawnWorm(float delta) {
+        Vector2 treePos = treePositions.get("ordinary");
+        if(treePos == null){
+            throw new RuntimeException("Tree position for 'ordinary' tree not found.");
+        }
+
+        spawnTimer += delta;
+        if (spawnTimer >= spawnInterval && wormPool.getActiveCount() < 5) { // Limit to 5 worms at a time
+            Vector2 spawnPos = new Vector2(WINDOW_WIDTH + 50f, treePos.y);
+            WormController worm = wormPool.getWorm(spawnPos);
+            if(worm != null){
+                System.out.println("L2 - Worm spawned at: " + spawnPos);
+                enemyManager.addEnemy(worm);
+            }
+            spawnTimer = 0; // Reset the timer after spawning an enemy
+
+        }
+
+    }
+
 
 
     private void updateTreeManager(float delta) {
@@ -248,17 +291,19 @@ public class LevelTwoScreen implements Screen {
 
 
     private void draw(float delta) {
+        stateTime += delta;
+
         camera.update();
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.setProjectionMatrix(camera.combined);
-        stateTime = Gdx.graphics.getDeltaTime();
 
         batch.begin();
         backgroundSprite.draw(batch);
         toolManager.render(batch);
         treeControllerManager.draw(batch);
+        enemyManager.draw(batch);
 
         batch.end();
         debugSprite();
@@ -313,8 +358,17 @@ public class LevelTwoScreen implements Screen {
         //watercan from toolManager, so perform it on toolManager
         if(draggingTool instanceof WateringCan){
             //after interact with trees using watering can, empty the water can
-
             toolManager.emptyWaterCan();
+        }
+        if(draggingTool instanceof Shovel){
+            for(EnemyController enemy : enemyManager.getEnemies()){
+                if(enemy.getCollisionRect().overlaps(draggingTool.getCollisionRect())){
+                    if(enemy instanceof WormController){
+                        enemy.die();
+                    }
+                }
+            }
+
         }
         // Check if the tool is a watering can and if it can water a fountain
         toolManager.isWaterCansCollideRefillWater(waterFountain);
@@ -365,17 +419,14 @@ public class LevelTwoScreen implements Screen {
     public void pause() {
 
     }
-
     @Override
     public void resume() {
 
     }
-
     @Override
     public void hide() {
 
     }
-
     private void debugSprite() {
         //debug mode start
         shapeRenderer.setProjectionMatrix(camera.combined);
@@ -385,6 +436,7 @@ public class LevelTwoScreen implements Screen {
         toolManager.drawDebug(shapeRenderer);
         treeControllerManager.drawDebug(shapeRenderer);
         waterFountain.drawDebug(shapeRenderer);
+        enemyManager.drawDebug(shapeRenderer);
 //
 //        for (Worm worm : worms) {
 //            worm.drawDebug(shapeRenderer);
@@ -404,6 +456,7 @@ public class LevelTwoScreen implements Screen {
         shapeRenderer.dispose();
         toolManager.dispose();
         treeControllerManager.dispose();
+        enemyManager.dispose();
 
 //
 //        for(GameSprite worm: worms){

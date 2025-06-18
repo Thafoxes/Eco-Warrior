@@ -119,10 +119,10 @@ public class WormTestScreen implements Screen {
             if (enemy instanceof WormController) {
                 // Debug controls for the worm
                 if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
-                    ((WormController) enemy).changeDirection(false);
+                    ((WormController) enemy).setRightDirection(false);
                 }
                 if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
-                    ((WormController) enemy).changeDirection(true);
+                    ((WormController) enemy).setRightDirection(true);
                 }
                 if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
                     ((WormController) enemy).move();

@@ -16,6 +16,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
 public abstract class Enemies extends GameSprite{
 
 
+
     public enum EnemyState {
         MOVING,
         IDLE,
@@ -28,7 +29,7 @@ public abstract class Enemies extends GameSprite{
     protected EnemyState previousState;
     protected float stateTime;
     // Direction of movement, true for right, false for left
-    protected boolean isRightDirection = true;
+    protected boolean isRightDirection = false;
     protected float movementSpeed = 50f;
     protected float attackCooldown = 1.5f;
     protected boolean canAttack = true;
@@ -50,6 +51,17 @@ public abstract class Enemies extends GameSprite{
     protected abstract void loadAnimations();
     protected abstract void loadAudio();
 
+    public void resetState(){
+        System.out.println("Enemies :  "+ this.stateTime);
+        this.currentState = EnemyState.IDLE;
+        this.previousState = EnemyState.IDLE;
+        this.stateTime = 0f;
+        this.isRightDirection = false;
+        this.canAttack = true;
+        // Reset animations
+        loadAnimations();
+        loadAudio();
+    }
 
     public void setState(EnemyState newState) {
         if (currentState != EnemyState.DEAD) { // Can't change state if dead
@@ -87,11 +99,6 @@ public abstract class Enemies extends GameSprite{
 
         updateState(delta);
 
-        if(currentState == EnemyState.MOVING){
-            float moveAmount = movementSpeed * delta;
-            moveBy(isRightDirection ? moveAmount : -moveAmount, 0);
-
-        }
     }
 
     public void updateState(float delta){
@@ -122,6 +129,10 @@ public abstract class Enemies extends GameSprite{
 
     public boolean isDead() {
         return currentState == EnemyState.DEAD && animationMap.get(currentState).isAnimationFinished(stateTime);
+    }
+
+    public boolean isDoneAttacking() {
+        return currentState == EnemyState.ATTACKING && animationMap.get(currentState).isAnimationFinished(stateTime);
     }
 
     public EnemyState getCurrentState() {
@@ -161,8 +172,6 @@ public abstract class Enemies extends GameSprite{
                 @Override
                 public void run() {
                     canAttack = true;
-                    System.out.println("Enemies: current state: " + currentState + " Attack status: " + canAttack);
-
                 }
             }, attackCooldown);
         }
