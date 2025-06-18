@@ -1,0 +1,69 @@
+package io.github.eco_warrior.sprite.gun_elements;
+
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import io.github.eco_warrior.controller.Manager.TreeControllerManager;
+import io.github.eco_warrior.controller.Trees.TreeController;
+import io.github.eco_warrior.entity.Trees;
+import io.github.eco_warrior.sprite.UI.GunElementUI;
+import io.github.eco_warrior.sprite.tree_variant.BreezingTree;
+
+public class BreezingTreeWindElementDrawer {
+    public static class ElementIconState {
+        public float x, y, width, height;
+        public boolean visible = true;
+        public long hiddenUntil = 0L;
+        public void updatePosition(float x, float y, float w, float h) {
+            this.x = x; this.y = y; this.width = w; this.height = h;
+        }
+        public boolean isPointInside(float px, float py) {
+            return visible && px >= x && px <= x + width && py >= y && py <= y + height;
+        }
+    }
+
+    private final TreeControllerManager treeControllerManager;
+    private final GunElementUI gunElementUI;
+    private final ElementIconState windIconState = new ElementIconState();
+    private final long hideMs;
+
+    public BreezingTreeWindElementDrawer(TreeControllerManager treeControllerManager, GunElementUI gunElementUI, long hideMs) {
+        this.treeControllerManager = treeControllerManager;
+        this.gunElementUI = gunElementUI;
+        this.hideMs = hideMs;
+    }
+
+    public void draw(SpriteBatch batch, float delta) {
+        for (TreeController<?> controller : treeControllerManager.treeControllers) {
+            Trees tree = controller.getTree();
+            if (tree instanceof BreezingTree) {
+                boolean isMature = tree.getStage() == BreezingTree.TreeStage.MATURED_TREE;
+                boolean isDead = tree.getStage() == BreezingTree.TreeStage.DEAD_MATURE_TREE
+                    || tree.getStage() == BreezingTree.TreeStage.DEAD_YOUNG_TREE
+                    || tree.getStage() == BreezingTree.TreeStage.DEAD_SAPLING;
+
+                long now = System.currentTimeMillis();
+                if (!isMature || isDead) {
+                    windIconState.visible = false;
+                    return;
+                }
+
+                if (!windIconState.visible && now > windIconState.hiddenUntil) {
+                    windIconState.visible = true;
+                }
+                float iconX = tree.getSprite().getX() + tree.getSprite().getWidth() / 2f + 5;
+                float iconY = tree.getSprite().getY() + tree.getSprite().getHeight() - 25;
+                windIconState.updatePosition(iconX, iconY, 65, 65); // 65x65 as in your original code
+                if (windIconState.visible) {
+                    gunElementUI.renderElementIcon(batch, GunElementUI.ElementType.WIND, iconX, iconY, 65, 65, delta);
+                }
+            }
+        }
+    }
+
+    public void handleClick(float screenX, float screenY) {
+        long now = System.currentTimeMillis();
+        if (windIconState.isPointInside(screenX, screenY)) {
+            windIconState.visible = false;
+            windIconState.hiddenUntil = now + hideMs;
+        }
+    }
+}

@@ -1,0 +1,13 @@
+ray_gun.png
+size:2048,512
+repeat:none
+blazing_ray_gun
+bounds:776,2,256,256
+breezing_ray_gun
+bounds:518,2,256,256
+ice_ray_gun
+bounds:260,2,256,256
+useless_ray_gun
+bounds:1034,2,256,256
+voltaic_ray_gun
+bounds:2,2,256,256

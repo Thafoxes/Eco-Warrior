@@ -26,8 +26,10 @@ import io.github.eco_warrior.entity.Trees;
 import io.github.eco_warrior.enums.GardeningEnums;
 import io.github.eco_warrior.sprite.*;
 import io.github.eco_warrior.sprite.Enemy.Worm;
+import io.github.eco_warrior.sprite.UI.GunElementUI;
 import io.github.eco_warrior.sprite.gardening_equipments.*;
 import io.github.eco_warrior.sprite.gardening_equipments.sapling_variant.*;
+import io.github.eco_warrior.sprite.gun_elements.*;
 import io.github.eco_warrior.sprite.tree_variant.*;
 
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_HEIGHT;
@@ -41,7 +43,6 @@ public class LevelTwoScreen implements Screen {
     private Viewport viewport;
     private SpriteBatch batch;
     private SpriteBatch uiBatch;
-
     private Texture backgroundTexture;
     private Sprite backgroundSprite;
 
@@ -68,6 +69,9 @@ public class LevelTwoScreen implements Screen {
     private boolean isReturning = false;
     private GameSprite draggingTool;
 
+    //gun elements
+    private GunElementUI gunElementUI;
+
     //enemies
     private Array<Worm> worms;
     private Array<Worm> wormPool;
@@ -78,6 +82,11 @@ public class LevelTwoScreen implements Screen {
     private float stateTime;
     private static final int WORM_BUFFER_CAPACITY = 10;
 
+    //gun elements drawers
+    private BlazingTreeFireElementDrawer blazingTreeFireElementDrawer;
+    private BreezingTreeWindElementDrawer breezingTreeWindElementDrawer;
+    private IceTreeIceElementDrawer iceTreeIceElementDrawer;
+    private VoltaicTreeLightningElementDrawer voltaicTreeLightningDrawer;
     //enemy path
     private final Random rand = new Random();
     public enum WormPath {
@@ -136,10 +145,18 @@ public class LevelTwoScreen implements Screen {
         //setup camera to middle
         camera.position.set(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0);
 
+        //initialize GunElement atlas
+        gunElementUI = new GunElementUI("GunElement.atlas", "Lighting.atlas", "Fire.atlas", "Wind.atlas", "Ice.atlas");
+
         worms = new Array<>();
         initializeTools();
         initializeTrees();
 
+        //initialize for drawing gun elements + elements hiding time
+        blazingTreeFireElementDrawer = new BlazingTreeFireElementDrawer(treeControllerManager, gunElementUI, 3000); // 3 seconds
+        breezingTreeWindElementDrawer = new BreezingTreeWindElementDrawer(treeControllerManager, gunElementUI, 3000); // 3 seconds
+        iceTreeIceElementDrawer = new IceTreeIceElementDrawer(treeControllerManager, gunElementUI, 3000); // 3 seconds
+        voltaicTreeLightningDrawer = new VoltaicTreeLightningElementDrawer(treeControllerManager, gunElementUI, 3000); // 3 seconds
     }
 
 
@@ -262,6 +279,12 @@ public class LevelTwoScreen implements Screen {
         toolManager.render(batch);
         treeControllerManager.draw(batch);
 
+        //draw the elements
+        blazingTreeFireElementDrawer.draw(batch, stateTime);
+        voltaicTreeLightningDrawer.draw(batch, stateTime);
+        breezingTreeWindElementDrawer.draw(batch, stateTime);
+        iceTreeIceElementDrawer.draw(batch, stateTime);
+
         batch.end();
         debugSprite();
     }
@@ -294,6 +317,18 @@ public class LevelTwoScreen implements Screen {
             isDragging = false;
             isReturning = true;
         }
+
+        //Handle clicks for gun elements
+        if (Gdx.input.justTouched()) {
+            float sx = Gdx.input.getX();
+            float sy = Gdx.graphics.getHeight() - Gdx.input.getY(); // flip y
+            blazingTreeFireElementDrawer.handleClick(sx, sy);
+            breezingTreeWindElementDrawer.handleClick(sx, sy);
+            iceTreeIceElementDrawer.handleClick(sx, sy);
+            voltaicTreeLightningDrawer.handleClick(sx, sy);
+            // ... (rest unchanged for wind, ice, lightning if you still use them)
+        }
+
     }
 
     private void handleToolInteractions(GameSprite draggingTool) {
