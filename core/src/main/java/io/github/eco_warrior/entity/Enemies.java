@@ -103,12 +103,12 @@ public abstract class Enemies extends GameSprite{
         return currentState;
     }
 
-    @Override
+
     public void dispose() {
         attackSound.dispose();
     }
 
-    @Override
+
     public Vector2 getPosition() {
         return new Vector2(getSprite().getX(), getSprite().getY());
     }
@@ -117,7 +117,7 @@ public abstract class Enemies extends GameSprite{
         return isMoving;
     }
 
-    @Override
+
     public void setPosition(Vector2 position) {
         getSprite().setPosition(position.x, position.y);
         //originalPos = position; // Update original position

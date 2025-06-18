@@ -1,6 +1,9 @@
 package io.github.eco_warrior.controller.Enemy;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.animation.Explosion.RedExplosion;
 import io.github.eco_warrior.entity.Enemies;
@@ -61,13 +64,17 @@ public class WormController {
     }
 
 
-
     public void draw(SpriteBatch batch) {
         worm.draw(batch);
 //        if (isExploding && !deathEffect.isFinished()) {
 //            deathEffect.draw(batch);
 //        }
     }
+
+    public void drawDebug(ShapeRenderer shapeRenderer) {
+
+    }
+
 
     public void dispose() {
 //        deathEffect.dispose();

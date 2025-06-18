@@ -206,7 +206,6 @@ public class WorldTestsV2 implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         adventurerGirl.draw(batch);
-        npcManager.render(batch);
         batch.end();
 
         // Draw the top 3 layers above the character
@@ -215,10 +214,14 @@ public class WorldTestsV2 implements Screen {
             foregroundLayers[i] = numLayers - LAYER_MAP + i;
         }
         map.getRenderer().render(foregroundLayers);
+        batch.begin();
+        npcManager.render(batch, camera);
+        batch.end();
 
         // Draw DialogBox in screen coordinates so it is always visible
         batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 
+        //dialog box so the character will look next to the character and smaller
         batch.begin();
         dialogBox.render(batch);
         batch.end();

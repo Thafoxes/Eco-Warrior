@@ -3,8 +3,10 @@ package io.github.eco_warrior.tests;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.controller.Enemy.WormController;
 import io.github.eco_warrior.entity.Enemies;
@@ -14,12 +16,14 @@ public class WormTestScreen implements Screen {
     private Worm worm;
     private SpriteBatch batch;
     private WormController wormController;
+    private ShapeRenderer shapeRenderer;
 
     @Override
     public void show() {
         batch = new SpriteBatch();
         worm = new Worm(new Vector2(100, 100));
         wormController = new WormController(worm);
+        shapeRenderer = new ShapeRenderer();
     }
 
     @Override
@@ -34,6 +38,14 @@ public class WormTestScreen implements Screen {
         batch.end();
 
         HandleInput();
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        debug();
+        shapeRenderer.end();
+    }
+
+    private void debug() {
+        ShapeRenderer renderer = new ShapeRenderer();
+        wormController.drawDebug(renderer);
     }
 
     private void HandleInput() {

@@ -52,8 +52,9 @@ public class Hearts {
         Vector2 labelPos = new Vector2(position.x , position.y + heartRegion.getRegionHeight() );
 
         batch.end();
-        fontGenerator.fontDraw(batch , "Hearts: ", camera, labelPos);
         batch.begin();
+        fontGenerator.fontDraw(batch , "Hearts: ", camera, labelPos);
+
 
         for (int i = 0; i < currentHearts; i++) {
             float x = position.x + (i * (heartWidth + spacing));

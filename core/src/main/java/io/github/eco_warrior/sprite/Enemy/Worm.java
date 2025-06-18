@@ -9,9 +9,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
 import io.github.eco_warrior.entity.Enemies;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
 
 public class Worm extends Enemies {
@@ -65,33 +62,37 @@ public class Worm extends Enemies {
         }
 
        Animation<TextureRegion> currentAnimation = animationMap.get(currentState);
-       if(currentAnimation != null){
-           TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, currentState == EnemyState.MOVING);
-           getSprite().setRegion(currentFrame);
-           getSprite().flip(isMoving, false);
-
-           // Play sound if attacking
-           if(currentState ==EnemyState.ATTACKING && previousState != currentState){
-               attackSound.play(0.5f);
-           }
-
-           if(currentState == EnemyState.ATTACKING && currentAnimation.isAnimationFinished(stateTime)){
-               setState(EnemyState.IDLE);
-               stateTime = 0f;
-               canAttack = false;
-
-               Timer.schedule(new Timer.Task() {
-                    @Override
-                   public void run() {
-                       canAttack = true;
-                   }
-               }, attackCooldown);
-
-           }
-       }
+        MovingAnimation(currentAnimation);
+        AttackAnim(currentAnimation);
 
 
         previousState = currentState;
         stateTime += delta;
+    }
+
+    private void AttackAnim(Animation<TextureRegion> currentAnimation) {
+        // Play sound if attacking
+        if(currentState ==EnemyState.ATTACKING && previousState != currentState){
+            attackSound.play(0.5f);
+        }
+        if(currentState == EnemyState.ATTACKING && currentAnimation.isAnimationFinished(stateTime)){
+            setState(EnemyState.IDLE);
+            stateTime = 0f;
+            canAttack = false;
+
+            Timer.schedule(new Timer.Task() {
+                 @Override
+                public void run() {
+                    canAttack = true;
+                }
+            }, attackCooldown);
+
+        }
+    }
+
+    private void MovingAnimation(Animation<TextureRegion> currentAnimation) {
+        TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, currentState == EnemyState.MOVING);
+        getSprite().setRegion(currentFrame);
+        getSprite().flip(isMoving, false);
     }
 }
