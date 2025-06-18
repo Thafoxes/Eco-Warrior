@@ -265,7 +265,7 @@ public class LevelTwoScreen implements Screen {
             currentTouchPos.set(Gdx.input.getX(), Gdx.input.getY());
             viewport.unproject(currentTouchPos);
 
-            if(!isDragging){
+            if(!isDragging && !isReturning){
                 // Only try to pick up a tool if we're not already dragging
                 draggingTool = toolManager.getToolAt(currentTouchPos);
                 if (draggingTool != null) {
