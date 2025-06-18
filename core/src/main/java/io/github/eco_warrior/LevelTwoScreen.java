@@ -18,8 +18,6 @@ import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.controller.Trees.*;
 import io.github.eco_warrior.entity.GameSprite;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import io.github.eco_warrior.entity.Trees;
@@ -172,11 +170,6 @@ public class LevelTwoScreen implements Screen {
         toolManager.addTool(GardeningEnums.FERTILIZER, fertilizer);
 
         initializeSapling(spacing, toolScale);
-//
-//        wormPool = new Array<>(WORM_BUFFER_CAPACITY);
-//        for (int i = 0; i < WORM_BUFFER_CAPACITY; i++) {
-//            wormPool.add(new Worm(startWormPosition));
-//        }
     }
 
     private void initializeSapling(float spacing, float toolScale) {
@@ -189,9 +182,11 @@ public class LevelTwoScreen implements Screen {
 
         toolManager.addSaplingController(voltaicSapling);
         toolManager.addSaplingController(ordinarySapling);
+        toolManager.addSaplingController(voltaicSapling);
         toolManager.addSaplingController(blazingSapling);
         toolManager.addSaplingController(breezingSapling);
         toolManager.addSaplingController(iceSapling);
+
 
     }
 
@@ -298,18 +293,23 @@ public class LevelTwoScreen implements Screen {
         }else if(isDragging){
             //on mouse release, check for interaction
             if(draggingTool != null){
-                // Check if the tool is a sapling and if it can be planted
-                if(treeControllerManager.interactWithTrees(draggingTool)){
-                    // If a sapling was successfully planted, handle the planting logic
-                    System.out.println("Is planted");
-                    toolManager.handleSaplingPlanting(draggingTool);
-                }
-                // Check if the tool is a watering can and if it can water a fountain
-                toolManager.isWaterCansCollide(waterFountain);
+                //handle tool interactions
+                handleToolInteractions(draggingTool);
             }
             isDragging = false;
             isReturning = true;
         }
+    }
+
+    private void handleToolInteractions(GameSprite draggingTool) {
+        // Check if the tool is a sapling and if it can be planted
+        if (treeControllerManager.interactWithTrees(draggingTool)) {
+            // If a sapling was successfully planted, handle the planting logic
+            System.out.println("Is planted");
+            toolManager.handleSaplingPlanting(draggingTool);
+        }
+        // Check if the tool is a watering can and if it can water a fountain
+        toolManager.isWaterCansCollide(waterFountain);
     }
 
     private void returnOriginalPosition() {
