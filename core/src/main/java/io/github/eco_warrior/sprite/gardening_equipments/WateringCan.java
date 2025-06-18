@@ -42,4 +42,13 @@ public class WateringCan extends Tool {
             setFrame(waterLevel.ordinal()); // Update frame to filled state
         }
     }
+
+    public void emptyWateringCan() {
+        if (waterLevel == WateringCanState.FILLED) {
+            waterLevel = WateringCanState.EMPTY;
+            setFrame(waterLevel.ordinal()); // Update frame to empty state
+        }
+    }
+
+
 }

@@ -1,10 +1,9 @@
-package io.github.eco_warrior.controller;
+package io.github.eco_warrior.controller.Manager;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.sprite.CrackSprite;
-import io.github.eco_warrior.sprite.PipeCrack;
 import io.github.eco_warrior.sprite.UI.WaterWasteBarUI;
 import io.github.eco_warrior.sprite.WaterDrop;
 
