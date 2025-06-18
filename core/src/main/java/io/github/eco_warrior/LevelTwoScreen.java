@@ -25,6 +25,7 @@ import io.github.eco_warrior.sprite.Enemy.Worm;
 import io.github.eco_warrior.sprite.gardening_equipments.*;
 import io.github.eco_warrior.sprite.gardening_equipments.sapling_variant.*;
 import io.github.eco_warrior.sprite.tree_variant.*;
+import io.github.eco_warrior.sprite.UI.Currency;
 
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_HEIGHT;
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_WIDTH;
@@ -56,6 +57,8 @@ public class LevelTwoScreen implements Screen {
     private WateringCan wateringCan;
     private WaterFountain waterFountain;
 
+    //currency
+    private Currency currency;
 
     //input selection
     private Vector2 currentTouchPos;
@@ -136,6 +139,8 @@ public class LevelTwoScreen implements Screen {
         initializeTools();
         initializeTrees();
 
+
+        currency = new Currency(new Vector2(20, WINDOW_HEIGHT - 60), 0.5f, camera);
     }
 
 
@@ -219,7 +224,7 @@ public class LevelTwoScreen implements Screen {
     @Override
     public void render(float delta) {
         input();
-        draw();
+        draw(delta);
         returnOriginalPosition();
         updateToolManager(delta);
         updateTreeManager(delta);
@@ -242,7 +247,7 @@ public class LevelTwoScreen implements Screen {
     }
 
 
-    private void draw() {
+    private void draw(float delta) {
         camera.update();
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -257,6 +262,12 @@ public class LevelTwoScreen implements Screen {
 
         batch.end();
         debugSprite();
+
+        uiBatch.setProjectionMatrix(camera.combined);
+        uiBatch.begin();
+        currency.update(delta);
+        currency.draw(uiBatch);
+        uiBatch.end();
     }
 
 
@@ -406,5 +417,6 @@ public class LevelTwoScreen implements Screen {
 //        wateringCan.dispose();
         waterFountain.dispose();
 //        shovel.dispose();
+        if (currency != null) currency.dispose();
     }
 }

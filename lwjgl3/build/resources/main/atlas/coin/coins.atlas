@@ -1,0 +1,6 @@
+coins.png
+size:128,128
+repeat:none
+coin_pixel
+bounds:2,2,92,92
+offsets:11,23,112,136

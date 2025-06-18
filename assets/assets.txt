@@ -50,6 +50,8 @@ atlas/bins/recyclables_bin.atlas
 atlas/bins/recyclables_bin.png
 atlas/bucket/bucket_anim.atlas
 atlas/bucket/bucket_anim.png
+atlas/coin/coins.atlas
+atlas/coin/coins.png
 atlas/conveyor/conveyor.atlas
 atlas/conveyor/conveyor.png
 atlas/conveyor/conveyor_belt.atlas
@@ -161,6 +163,7 @@ sound_effects/Game_over_sfx.mp3
 sound_effects/Gravel_dig1.mp3
 sound_effects/breeze.mp3
 sound_effects/cartoon_splat.mp3
+sound_effects/coin.wav
 sound_effects/correct.mp3
 sound_effects/fill_water_sfx.mp3
 sound_effects/fill_watering_can1.mp3
