@@ -167,10 +167,12 @@ public class LevelTwoScreen implements Screen {
         wateringCan = new WateringCan(new Vector2(spacing * 2 - manipulatorX, startY), toolScale);
         Shovel shovel = new Shovel(new Vector2(spacing * 3 - manipulatorX, startY), toolScale);
         Fertilizer fertilizer = new Fertilizer(new Vector2(spacing * 4 - manipulatorX, startY), toolScale);
+        DebugStick debugStick = new DebugStick(new Vector2(spacing * 6 - manipulatorX, startY), .25f);
         toolManager.addTool(GardeningEnums.WATERING_CAN, wateringCan);
         toolManager.addTool(GardeningEnums.SHOVEL, shovel);
         toolManager.addTool(GardeningEnums.RAY_GUN, rayGun);
         toolManager.addTool(GardeningEnums.FERTILIZER, fertilizer);
+        toolManager.addTool(GardeningEnums.DEBUG_STICK, debugStick);
 
         initializeSapling(spacing, toolScale);
     }
@@ -334,7 +336,9 @@ public class LevelTwoScreen implements Screen {
         if (treeControllerManager.interactWithTrees(draggingTool)) {
             //because the is tree who change the image, so treeControllerManager is used to perform action
             // If a sapling was successfully planted, handle the planting logic
+            // If a debug stick touches a tree, its tree health is decremented
             System.out.println("L2Screen: Is planted");
+            System.out.println("L2Screen: Tree health is deducted");
             toolManager.handleSaplingPlanting(draggingTool);
 
         }

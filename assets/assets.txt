@@ -63,6 +63,8 @@ atlas/crack/crackx64.atlas
 atlas/crack/crackx64.png
 atlas/crack/crackx64v2.atlas
 atlas/crack/crackx64v2.png
+atlas/debug_stick/debug_stick.atlas
+atlas/debug_stick/debug_stick.png
 atlas/flip_flop/flip-flop.atlas
 atlas/flip_flop/flip-flop.png
 atlas/gardening_equipments/equipments.atlas
