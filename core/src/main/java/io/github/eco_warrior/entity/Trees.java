@@ -44,6 +44,8 @@ public abstract class Trees extends GameSprite {
 
     protected float growingTime = 3f;
 
+    protected boolean isGrowing = false;
+
     public Trees(String atlasPath, String regionBaseName, int frameCount, Vector2 position, float scale, SaplingType saplingType) {
         super(atlasPath,
             regionBaseName,
@@ -108,18 +110,39 @@ public abstract class Trees extends GameSprite {
      * This method will only work if the tree is in the FLAG stage.
      */
     public void water() {
+        if (isGrowing) {
+            System.out.println("in working");
+            return;
+        }
+
         if (treeStage == TreeStage.SAPLING) {
             waterPourSound.play(0.5f);
-            setStage(TreeStage.YOUNG_TREE);
             if (growTask != null) {
                 growTask.cancel();
             }
+            isGrowing = true;
+            System.out.println("Tree is done growing");
             growTask = Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
+                    setStage(TreeStage.YOUNG_TREE);
                     growthSound.play(0.5f);
+                    isGrowing = false;
+                }
+            }, growingTime);
+            return;
+        }
+        if(treeStage == TreeStage.YOUNG_TREE){
+            waterPourSound.play(0.5f);
+            isGrowing = true;
+            growTask = Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
                     setStage(TreeStage.MATURED_TREE);
+                    growthSound.play(0.5f);
                     isMatureTree = true;
+                    isGrowing = false;
+
                 }
             }, growingTime);
         }
@@ -135,6 +158,12 @@ public abstract class Trees extends GameSprite {
             setStage(TreeStage.SAPLING);
         }
     }
+
+    public boolean isMatured(){
+        return treeStage == TreeStage.YOUNG_TREE || treeStage == TreeStage.DEAD_YOUNG_TREE
+            || treeStage == TreeStage.SAPLING || treeStage == TreeStage.DEAD_SAPLING;
+    }
+
 
     public void revivePlant() {
         switch (treeStage){

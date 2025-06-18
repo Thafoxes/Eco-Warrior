@@ -17,6 +17,7 @@ public class ToolManager {
     private Map<GardeningEnums, Tool> tools = new HashMap<>();
     private ArrayList<BaseSaplingController> saplingControllers = new ArrayList<>();
     private int saplingIndex = 0;
+    private boolean isPlanting = false;
 
     public void addTool(GardeningEnums type, Tool tool) {
         tools.put(type, tool);
@@ -31,14 +32,37 @@ public class ToolManager {
             tool.update(delta);
         }
 
-        for(BaseSaplingController saplingController : saplingControllers) {
-            saplingController.update(delta);
+        if(!isPlanting){
+            for(BaseSaplingController saplingController : saplingControllers) {
+                saplingController.update(delta);
+            }
+        }
+
+    }
+
+    public void render(SpriteBatch batch) {
+//            System.out.println("Tool Manager: will not print");
+            // Only draw saplings if there are any left
+            if (!saplingControllers.isEmpty() && !isPlanting) {
+                // Draw current sapling at the tool position
+                BaseSaplingController currentSapling = saplingControllers.get(saplingIndex);
+                if (currentSapling != null) {
+                    currentSapling.draw(batch);
+                }
+            }
+
+        for (Tool tool : tools.values()) {
+            tool.render(batch);
         }
     }
 
-    public boolean isWaterCansCollide(GameSprite waterPool) {
+    public void setIsPlanting(boolean isPlanting) {
+        this.isPlanting = isPlanting;
+    }
+
+    public boolean isWaterCansCollideRefillWater(GameSprite waterPool) {
         if(tools.get(GardeningEnums.WATERING_CAN).getCollisionRect().overlaps(waterPool.getCollisionRect())){
-            System.out.println("Watering can collided with water pool");
+            System.out.println("ToolManager: Watering can collided with water pool");
             WateringCan wateringCan = (WateringCan) tools.get(GardeningEnums.WATERING_CAN);
             wateringCan.updateWateringCan();
             return true;
@@ -46,11 +70,18 @@ public class ToolManager {
         return false;
     }
 
+    public void emptyWaterCan() {
+        WateringCan wateringCan = (WateringCan) tools.get(GardeningEnums.WATERING_CAN);
+        wateringCan.emptyWateringCan();
+    }
+
     public void handleSaplingPlanting(GameSprite sapling) {
         if(sapling instanceof BaseSaplingController){
             saplingControllers.remove(sapling);
+            //to fix the issue flash spawning issue
+            isPlanting = true;
 
-            if(saplingControllers.size() > 0) {
+            if(!saplingControllers.isEmpty()) {
                 // Update current index if needed
                 saplingIndex = Math.min(saplingIndex, saplingControllers.size() - 1);
             }
@@ -58,20 +89,6 @@ public class ToolManager {
 
     }
 
-    public void render(SpriteBatch batch) {
-        // Only draw saplings if there are any left
-        if (!saplingControllers.isEmpty()) {
-            // Draw current sapling at the tool position
-            BaseSaplingController currentSapling = saplingControllers.get(saplingIndex);
-            if (currentSapling != null) {
-                currentSapling.draw(batch);
-            }
-        }
-
-        for (Tool tool : tools.values()) {
-            tool.render(batch);
-        }
-    }
 
     public GameSprite getToolAt(Vector2 position) {
         // Check if the position is within the bounds of any tool
@@ -134,6 +151,5 @@ public class ToolManager {
 
     public ArrayList<BaseSaplingController> getSaplingSize() {
         return saplingControllers;
-
     }
 }

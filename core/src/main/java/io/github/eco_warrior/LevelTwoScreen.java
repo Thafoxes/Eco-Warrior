@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.ui.Tree;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -20,7 +19,6 @@ import io.github.eco_warrior.entity.GameSprite;
 
 import java.util.Random;
 
-import io.github.eco_warrior.entity.Trees;
 import io.github.eco_warrior.enums.GardeningEnums;
 import io.github.eco_warrior.sprite.*;
 import io.github.eco_warrior.sprite.Enemy.Worm;
@@ -180,18 +178,18 @@ public class LevelTwoScreen implements Screen {
         BaseSaplingController voltaicSapling = new VoltaicSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
 
 
-        toolManager.addSaplingController(voltaicSapling);
+        //following teir list
         toolManager.addSaplingController(ordinarySapling);
         toolManager.addSaplingController(voltaicSapling);
-        toolManager.addSaplingController(blazingSapling);
         toolManager.addSaplingController(breezingSapling);
         toolManager.addSaplingController(iceSapling);
+        toolManager.addSaplingController(blazingSapling);
 
 
     }
 
     private void initializeTrees() {
-        float treeScale = 0.26f;
+        float treeScale = 0.25f;
 
         TreeController<OrdinaryTree> ordinaryTreeController = new OrdinaryTreeController(
             new OrdinaryTree(new Vector2(763, 92), treeScale),
@@ -245,6 +243,7 @@ public class LevelTwoScreen implements Screen {
 
     private void updateToolManager(float delta) {
         toolManager.update(delta);
+        toolManager.setIsPlanting(treeControllerManager.isCurrentTreeMatured());
     }
 
 
@@ -277,7 +276,7 @@ public class LevelTwoScreen implements Screen {
             currentTouchPos.set(Gdx.input.getX(), Gdx.input.getY());
             viewport.unproject(currentTouchPos);
 
-            if(!isDragging){
+            if(!isDragging && !isReturning){
                 // Only try to pick up a tool if we're not already dragging
                 draggingTool = toolManager.getToolAt(currentTouchPos);
                 if (draggingTool != null) {
@@ -304,12 +303,21 @@ public class LevelTwoScreen implements Screen {
     private void handleToolInteractions(GameSprite draggingTool) {
         // Check if the tool is a sapling and if it can be planted
         if (treeControllerManager.interactWithTrees(draggingTool)) {
+            //because the is tree who change the image, so treeControllerManager is used to perform action
             // If a sapling was successfully planted, handle the planting logic
-            System.out.println("Is planted");
+            System.out.println("L2Screen: Is planted");
             toolManager.handleSaplingPlanting(draggingTool);
+
+        }
+
+        //watercan from toolManager, so perform it on toolManager
+        if(draggingTool instanceof WateringCan){
+            //after interact with trees using watering can, empty the water can
+
+            toolManager.emptyWaterCan();
         }
         // Check if the tool is a watering can and if it can water a fountain
-        toolManager.isWaterCansCollide(waterFountain);
+        toolManager.isWaterCansCollideRefillWater(waterFountain);
     }
 
     private void returnOriginalPosition() {

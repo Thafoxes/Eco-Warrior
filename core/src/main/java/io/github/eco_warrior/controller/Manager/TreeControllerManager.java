@@ -2,6 +2,7 @@ package io.github.eco_warrior.controller.Manager;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.ui.Tree;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.controller.Trees.TreeController;
 import io.github.eco_warrior.entity.GameSprite;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 
 public class TreeControllerManager {
     ArrayList<TreeController> treeControllers = new ArrayList<>();
+    private TreeController currentTreeController;
 
     public void addTreeController(TreeController treeController) {
         treeControllers.add(treeController);
@@ -70,6 +72,9 @@ public class TreeControllerManager {
                         // If the dragging tool is a sapling, handle planting
                         BaseSaplingController sapling = (BaseSaplingController) draggingTool;
                         planted = treeController.handleSaplingPlanting(sapling);
+                        // If a sapling was successfully planted, remove it from the tool manager.
+                        //TODO - check this
+                        currentTreeController = treeController;
                         if(planted) {
                             return true; // Return true if a sapling was successfully planted
                         }
@@ -79,4 +84,15 @@ public class TreeControllerManager {
         }
         return planted;
     }
+
+    public boolean isCurrentTreeMatured(){
+        if(currentTreeController == null) {
+            return false; // No current tree controller set
+        }
+        boolean matured =  currentTreeController.isMatured();
+        return matured;
+    }
+
+
 }
+
