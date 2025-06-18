@@ -19,7 +19,7 @@ public class GroundTrashController {
         }
     };
 
-    // Spawn parameters
+    // Spawn trash parameters
     private float spawnTimer = 0f;
     private float spawnInterval = 3f;
 
@@ -91,19 +91,16 @@ public class GroundTrashController {
         }
     }
 
-    public boolean checkItemTouched(Vector2 touchPos) {
+    public boolean removeItem(Vector2 touchPos) {
         for(GroundTrash item : groundTrash) {
-            if(item.getCollisionRect().contains(touchPos)) {
 
+            if(item.getCollisionRect().contains(touchPos)) {
+                groundTrash.removeValue(item, true);
+                trashPool.free(item);
                 return true;
             }
         }
         return false;
-    }
-
-    public void removeItem(GroundTrash item) {
-        groundTrash.removeValue(item, true);
-        trashPool.free(item);
     }
 
     public void draw(SpriteBatch batch) {
@@ -115,7 +112,16 @@ public class GroundTrashController {
     public void drawDebug(ShapeRenderer shapeRenderer) {
         for(GroundTrash item : groundTrash) {
             item.drawDebug(shapeRenderer);
+
         }
+
+        spawnRectangleDebug(shapeRenderer);
+    }
+
+    public void spawnRectangleDebug (ShapeRenderer shapeRenderer) {
+        shapeRenderer.setColor(0, 0, 1, 1); // Red color
+        shapeRenderer.rect(minX, minY, maxX - minX, maxY - minY);
+
     }
 
     public void dispose() {

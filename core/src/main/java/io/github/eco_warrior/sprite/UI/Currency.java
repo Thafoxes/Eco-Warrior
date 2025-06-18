@@ -49,7 +49,9 @@ public class Currency {
         }
 
         // Smooth number interpolation
-        displayedMoney += (moneyAmount - displayedMoney) * 5 * delta;
+        displayedMoney = moneyAmount;
+
+//        }
     }
 
     public void draw(SpriteBatch batch) {
@@ -67,6 +69,8 @@ public class Currency {
         this.scaleEffect = 1.5f;
         this.scaleTimer = 0.3f; // Reset pop duration
         if (coinSound != null) coinSound.play();
+
+        System.out.println(moneyAmount);
     }
 
     public void spendMoney(int amount) {

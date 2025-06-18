@@ -68,6 +68,7 @@ public class LevelTwoScreen implements Screen {
     private Vector2 currentTouchPos;
     private Vector2 lastTouchPos;
     private boolean isDragging = false;
+    private boolean isReleased = true;
     private boolean isReturning = false;
     private GameSprite draggingTool;
 
@@ -282,6 +283,7 @@ public class LevelTwoScreen implements Screen {
 
     private void input() {
         if (Gdx.input.isTouched()) {
+            isReleased = false;
             currentTouchPos.set(Gdx.input.getX(), Gdx.input.getY());
             viewport.unproject(currentTouchPos);
 
@@ -299,10 +301,10 @@ public class LevelTwoScreen implements Screen {
                 draggingTool.setPosition(new Vector2(xPos, yPos));
             }
 
-            // Check if ground trash was touched and set draggingItem
-            if(groundTrashController.checkItemTouched(currentTouchPos)) {
-//                groundTrashController.removeItem();
-            }
+
+//            //trash is removed when clicked
+//            groundTrashController.removeItem(currentTouchPos);
+
         } else if(isDragging){
             //on mouse release, check for interaction
             if(draggingTool != null){
@@ -311,7 +313,20 @@ public class LevelTwoScreen implements Screen {
             }
             isDragging = false;
             isReturning = true;
+        }else if (!isReleased && !Gdx.input.isTouched()){
+            //if click released
+            CollectTrashLogic();
+
         }
+    }
+
+    private void CollectTrashLogic() {
+        //trash is removed when clicked
+        if(groundTrashController.removeItem(currentTouchPos)){
+            currency.addMoney(1);
+            isReleased = true;
+        }
+
     }
 
     private void handleToolInteractions(GameSprite draggingTool) {
@@ -400,6 +415,7 @@ public class LevelTwoScreen implements Screen {
         treeControllerManager.drawDebug(shapeRenderer);
         waterFountain.drawDebug(shapeRenderer);
         groundTrashController.drawDebug(shapeRenderer);
+
 //
 //        for (Worm worm : worms) {
 //            worm.drawDebug(shapeRenderer);
