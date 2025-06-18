@@ -12,10 +12,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Tree;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import io.github.eco_warrior.controller.GroundTrashController;
 import io.github.eco_warrior.controller.Manager.ToolManager;
 import io.github.eco_warrior.controller.Manager.TreeControllerManager;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.controller.Trees.*;
+import io.github.eco_warrior.controller.recyclablesController;
 import io.github.eco_warrior.entity.GameSprite;
 
 import java.util.Random;
@@ -54,6 +56,8 @@ public class LevelTwoScreen implements Screen {
 
 
     private TreeControllerManager treeControllerManager;
+
+    private GroundTrashController groundTrashController;
 
     //entities declaration
     private WateringCan wateringCan;
@@ -141,7 +145,7 @@ public class LevelTwoScreen implements Screen {
         initializeTools();
         initializeTrees();
 
-
+        groundTrashController = new GroundTrashController(200, 600, 200, 600);
         currency = new Currency(new Vector2(20, WINDOW_HEIGHT - 60), 0.5f, camera);
     }
 
@@ -230,6 +234,7 @@ public class LevelTwoScreen implements Screen {
         returnOriginalPosition();
         updateToolManager(delta);
         updateTreeManager(delta);
+        controller(delta);
 //        spawnWorm(delta);
 //        updateEnemyAnimationMovement();
 //
@@ -238,6 +243,9 @@ public class LevelTwoScreen implements Screen {
 //        }
     }
 
+    private void controller(float delta) {
+        groundTrashController.update(delta);
+    }
 
     private void updateTreeManager(float delta) {
         treeControllerManager.update(delta);
@@ -260,6 +268,7 @@ public class LevelTwoScreen implements Screen {
         backgroundSprite.draw(batch);
         toolManager.render(batch);
         treeControllerManager.draw(batch);
+        groundTrashController.draw(batch);
 
         batch.end();
         debugSprite();
@@ -284,13 +293,18 @@ public class LevelTwoScreen implements Screen {
                     isDragging = true;
                     isReturning = false;
                 }
-            }else if (isDragging && draggingTool != null){ //ensure the tool is not null
+            } else if (isDragging && draggingTool != null){ //ensure the tool is not null
                 // Update tool position while dragging
                 float xPos = currentTouchPos.x - draggingTool.getSprite().getWidth() / 2;
                 float yPos = currentTouchPos.y - draggingTool.getSprite().getHeight() / 2;
                 draggingTool.setPosition(new Vector2(xPos, yPos));
             }
-        }else if(isDragging){
+
+            // Check if ground trash was touched and set draggingItem
+            if(groundTrashController.checkItemTouched(currentTouchPos)) {
+//                groundTrashController.removeItem();
+            }
+        } else if(isDragging){
             //on mouse release, check for interaction
             if(draggingTool != null){
                 //handle tool interactions
@@ -377,6 +391,7 @@ public class LevelTwoScreen implements Screen {
         toolManager.drawDebug(shapeRenderer);
         treeControllerManager.drawDebug(shapeRenderer);
         waterFountain.drawDebug(shapeRenderer);
+        groundTrashController.drawDebug(shapeRenderer);
 //
 //        for (Worm worm : worms) {
 //            worm.drawDebug(shapeRenderer);
@@ -396,6 +411,7 @@ public class LevelTwoScreen implements Screen {
         shapeRenderer.dispose();
         toolManager.dispose();
         treeControllerManager.dispose();
+        groundTrashController.dispose();
 
 //
 //        for(GameSprite worm: worms){

@@ -31,6 +31,4 @@ public class Recyclables extends GameSprite {
     public ERecycleMap getCategoryPile() {
         return categoryPile;
     }
-
-
 }
