@@ -52,6 +52,8 @@ atlas/bucket/bucket_anim.atlas
 atlas/bucket/bucket_anim.png
 atlas/coin/coins.atlas
 atlas/coin/coins.png
+atlas/coin/robux.atlas
+atlas/coin/robux.png
 atlas/conveyor/conveyor.atlas
 atlas/conveyor/conveyor.png
 atlas/conveyor/conveyor_belt.atlas
@@ -69,6 +71,8 @@ atlas/flip_flop/flip-flop.atlas
 atlas/flip_flop/flip-flop.png
 atlas/gardening_equipments/equipments.atlas
 atlas/gardening_equipments/equipments.png
+atlas/gardening_equipments/fertilizer_revamp.atlas
+atlas/gardening_equipments/fertilizer_revamp.png
 atlas/heart/hearts.atlas
 atlas/heart/hearts.png
 atlas/lake_hitbox/lake_hitbox.atlas
