@@ -21,7 +21,7 @@ public class GroundTrashController {
 
     // Spawn trash parameters
     private float spawnTimer = 0f;
-    private float spawnInterval = 3f;
+    private float spawnInterval = 5f;
 
     // Maximum number of trash items on screen
     private static final int MAX_TRASH = 10;
@@ -54,7 +54,14 @@ public class GroundTrashController {
         spawnTimer += delta;
         if(spawnTimer > spawnInterval) {
             spawnTimer = 0f;
+
+            long startTime = System.nanoTime();
+
             spawnGroundTrash();
+
+            long endTime = System.nanoTime();
+            float elapsedMs = (endTime - startTime) / 1_000_000f;
+            System.out.println("spawnGroundTrash() execution time: " + elapsedMs + " ms");
         }
 
         // Update trash items
@@ -62,9 +69,6 @@ public class GroundTrashController {
             GroundTrash item = groundTrash.get(i);
             item.update(delta);
 
-            if(item.isOffScreen()) {
-                groundTrash.removeIndex(i);
-            }
         }
     }
 

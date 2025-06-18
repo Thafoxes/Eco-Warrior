@@ -144,7 +144,7 @@ public class LevelTwoScreen implements Screen {
         initializeTools();
         initializeTrees();
 
-        groundTrashController = new GroundTrashController(200, 600, 200, 600);
+        groundTrashController = new GroundTrashController(700, 1200, 0, 300);
         currency = new Currency(new Vector2(20, WINDOW_HEIGHT - 60), 0.5f, camera);
     }
 
