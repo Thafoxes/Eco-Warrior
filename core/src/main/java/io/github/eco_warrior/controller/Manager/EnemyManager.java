@@ -70,10 +70,9 @@ public class EnemyManager {
             shapeRenderer.rect(sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
 
             shapeRenderer.setColor(1, 1, 1, 1);
-            System.out.println("Collision Rect: " + enemy.getCollisionRect());
-            shapeRenderer.rect(enemy.getCollisionRect().x,
+            shapeRenderer.rect(enemy.getCollisionRect().x - 5f,
                                enemy.getCollisionRect().y,
-                               enemy.getCollisionRect().width,
+                               enemy.getCollisionRect().width + 10f,
                                enemy.getCollisionRect().height);
         }
     }

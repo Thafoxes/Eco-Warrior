@@ -11,12 +11,11 @@ import io.github.eco_warrior.entity.Enemies;
 import io.github.eco_warrior.enums.EnemyType;
 
 public class EnemyController {
-    private Enemies enemy;
-    private static float moveSpeed = 50f;
+    protected Enemies enemy;
+    private static final float moveSpeed = 50f;
     private BaseExplosion deathEffect;
     private boolean isExploding = false;
     private EnemyType enemyType;
-    protected Vector2 velocity = new Vector2();
 
     /***
      * This is where you add effects for the worm, such as explosion effects.
@@ -39,16 +38,12 @@ public class EnemyController {
     public void update(float delta) {
         //update worm animation state
         enemy.update(delta);
-
-        //TODO - ISSUE ON MOVEMENT GOING THROUGH WALLS AND TOO FAST
-        // Handle movement
+        
         if (enemy.getCurrentState() == Enemies.EnemyState.MOVING) {
             float direction = enemy.isRightDirection() ? 1 : -1;
-            velocity.x = direction * moveSpeed * delta;
-
-            Vector2 position = new Vector2(velocity.x,0);
-            enemy.setTranslationPos(position);
-            //enemy.getSprite().translate(velocity.x * delta, 0);
+            Vector2 position = enemy.getPosition();
+            position.x += direction * moveSpeed * delta;
+            enemy.setPosition(position);
         }
 
         // Handle death effect

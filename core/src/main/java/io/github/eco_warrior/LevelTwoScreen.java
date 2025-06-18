@@ -252,6 +252,8 @@ public class LevelTwoScreen implements Screen {
         if(!enemyControllersToBeRemove.isEmpty()){
             for(EnemyController enemy : enemyControllersToBeRemove) {
                 wormPool.returnEnemy((WormController) enemy);
+                //must remove to avoid stacking speed and collision
+                enemyManager.getEnemies().remove(enemy);
             }
             enemyControllersToBeRemove.clear();
         }
@@ -364,7 +366,7 @@ public class LevelTwoScreen implements Screen {
             for(EnemyController enemy : enemyManager.getEnemies()){
                 if(enemy.getCollisionRect().overlaps(draggingTool.getCollisionRect())){
                     if(enemy instanceof WormController){
-                        enemy.die();
+                        if(!enemy.isDead()) enemy.die();
                     }
                 }
             }
