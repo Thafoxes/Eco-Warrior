@@ -15,6 +15,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
 
 public abstract class Enemies extends GameSprite{
 
+
     public enum EnemyState {
         MOVING,
         IDLE,
@@ -26,10 +27,10 @@ public abstract class Enemies extends GameSprite{
     protected EnemyState currentState;
     protected EnemyState previousState;
     protected float stateTime;
-    protected boolean isMoving;
+    // Direction of movement, true for right, false for left
+    protected boolean isRightDirection = true;
     protected float movementSpeed = 50f;
     protected float attackCooldown = 1.5f;
-    protected float timeSinceLastAttack = 0f;
     protected boolean canAttack = true;
 
     protected TextureAtlas atlas;
@@ -47,9 +48,8 @@ public abstract class Enemies extends GameSprite{
     }
 
     protected abstract void loadAnimations();
+    protected abstract void loadAudio();
 
-
-    protected abstract void updateState(float delta);
 
     public void setState(EnemyState newState) {
         if (currentState != EnemyState.DEAD) { // Can't change state if dead
@@ -61,16 +61,20 @@ public abstract class Enemies extends GameSprite{
      * Direction can be going from right to left
      * Or from top to bottom
      * Some enemies do not move
-     * @param moving
      */
-    public void setDirection(boolean moving) {
-        this.isMoving = moving;
+    public void setDirection() {
+        this.isRightDirection = !isRightDirection;
+    }
+
+    public void setDirection(boolean isRightDirection) {
+        this.isRightDirection = isRightDirection;
     }
 
     public void attack() {
-        if (timeSinceLastAttack >= attackCooldown && currentState != EnemyState.DEAD) {
+        if (canAttack && currentState != EnemyState.DEAD) {
             setState(EnemyState.ATTACKING);
-            timeSinceLastAttack = 0;
+            canAttack = false;
+            stateTime = 0;
         }
     }
 
@@ -80,15 +84,36 @@ public abstract class Enemies extends GameSprite{
     }
 
     public void update(float delta) {
-        timeSinceLastAttack += delta;
 
         updateState(delta);
 
         if(currentState == EnemyState.MOVING){
             float moveAmount = movementSpeed * delta;
-            moveBy(isMoving ? moveAmount : -moveAmount, 0);
+            moveBy(isRightDirection ? moveAmount : -moveAmount, 0);
 
         }
+    }
+
+    public void updateState(float delta){
+        if(previousState != currentState) {
+            stateTime = 0;
+        }
+
+        Animation<TextureRegion> currentAnimation = animationMap.get(currentState);
+        if (currentAnimation != null) {
+            if (currentState == EnemyState.ATTACKING) {
+                handleAttackingAnimation(currentAnimation);
+            }
+            updateAnimationFrame(currentAnimation);
+
+        }
+
+        previousState = currentState;
+        stateTime += delta;
+    }
+
+    public void move() {
+        setState(EnemyState.MOVING);
     }
 
     public void die() {
@@ -96,7 +121,7 @@ public abstract class Enemies extends GameSprite{
     }
 
     public boolean isDead() {
-        return currentState == EnemyState.DEAD;
+        return currentState == EnemyState.DEAD && animationMap.get(currentState).isAnimationFinished(stateTime);
     }
 
     public EnemyState getCurrentState() {
@@ -109,22 +134,57 @@ public abstract class Enemies extends GameSprite{
     }
 
 
-    public Vector2 getPosition() {
-        return new Vector2(getSprite().getX(), getSprite().getY());
+    public boolean isRightDirection() {
+        return isRightDirection;
     }
 
-    public boolean isMoving() {
-        return isMoving;
-    }
-
-
-    public void setPosition(Vector2 position) {
-        getSprite().setPosition(position.x, position.y);
-        //originalPos = position; // Update original position
-    }
 
 
     private void addAnimation(String moving, float v) {
+    }
+
+
+    protected void handleAttackingAnimation(Animation<TextureRegion> currentAnimation) {
+        // Play sound only when entering ATTACKING state
+        if(currentState == EnemyState.ATTACKING && previousState != currentState) {
+            if (attackSound != null) {
+                attackSound.play(0.5f);
+            }
+        }
+
+
+        if(currentState == EnemyState.ATTACKING && currentAnimation.isAnimationFinished(stateTime)){
+            setState(EnemyState.IDLE);
+            stateTime = 0f;
+            canAttack = false;
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    canAttack = true;
+                    System.out.println("Enemies: current state: " + currentState + " Attack status: " + canAttack);
+
+                }
+            }, attackCooldown);
+        }
+    }
+
+    public void setAttackCooldown(float attackCooldown) {
+        this.attackCooldown = attackCooldown;
+    }
+
+    public float getAttackCooldown() {
+        return attackCooldown;
+    }
+
+    protected void updateAnimationFrame(Animation<TextureRegion> currentAnimation) {
+        TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime,
+            currentState == EnemyState.MOVING || currentState == EnemyState.IDLE);
+        getSprite().setRegion(currentFrame);
+        handleSpriteFlip();
+    }
+
+    protected void handleSpriteFlip() {
+        getSprite().flip(isRightDirection, false);
     }
 
 }

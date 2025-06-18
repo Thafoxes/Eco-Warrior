@@ -1,0 +1,115 @@
+package io.github.eco_warrior.controller.Enemy;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import io.github.eco_warrior.entity.BaseExplosion;
+import io.github.eco_warrior.entity.Enemies;
+import io.github.eco_warrior.enums.EnemyType;
+
+public class EnemyController {
+    private Enemies enemy;
+    private float moveSpeed = 100f;
+    private BaseExplosion deathEffect;
+    private boolean isExploding = false;
+    private EnemyType enemyType;
+
+    /***
+     * This is where you add effects for the worm, such as explosion effects.
+     * You can add more effects as needed.
+     * Add text on top of the worm when it dies, or any other effects.
+     * you can add sprite icon on top of the worm when it dies, or any other effects.
+     */
+    public EnemyController(Enemies enemy, EnemyType enemyType) {
+        this.enemy = enemy;
+        this.enemyType = enemyType;
+        // Initialize effects for explosion
+        initializeEffects();
+    }
+
+    private void initializeEffects() {
+
+//        deathEffect = new RedExplosion(worm.getPosition(), 1f);
+    }
+
+    public void update(float delta) {
+
+        //update worm animation state
+        enemy.update(delta);
+
+        // Handle movement
+        if (enemy.getCurrentState() == Enemies.EnemyState.MOVING) {
+            float direction = enemy.isRightDirection() ? 1 : -1;
+            Vector2 position = enemy.getPosition();
+            position.x += direction * moveSpeed * delta;
+            enemy.setPosition(position);
+        }
+
+        // Handle death effect
+        if (enemy.getCurrentState() == Enemies.EnemyState.DEAD && !isExploding) {
+            Vector2 position = enemy.getPosition();
+            position.x += enemy.getSprite().getWidth() /2; // Center the explosion effect
+            position.y += enemy.getSprite().getHeight() / 2; // Center the explosion effect
+            isExploding = true;
+        }
+
+    }
+
+    public void die(){
+        enemy.die();
+    }
+
+    public boolean isDead() {
+        return enemy.isDead();
+    }
+
+    public void attack(){
+        enemy.attack();
+    }
+
+    public void move(){
+        enemy.move();
+    }
+
+
+    public Sprite getSprite() {
+        return enemy.getSprite();
+    }
+
+    public void draw(SpriteBatch batch) {
+        enemy.draw(batch);
+//        if (isExploding && !deathEffect.isFinished()) {
+//            deathEffect.draw(batch);
+//        }
+    }
+
+    public void changeDirection(){
+        enemy.setDirection();
+    }
+
+    public void changeDirection(boolean isRightDirection) {
+        enemy.setDirection(isRightDirection);
+    }
+
+    public void drawDebug(ShapeRenderer shapeRenderer) {
+        shapeRenderer.setColor(Color.RED);
+        Rectangle spriteBounds = enemy.getSprite().getBoundingRectangle();
+        shapeRenderer.rect(spriteBounds.x -1f, spriteBounds.y - 1, spriteBounds.width + 2 , spriteBounds.height + 2);
+
+        // Draw collision bounds in green
+        shapeRenderer.setColor(Color.GREEN);
+        Rectangle collisionBounds = enemy.getCollisionRect();
+        shapeRenderer.rect(collisionBounds.x, collisionBounds.y, collisionBounds.width, collisionBounds.height);
+    }
+
+
+    public void dispose() {
+//        deathEffect.dispose();
+        enemy.dispose();
+    }
+
+
+}

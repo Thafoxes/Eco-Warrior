@@ -27,9 +27,10 @@ public class Worm extends Enemies {
         previousState = EnemyState.MOVING;
 
         stateTime = 0f;
-        isMoving = true;
+        isRightDirection = true;
 
         loadAnimations();
+        loadAudio();
     }
 
     /**
@@ -56,43 +57,13 @@ public class Worm extends Enemies {
     }
 
     @Override
-    protected void updateState(float delta) {
-        if(previousState != currentState) {
-            stateTime = 0;
-        }
-
-       Animation<TextureRegion> currentAnimation = animationMap.get(currentState);
-        MovingAnimation(currentAnimation);
-        AttackAnim(currentAnimation);
-
-
-        previousState = currentState;
-        stateTime += delta;
+    protected void loadAudio() {
+        super.attackSound = attackSound;
     }
 
-    private void AttackAnim(Animation<TextureRegion> currentAnimation) {
-        // Play sound if attacking
-        if(currentState ==EnemyState.ATTACKING && previousState != currentState){
-            attackSound.play(0.5f);
-        }
-        if(currentState == EnemyState.ATTACKING && currentAnimation.isAnimationFinished(stateTime)){
-            setState(EnemyState.IDLE);
-            stateTime = 0f;
-            canAttack = false;
-
-            Timer.schedule(new Timer.Task() {
-                 @Override
-                public void run() {
-                    canAttack = true;
-                }
-            }, attackCooldown);
-
-        }
+    @Override
+    public void updateState(float delta) {
+        super.updateState(delta);
     }
 
-    private void MovingAnimation(Animation<TextureRegion> currentAnimation) {
-        TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime, currentState == EnemyState.MOVING);
-        getSprite().setRegion(currentFrame);
-        getSprite().flip(isMoving, false);
-    }
 }
