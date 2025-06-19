@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.controller.FertilizerController;
 import io.github.eco_warrior.controller.GroundTrashController;
+import io.github.eco_warrior.controller.Manager.ButtonManager;
 import io.github.eco_warrior.controller.Manager.ToolManager;
 import io.github.eco_warrior.controller.Manager.TreeControllerManager;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
@@ -21,13 +22,18 @@ import io.github.eco_warrior.entity.GameSprite;
 
 import java.util.Random;
 
+import io.github.eco_warrior.enums.ButtonEnums;
 import io.github.eco_warrior.enums.GardeningEnums;
 import io.github.eco_warrior.sprite.*;
 import io.github.eco_warrior.sprite.Enemy.Worm;
+import io.github.eco_warrior.sprite.buttons.FertilizerButton;
+import io.github.eco_warrior.sprite.buttons.PurchaseButton;
+import io.github.eco_warrior.sprite.buttons.UpgradePotionButton;
 import io.github.eco_warrior.sprite.gardening_equipments.*;
 import io.github.eco_warrior.sprite.gardening_equipments.sapling_variant.*;
 import io.github.eco_warrior.sprite.tree_variant.*;
 import io.github.eco_warrior.sprite.UI.Currency;
+import sun.jvm.hotspot.tools.Tool;
 
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_HEIGHT;
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_WIDTH;
@@ -56,6 +62,13 @@ public class LevelTwoScreen implements Screen {
     private TreeControllerManager treeControllerManager;
 
     private GroundTrashController groundTrashController;
+
+    private FertilizerController fertilizerController;
+
+    //buttons
+    private ButtonManager buttonManager;
+    private float manipulatorY;
+    private float startX;
 
     //entities declaration
     private WateringCan wateringCan;
@@ -121,6 +134,7 @@ public class LevelTwoScreen implements Screen {
         this.game = main;
         this.toolManager = new ToolManager();
         this.treeControllerManager = new TreeControllerManager();
+        this.buttonManager = new ButtonManager();
     }
 
     @Override
@@ -143,6 +157,7 @@ public class LevelTwoScreen implements Screen {
         worms = new Array<>();
         initializeTools();
         initializeTrees();
+        initializeButtons();
 
         groundTrashController = new GroundTrashController(700, 1200, 0, 300);
         currency = new Currency(new Vector2(20, WINDOW_HEIGHT - 60), 0.2f, camera);
@@ -175,6 +190,20 @@ public class LevelTwoScreen implements Screen {
         initializeSapling(spacing, toolScale);
     }
 
+    private void initializeButtons() {
+        int buttonCount = 2;
+        float spacing = WINDOW_HEIGHT / (buttonCount + 4); //make it 10 so it look from left to right
+        float buttonScale = .09f;
+
+        startX = WINDOW_WIDTH - 100;
+        manipulatorY = 350;
+
+        FertilizerButton fertilizerButton = new FertilizerButton(new Vector2(startX, spacing + manipulatorY), buttonScale);
+        UpgradePotionButton upgradePotionButton = new UpgradePotionButton(new Vector2(startX, spacing * 2 + manipulatorY), buttonScale);
+        buttonManager.addButton(ButtonEnums.FERTILIZER_BUTTON, fertilizerButton);
+        buttonManager.addButton(ButtonEnums.UPGRADE_POTION_BUTTON, upgradePotionButton);
+    }
+
     private void initializeSapling(float spacing, float toolScale) {
         BaseSaplingController ordinarySapling = new OrdinarySapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
         BaseSaplingController blazingSapling = new BlazingSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
@@ -182,7 +211,7 @@ public class LevelTwoScreen implements Screen {
         BaseSaplingController iceSapling = new IceSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
         BaseSaplingController voltaicSapling = new VoltaicSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
 
-        FertilizerController fertilizerController = new FertilizerController(new Vector2(spacing * 4 - manipulatorX, startY), toolScale);
+        fertilizerController = new FertilizerController(new Vector2(spacing * 4 - manipulatorX, startY), toolScale);
 
 
         //following teir list
@@ -235,6 +264,7 @@ public class LevelTwoScreen implements Screen {
         returnOriginalPosition();
         updateToolManager(delta);
         updateTreeManager(delta);
+        updateButtonManager(delta);
         controller(delta);
 //        spawnWorm(delta);
 //        updateEnemyAnimationMovement();
@@ -257,6 +287,10 @@ public class LevelTwoScreen implements Screen {
         toolManager.setIsPlanting(treeControllerManager.isCurrentTreeMatured());
     }
 
+    private void updateButtonManager(float delta) {
+        buttonManager.update(delta);
+    }
+
 
     private void draw(float delta) {
         camera.update();
@@ -270,6 +304,7 @@ public class LevelTwoScreen implements Screen {
         backgroundSprite.draw(batch);
         toolManager.render(batch);
         treeControllerManager.draw(batch);
+        buttonManager.render(batch);
         groundTrashController.draw(batch);
 
         batch.end();
@@ -317,18 +352,27 @@ public class LevelTwoScreen implements Screen {
             isReturning = true;
         }else if (!isReleased && !Gdx.input.isTouched()){
             //if click released
-            CollectTrashLogic();
-
+            collectTrashLogic();
+            clickButtonLogic();
         }
     }
 
-    private void CollectTrashLogic() {
+    private void collectTrashLogic() {
         //trash is removed when clicked
         if(groundTrashController.removeItem(currentTouchPos)){
             currency.addMoney(1);
             isReleased = true;
         }
 
+    }
+
+    private void clickButtonLogic() {
+        if (currency.getMoneyAmount() >= PurchaseButton.MAX_PRICE) {
+            buttonManager.click(currentTouchPos, currency);
+            isReleased = true;
+
+
+        }
     }
 
     private void handleToolInteractions(GameSprite draggingTool) {
@@ -420,6 +464,7 @@ public class LevelTwoScreen implements Screen {
 
         toolManager.drawDebug(shapeRenderer);
         treeControllerManager.drawDebug(shapeRenderer);
+        buttonManager.drawDebug(shapeRenderer);
         waterFountain.drawDebug(shapeRenderer);
         groundTrashController.drawDebug(shapeRenderer);
 
@@ -442,6 +487,7 @@ public class LevelTwoScreen implements Screen {
         shapeRenderer.dispose();
         toolManager.dispose();
         treeControllerManager.dispose();
+        buttonManager.dispose();
         groundTrashController.dispose();
 
 //

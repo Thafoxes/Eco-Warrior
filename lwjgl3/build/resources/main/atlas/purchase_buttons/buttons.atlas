@@ -1,0 +1,15 @@
+buttons.png
+size:2048,2048
+repeat:none
+fertilizer_button_press
+bounds:2,2,864,1080
+potent_potion_unpress
+bounds:868,2,864,1080
+
+buttons2.png
+size:2048,2048
+repeat:none
+fertilizer_button_unpress
+bounds:868,2,864,1080
+potent_potion_press
+bounds:2,2,864,1080

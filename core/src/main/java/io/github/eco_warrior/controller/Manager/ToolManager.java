@@ -21,7 +21,7 @@ public class ToolManager {
     private int saplingIndex = 0;
     private int fertilizerIndex = 0;
     private boolean isPlanting = false;
-    private boolean isFertilizerUsed = false;
+//    private boolean isFertilizerUsed = false;
 
     public void addTool(GardeningEnums type, Tool tool) {
         tools.put(type, tool);
@@ -46,7 +46,7 @@ public class ToolManager {
             }
         }
 
-        if (!isFertilizerUsed) {
+        if (!fertilizerControllers.isEmpty()) {
             for(FertilizerController fertilizerController : fertilizerControllers) {
                 fertilizerController.update(delta);
             }
@@ -65,7 +65,7 @@ public class ToolManager {
             }
         }
             // draw fertilizer when it is not empty
-        if (!fertilizerControllers.isEmpty() && !isFertilizerUsed) {
+        if (!fertilizerControllers.isEmpty()) {
 
             FertilizerController fertilizerController = fertilizerControllers.get(fertilizerIndex);
             if (fertilizerController != null) {
@@ -82,7 +82,7 @@ public class ToolManager {
         this.isPlanting = isPlanting;
     }
 
-    public void setIsFertilizerUsed(boolean isFertilizerUsed) {this.isFertilizerUsed = isFertilizerUsed;}
+//    public void setIsFertilizerUsed(boolean isFertilizerUsed) {this.isFertilizerUsed = isFertilizerUsed;}
 
     public boolean isWaterCansCollideRefillWater(GameSprite waterPool) {
         if(tools.get(GardeningEnums.WATERING_CAN).getCollisionRect().overlaps(waterPool.getCollisionRect())){
@@ -117,7 +117,7 @@ public class ToolManager {
         if(fertilizer instanceof FertilizerController){
             fertilizerControllers.remove(fertilizer);
             //to fix the issue flash spawning issue
-            isFertilizerUsed = true;
+//            isFertilizerUsed = true;
 
             if(!fertilizerControllers.isEmpty()) {
                 // Update current index if needed

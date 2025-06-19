@@ -77,6 +77,9 @@ atlas/heart/hearts.atlas
 atlas/heart/hearts.png
 atlas/lake_hitbox/lake_hitbox.atlas
 atlas/lake_hitbox/lake_hitbox.png
+atlas/purchase_buttons/buttons.atlas
+atlas/purchase_buttons/buttons.png
+atlas/purchase_buttons/buttons2.png
 atlas/recyclables/recyclables.atlas
 atlas/recyclables/recyclables.png
 atlas/recyclables/trash.atlas
@@ -167,6 +170,7 @@ sound_effects/Bonemeal1.mp3
 sound_effects/Button_Click.mp3
 sound_effects/Game_over_sfx.mp3
 sound_effects/Gravel_dig1.mp3
+sound_effects/Stone_button_unpress.mp3
 sound_effects/breeze.mp3
 sound_effects/cartoon_splat.mp3
 sound_effects/coin.wav
@@ -180,6 +184,7 @@ sound_effects/happy_wheels_victory.mp3
 sound_effects/hard_slap.mp3
 sound_effects/hitting_bin.mp3
 sound_effects/ice.mp3
+sound_effects/orb.mp3
 sound_effects/pan.mp3
 sound_effects/pour_watering_can.mp3
 sound_effects/sapling_placement.mp3
