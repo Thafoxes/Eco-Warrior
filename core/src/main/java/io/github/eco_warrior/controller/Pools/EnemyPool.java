@@ -33,9 +33,10 @@ public abstract class EnemyPool<T extends EnemyController> {
 
     protected abstract T createEnemy(Vector2 vector2);
 
-    public T getEnemy(Vector2 position) {
+    public T getEnemy(Vector2 position, TreeType treeType) {
         if (enemyPool.size > 0 && poolSent < maxPoolSize) {
             T enemy = (T) enemyPool.pop();
+            enemy.setCurrentAttackTreeType(treeType);
             enemy.setSpritePosition(position);
             enemy.setState(Enemies.EnemyState.MOVING);
             enemy.setRightDirection(false);

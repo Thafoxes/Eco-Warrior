@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.entity.BaseExplosion;
 import io.github.eco_warrior.entity.Enemies;
 import io.github.eco_warrior.enums.EnemyType;
+import io.github.eco_warrior.enums.TreeType;
 
 public abstract class EnemyController {
     protected Enemies enemy;
@@ -17,6 +18,7 @@ public abstract class EnemyController {
     protected boolean isExploding = false;
     protected EnemyType enemyType;
     protected boolean isAttacking = false;
+    protected TreeType currentAttackTreeType = null; // The tree type that the worm is currently attacking
 
     /***
      * This is where you add effects for the worm, such as explosion effects.
@@ -82,7 +84,16 @@ public abstract class EnemyController {
 
     public void resetState() {
         isAttacking = false;
+        currentAttackTreeType = null; // Reset the current attack tree type
         enemy.resetState();
+    }
+
+    public void setCurrentAttackTreeType(TreeType treeType) {
+        this.currentAttackTreeType = treeType;
+    }
+
+    public TreeType getCurrentAttackTreeType() {
+        return currentAttackTreeType;
     }
 
     public void setState(Enemies.EnemyState state) {

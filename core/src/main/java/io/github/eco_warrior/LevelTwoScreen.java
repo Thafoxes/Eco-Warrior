@@ -234,10 +234,7 @@ public class LevelTwoScreen implements Screen {
     private void updateEnemyTreeLogic(float delta) {
 
         for(EnemyController enemy: enemyManager.getEnemies()){
-
-            EnemyPool<?> enemyPool = getEenemyPool(enemy);
-
-            checkTreeCollisionsAndAttack(enemy, enemyPool);
+            checkTreeCollisionsAndAttack(enemy);
         }
     }
 
@@ -252,11 +249,11 @@ public class LevelTwoScreen implements Screen {
         }
     }
 
-    private void checkTreeCollisionsAndAttack(EnemyController enemy, EnemyPool<?> pool) {
+    private void checkTreeCollisionsAndAttack(EnemyController enemy) {
         for (TreeController<?> treeController : treeControllerManager.getTreeControllers()) {
             TreeType currentTreeType = treeController.getTreeType();
 
-            if (pool.getAttackTreeType().contains(currentTreeType) &&
+            if (enemy.getCurrentAttackTreeType() == currentTreeType &&
                 treeController.getCollisionRect().overlaps(enemy.getCollisionRect())) {
 
                 if(!enemy.isAttacking()){
@@ -321,7 +318,7 @@ public class LevelTwoScreen implements Screen {
             float ypos = treePositions.get(treeTypes.get(randomIndex)).y;
 
             Vector2 spawnPos = new Vector2(WINDOW_WIDTH + 50f, ypos);
-            T enemy = pool.getEnemy(spawnPos);
+            T enemy = pool.getEnemy(spawnPos, treeTypes.get(randomIndex));
             if(enemy != null){
 //                System.out.println("L2 - Enemy spawned at: " + spawnPos + " Type: " + treeTypes.get(randomIndex));
                 enemyManager.addEnemy(enemy);
@@ -459,16 +456,6 @@ public class LevelTwoScreen implements Screen {
 
         }
     }
-
-    private void onMouseRelease() {
-        isDragging = false;
-////                for (Worm worm : worms) {
-////                    if (worm.getCollisionRect().overlaps(shovel.getCollisionRect())) {
-////                        isShovelReleased = true; //set to true when shovel is used
-////                    }
-////                }
-    }
-
 
     @Override
     public void resize(int width, int height) {
