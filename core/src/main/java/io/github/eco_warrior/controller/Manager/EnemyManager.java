@@ -65,15 +65,7 @@ public class EnemyManager {
 
     public void drawDebug(ShapeRenderer shapeRenderer) {
         for (EnemyController enemy : enemies) {
-            Sprite sprite = enemy.getSprite();
-            shapeRenderer.setColor(1, 0, 0, 1); // Set color for debug
-            shapeRenderer.rect(sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
-
-            shapeRenderer.setColor(1, 1, 1, 1);
-            shapeRenderer.rect(enemy.getCollisionRect().x - 5f,
-                               enemy.getCollisionRect().y,
-                               enemy.getCollisionRect().width + 10f,
-                               enemy.getCollisionRect().height);
+            enemy.drawDebug(shapeRenderer);
         }
     }
 

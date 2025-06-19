@@ -10,6 +10,7 @@ import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.entity.BaseExplosion;
 import io.github.eco_warrior.entity.BaseTreeHealth;
 import io.github.eco_warrior.entity.Trees;
+import io.github.eco_warrior.enums.TreeType;
 import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
 
 public abstract class TreeController <T extends Trees> {
@@ -26,11 +27,13 @@ public abstract class TreeController <T extends Trees> {
     protected Vector2 animPosition;
     protected int wateringTime = 0;
     protected boolean isGrowing = false;
+    protected TreeType treeType;
 
-    public TreeController(T tree, WateringCan wateringCan, BaseTreeHealth treeHealth) {
+    public TreeController(T tree, WateringCan wateringCan, BaseTreeHealth treeHealth, TreeType treeType) {
         this.tree = tree;
         this.wateringCan = wateringCan;
         this.treeHealth = treeHealth;
+        this.treeType = treeType;
         setDeadAnimation();
     }
 
@@ -186,6 +189,10 @@ public abstract class TreeController <T extends Trees> {
     public void resetHealth() {
         health = 4;
         isDead = false;
+    }
+
+    public TreeType getTreeType() {
+        return treeType;
     }
 
     public int getHealth() {

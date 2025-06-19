@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.controller.Enemy.EnemyController;
+import io.github.eco_warrior.controller.Enemy.MetalChuckController;
 import io.github.eco_warrior.controller.Enemy.WormController;
 import io.github.eco_warrior.controller.Manager.EnemyManager;
 import io.github.eco_warrior.controller.Manager.ToolManager;
@@ -135,7 +136,6 @@ public class LevelTwoScreen implements Screen {
 
     }
 
-
     private void initializeTools() {
         int toolCount = 5;
         float spacing = WINDOW_WIDTH / (toolCount + 4); //make it 10 so it look from left to right
@@ -232,21 +232,40 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void updateEnemyTreeLogic(float delta) {
-        for(EnemyController enemy: enemyManager.getEnemies()){
-            if(enemy instanceof WormController){
-                WormController worm = (WormController) enemy;
-                // Check if the worm is colliding with any tree
-                for(TreeController<?> treeController : treeControllerManager.getTreeControllers()){
-                    if(treeController instanceof OrdinaryTreeController){
-                        if(treeController.getCollisionRect().overlaps(enemy.getCollisionRect())){
-                            // If it collides, set the worm to idle state
-                            worm.attack();
-                            if(worm.isDoneAttacking()){
-                                treeController.takeDamage(1); // Assuming the worm deals 1 damage
-                            }
-                        }
-                    }
 
+        for(EnemyController enemy: enemyManager.getEnemies()){
+
+            EnemyPool<?> enemyPool = getEenemyPool(enemy);
+
+            checkTreeCollisionsAndAttack(enemy, enemyPool);
+        }
+    }
+
+    private EnemyPool<?> getEenemyPool(EnemyController enemy) {
+        if(enemy instanceof WormController){
+            return wormPool;
+        }
+        if(enemy instanceof MetalChuckController){
+            return metalChuckPool;
+        } else {
+            throw new IllegalArgumentException("Unknown enemy type: " + enemy.getClass().getSimpleName());
+        }
+    }
+
+    private void checkTreeCollisionsAndAttack(EnemyController enemy, EnemyPool<?> pool) {
+        for (TreeController<?> treeController : treeControllerManager.getTreeControllers()) {
+            TreeType currentTreeType = treeController.getTreeType();
+
+            if (pool.getAttackTreeType().contains(currentTreeType) &&
+                treeController.getCollisionRect().overlaps(enemy.getCollisionRect())) {
+
+                if(!enemy.isAttacking()){
+                    enemy.attack();
+                }
+                if (enemy.isAnimDoneAttacking()) {
+                    treeController.takeDamage(1);
+                    enemy.resetAttackState();
+                     // Reset the attack state after attacking
                 }
             }
         }
@@ -258,22 +277,29 @@ public class LevelTwoScreen implements Screen {
         enemyManager.update(delta);
 
         for(EnemyController enemy : enemyManager.getEnemies()) {
-            if(enemy instanceof WormController){
-                if(enemy.isDead()){
-                    enemyControllersToBeRemove.add(enemy);
-                }
+            if(enemy.isDead()){
+                addBackEnemyToPool(enemy);
+                enemyControllersToBeRemove.add(enemy);
             }
         }
 
         if(!enemyControllersToBeRemove.isEmpty()){
             for(EnemyController enemy : enemyControllersToBeRemove) {
-                wormPool.returnEnemy((WormController) enemy);
-                //must remove to avoid stacking speed and collision
                 enemyManager.getEnemies().remove(enemy);
             }
             enemyControllersToBeRemove.clear();
         }
 
+    }
+
+    private <T extends EnemyPool> void addBackEnemyToPool(EnemyController enemy) {
+        if(enemy instanceof WormController) {
+            wormPool.returnEnemy((WormController) enemy);
+        } else if(enemy instanceof MetalChuckController) {
+            metalChuckPool.returnEnemy((MetalChuckController) enemy);
+        } else {
+            throw new IllegalArgumentException("Unknown enemy type: " + enemy.getClass().getSimpleName());
+        }
     }
 
     private void spawnMetalChuck(float delta) {
@@ -297,7 +323,7 @@ public class LevelTwoScreen implements Screen {
             Vector2 spawnPos = new Vector2(WINDOW_WIDTH + 50f, ypos);
             T enemy = pool.getEnemy(spawnPos);
             if(enemy != null){
-                System.out.println("L2 - Enemy spawned at: " + spawnPos + " Type: " + treeTypes.get(randomIndex));
+//                System.out.println("L2 - Enemy spawned at: " + spawnPos + " Type: " + treeTypes.get(randomIndex));
                 enemyManager.addEnemy(enemy);
             }
             spawnTimer = 0; // Reset the timer after spawning an enemy
@@ -389,6 +415,12 @@ public class LevelTwoScreen implements Screen {
             for(EnemyController enemy : enemyManager.getEnemies()){
                 if(enemy.getCollisionRect().overlaps(draggingTool.getCollisionRect())){
                     if(enemy instanceof WormController){
+                        if(!enemy.isDead()){
+                            enemy.die();
+                            draggingTool.playSound();
+                        }
+                    }
+                    if(enemy instanceof MetalChuckController){
                         if(!enemy.isDead()){
                             enemy.die();
                             draggingTool.playSound();

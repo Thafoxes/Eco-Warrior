@@ -36,7 +36,7 @@ public abstract class EnemyPool<T extends EnemyController> {
     public T getEnemy(Vector2 position) {
         if (enemyPool.size > 0 && poolSent < maxPoolSize) {
             T enemy = (T) enemyPool.pop();
-            enemy.getSprite().setPosition(position.x, position.y);
+            enemy.setSpritePosition(position);
             enemy.setState(Enemies.EnemyState.MOVING);
             enemy.setRightDirection(false);
             enemyManager.addEnemy(enemy);
@@ -49,7 +49,7 @@ public abstract class EnemyPool<T extends EnemyController> {
     public void returnEnemy(EnemyController enemy) {
         if (enemy != null && poolSent > 0) {
             // Reset enemy state
-            enemy.getSprite().setPosition(-100, -100); // Move off-screen
+            enemy.setSpritePosition(new Vector2(-100, -100)); // Move off-screen
             enemy.resetState();
             enemyPool.add(enemy);
             poolSent--;

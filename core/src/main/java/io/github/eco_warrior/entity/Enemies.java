@@ -53,7 +53,6 @@ public abstract class Enemies extends GameSprite{
     protected abstract void loadAudio();
 
     public void resetState(){
-        System.out.println("Enemies :  "+ this.stateTime);
         this.currentState = EnemyState.IDLE;
         this.previousState = EnemyState.IDLE;
         this.stateTime = 0f;
@@ -66,6 +65,7 @@ public abstract class Enemies extends GameSprite{
 
     public void setState(EnemyState newState) {
         if (currentState != EnemyState.DEAD) { // Can't change state if dead
+            this.previousState = this.currentState;
             this.currentState = newState;
         }
     }
@@ -84,7 +84,7 @@ public abstract class Enemies extends GameSprite{
     }
 
     public void attack() {
-        if (canAttack && currentState != EnemyState.DEAD) {
+        if (canAttack && currentState != EnemyState.DEAD && currentState != EnemyState.ATTACKING) {
             setState(EnemyState.ATTACKING);
             canAttack = false;
             stateTime = 0;
@@ -113,7 +113,6 @@ public abstract class Enemies extends GameSprite{
                 handleAttackingAnimation(currentAnimation);
             }
             updateAnimationFrame(currentAnimation);
-
         }
 
         previousState = currentState;
@@ -191,6 +190,10 @@ public abstract class Enemies extends GameSprite{
             currentState == EnemyState.MOVING || currentState == EnemyState.IDLE);
         getSprite().setRegion(currentFrame);
         handleSpriteFlip();
+    }
+
+    public boolean isCanAttack(){
+        return canAttack;
     }
 
     protected void handleSpriteFlip() {

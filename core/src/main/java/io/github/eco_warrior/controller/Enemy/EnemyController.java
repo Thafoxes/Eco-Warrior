@@ -9,9 +9,6 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.entity.BaseExplosion;
 import io.github.eco_warrior.entity.Enemies;
 import io.github.eco_warrior.enums.EnemyType;
-import io.github.eco_warrior.enums.TreeType;
-
-import java.util.ArrayList;
 
 public abstract class EnemyController {
     protected Enemies enemy;
@@ -19,6 +16,7 @@ public abstract class EnemyController {
     protected BaseExplosion deathEffect;
     protected boolean isExploding = false;
     protected EnemyType enemyType;
+    protected boolean isAttacking = false;
 
     /***
      * This is where you add effects for the worm, such as explosion effects.
@@ -68,7 +66,14 @@ public abstract class EnemyController {
     }
 
     public void attack(){
-        enemy.attack();
+        if(enemy.isCanAttack()){
+            isAttacking = true;
+            enemy.attack();
+        }
+    }
+
+    public boolean isAnimDoneAttacking() {
+        return enemy.isDoneAttacking();
     }
 
     public void move(){
@@ -76,7 +81,7 @@ public abstract class EnemyController {
     }
 
     public void resetState() {
-
+        isAttacking = false;
         enemy.resetState();
     }
 
@@ -84,8 +89,9 @@ public abstract class EnemyController {
         enemy.setState(state);
     }
 
-    public boolean isDoneAttacking() {
-        return enemy.isDoneAttacking();
+
+    public void setSpritePosition(Vector2 position) {
+        enemy.setPosition(position);
     }
 
     public Sprite getSprite() {
@@ -114,7 +120,7 @@ public abstract class EnemyController {
     public void drawDebug(ShapeRenderer shapeRenderer) {
         shapeRenderer.setColor(Color.RED);
         Rectangle spriteBounds = enemy.getSprite().getBoundingRectangle();
-        shapeRenderer.rect(spriteBounds.x -1f, spriteBounds.y - 1, spriteBounds.width + 2 , spriteBounds.height + 2);
+        shapeRenderer.rect(spriteBounds.x - 5f, spriteBounds.y - 5, spriteBounds.width + 10 , spriteBounds.height + 10);
 
         // Draw collision bounds in green
         shapeRenderer.setColor(Color.GREEN);
@@ -126,6 +132,15 @@ public abstract class EnemyController {
     public void dispose() {
 //        deathEffect.dispose();
         enemy.dispose();
+    }
+
+    public void resetAttackState() {
+        isAttacking = false;
+        // Reset any attack-related variables
+    }
+
+    public boolean isAttacking() {
+        return isAttacking;
     }
 
 
