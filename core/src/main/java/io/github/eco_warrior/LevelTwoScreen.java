@@ -237,17 +237,7 @@ public class LevelTwoScreen implements Screen {
             checkTreeCollisionsAndAttack(enemy);
         }
     }
-
-    private EnemyPool<?> getEenemyPool(EnemyController enemy) {
-        if(enemy instanceof WormController){
-            return wormPool;
-        }
-        if(enemy instanceof MetalChuckController){
-            return metalChuckPool;
-        } else {
-            throw new IllegalArgumentException("Unknown enemy type: " + enemy.getClass().getSimpleName());
-        }
-    }
+    
 
     private void checkTreeCollisionsAndAttack(EnemyController enemy) {
         for (TreeController<?> treeController : treeControllerManager.getTreeControllers()) {
