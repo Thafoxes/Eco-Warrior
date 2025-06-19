@@ -11,12 +11,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import io.github.eco_warrior.controller.FertilizerController;
 import io.github.eco_warrior.controller.GroundTrashController;
 import io.github.eco_warrior.controller.Manager.ToolManager;
 import io.github.eco_warrior.controller.Manager.TreeControllerManager;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.controller.Trees.*;
-import io.github.eco_warrior.controller.recyclablesController;
 import io.github.eco_warrior.entity.GameSprite;
 
 import java.util.Random;
@@ -145,7 +145,7 @@ public class LevelTwoScreen implements Screen {
         initializeTrees();
 
         groundTrashController = new GroundTrashController(700, 1200, 0, 300);
-        currency = new Currency(new Vector2(20, WINDOW_HEIGHT - 60), 0.5f, camera);
+        currency = new Currency(new Vector2(20, WINDOW_HEIGHT - 60), 0.2f, camera);
     }
 
 
@@ -166,12 +166,10 @@ public class LevelTwoScreen implements Screen {
         RayGun rayGun = new RayGun(new Vector2(spacing - manipulatorX, startY), toolScale);
         wateringCan = new WateringCan(new Vector2(spacing * 2 - manipulatorX, startY), toolScale);
         Shovel shovel = new Shovel(new Vector2(spacing * 3 - manipulatorX, startY), toolScale);
-        Fertilizer fertilizer = new Fertilizer(new Vector2(spacing * 4 - manipulatorX, startY), toolScale);
         DebugStick debugStick = new DebugStick(new Vector2(spacing * 6 - manipulatorX, startY), .25f);
         toolManager.addTool(GardeningEnums.WATERING_CAN, wateringCan);
         toolManager.addTool(GardeningEnums.SHOVEL, shovel);
         toolManager.addTool(GardeningEnums.RAY_GUN, rayGun);
-        toolManager.addTool(GardeningEnums.FERTILIZER, fertilizer);
         toolManager.addTool(GardeningEnums.DEBUG_STICK, debugStick);
 
         initializeSapling(spacing, toolScale);
@@ -184,6 +182,8 @@ public class LevelTwoScreen implements Screen {
         BaseSaplingController iceSapling = new IceSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
         BaseSaplingController voltaicSapling = new VoltaicSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
 
+        FertilizerController fertilizerController = new FertilizerController(new Vector2(spacing * 4 - manipulatorX, startY), toolScale);
+
 
         //following teir list
         toolManager.addSaplingController(ordinarySapling);
@@ -192,7 +192,7 @@ public class LevelTwoScreen implements Screen {
         toolManager.addSaplingController(iceSapling);
         toolManager.addSaplingController(blazingSapling);
 
-
+        toolManager.addFertilizerController(fertilizerController);
     }
 
     private void initializeTrees() {
@@ -336,10 +336,13 @@ public class LevelTwoScreen implements Screen {
         if (treeControllerManager.interactWithTrees(draggingTool)) {
             //because the is tree who change the image, so treeControllerManager is used to perform action
             // If a sapling was successfully planted, handle the planting logic
+            // If a fertilizer interacts with a tree, handle the fertilizer using logic
             // If a debug stick touches a tree, its tree health is decremented
             System.out.println("L2Screen: Is planted");
+            System.out.println("L2Screen: Fertilizer is used");
             System.out.println("L2Screen: Tree health is deducted");
             toolManager.handleSaplingPlanting(draggingTool);
+            toolManager.handleFertilizerUsing(draggingTool);
 
         }
 

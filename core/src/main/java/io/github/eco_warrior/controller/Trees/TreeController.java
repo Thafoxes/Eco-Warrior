@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.animation.FireBurningAnim;
+import io.github.eco_warrior.controller.FertilizerController;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.entity.BaseExplosion;
 import io.github.eco_warrior.entity.BaseTreeHealth;
@@ -72,11 +73,23 @@ public abstract class TreeController <T extends Trees> {
         return false;
     }
 
+    public boolean handleFertilizerUsing(FertilizerController fertilizerController) {
+        if (!isInteractionEnabled || !canUseFertilizer(fertilizerController)) {
+            return  false;
+        }
+        return tree.getCollisionRect().overlaps(fertilizerController.getCollisionRect());
+    }
+
 
     protected boolean canPlantSapling(BaseSaplingController sapling) {
         return sapling != null
             && tree.getSaplingType() == sapling.getSaplingType()
             && sapling.getCollisionRect().overlaps(tree.getCollisionRect());
+    }
+
+    protected boolean canUseFertilizer(FertilizerController fertilizerController) {
+        return fertilizerController != null
+            && fertilizerController.getCollisionRect().overlaps(tree.getCollisionRect());
     }
 
     public void digHole(){
