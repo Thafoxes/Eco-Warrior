@@ -24,6 +24,7 @@ import java.util.Random;
 import io.github.eco_warrior.enums.GardeningEnums;
 import io.github.eco_warrior.sprite.*;
 import io.github.eco_warrior.sprite.Enemy.Worm;
+import io.github.eco_warrior.sprite.UI.GunElementUI;
 import io.github.eco_warrior.sprite.gardening_equipments.*;
 import io.github.eco_warrior.sprite.gardening_equipments.sapling_variant.*;
 import io.github.eco_warrior.sprite.tree_variant.*;
@@ -81,6 +82,17 @@ public class LevelTwoScreen implements Screen {
     private float wormSpawnTimer;
     private float stateTime;
     private static final int WORM_BUFFER_CAPACITY = 10;
+
+    //gun elements
+    private GunElementUI gunElementUI;
+
+    //gun elements drawers
+    private io.github.eco_warrior.sprite.gun_elements.BlazingTreeFireElementDrawer blazingTreeFireElementDrawer;
+    private io.github.eco_warrior.sprite.gun_elements.BreezingTreeWindElementDrawer breezingTreeWindElementDrawer;
+    private io.github.eco_warrior.sprite.gun_elements.IceTreeIceElementDrawer iceTreeIceElementDrawer;
+    private io.github.eco_warrior.sprite.gun_elements.VoltaicTreeLightningElementDrawer voltaicTreeLightningDrawer;
+
+    private io.github.eco_warrior.sprite.gardening_equipments.RayGun rayGun;
 
     //enemy path
     private final Random rand = new Random();
@@ -140,12 +152,21 @@ public class LevelTwoScreen implements Screen {
         //setup camera to middle
         camera.position.set(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0);
 
+        //initialize GunElement atlas
+        gunElementUI = new GunElementUI("atlas/gun_element/GunElement.atlas", "atlas/gun_element/Lighting.atlas", "atlas/gun_element/Fire.atlas", "atlas/gun_element/Wind.atlas", "atlas/gun_element/Ice.atlas");
+
         worms = new Array<>();
         initializeTools();
         initializeTrees();
 
         groundTrashController = new GroundTrashController(700, 1200, 0, 300);
         currency = new Currency(new Vector2(20, WINDOW_HEIGHT - 60), 0.2f, camera);
+
+        //initialize for drawing gun elements + elements hiding time
+        blazingTreeFireElementDrawer = new io.github.eco_warrior.sprite.gun_elements.BlazingTreeFireElementDrawer(treeControllerManager, gunElementUI, 3000); // 3 seconds
+        breezingTreeWindElementDrawer = new io.github.eco_warrior.sprite.gun_elements.BreezingTreeWindElementDrawer(treeControllerManager, gunElementUI, 3000); // 3 seconds
+        iceTreeIceElementDrawer = new io.github.eco_warrior.sprite.gun_elements.IceTreeIceElementDrawer(treeControllerManager, gunElementUI, 3000); // 3 seconds
+        voltaicTreeLightningDrawer = new io.github.eco_warrior.sprite.gun_elements.VoltaicTreeLightningElementDrawer(treeControllerManager, gunElementUI, 3000); // 3 seconds
     }
 
 
@@ -163,8 +184,7 @@ public class LevelTwoScreen implements Screen {
         waterFountain = new WaterFountain(new Vector2(1, 180), lakeScale);
 
 
-        RayGun rayGun = new RayGun(new Vector2(spacing - manipulatorX, startY), toolScale);
-        wateringCan = new WateringCan(new Vector2(spacing * 2 - manipulatorX, startY), toolScale);
+        rayGun = new io.github.eco_warrior.sprite.gardening_equipments.RayGun(new Vector2(spacing - manipulatorX, startY), toolScale);        wateringCan = new WateringCan(new Vector2(spacing * 2 - manipulatorX, startY), toolScale);
         Shovel shovel = new Shovel(new Vector2(spacing * 3 - manipulatorX, startY), toolScale);
         DebugStick debugStick = new DebugStick(new Vector2(spacing * 6 - manipulatorX, startY), .25f);
         toolManager.addTool(GardeningEnums.WATERING_CAN, wateringCan);
@@ -272,6 +292,12 @@ public class LevelTwoScreen implements Screen {
         treeControllerManager.draw(batch);
         groundTrashController.draw(batch);
 
+        //draw the elements for gun
+        blazingTreeFireElementDrawer.draw(batch, stateTime, rayGun.getMode());
+        voltaicTreeLightningDrawer.draw(batch, stateTime, rayGun.getMode());
+        breezingTreeWindElementDrawer.draw(batch, stateTime, rayGun.getMode());
+        iceTreeIceElementDrawer.draw(batch, stateTime, rayGun.getMode());
+
         batch.end();
         debugSprite();
 
@@ -318,6 +344,29 @@ public class LevelTwoScreen implements Screen {
         }else if (!isReleased && !Gdx.input.isTouched()){
             //if click released
             CollectTrashLogic();
+
+        }
+
+        //Handle clicks for gun elements
+        if (Gdx.input.justTouched()) {
+            float sx = Gdx.input.getX();
+            float sy = Gdx.graphics.getHeight() - Gdx.input.getY(); // flip y
+            blazingTreeFireElementDrawer.handleClick(sx, sy);
+            breezingTreeWindElementDrawer.handleClick(sx, sy);
+            iceTreeIceElementDrawer.handleClick(sx, sy);
+            voltaicTreeLightningDrawer.handleClick(sx, sy);
+            //when the gun element is clicked, set the rayGun mode
+            if (blazingTreeFireElementDrawer.wasLastIconClicked()) {
+                rayGun.setMode(io.github.eco_warrior.sprite.gardening_equipments.RayGun.RayGunMode.BLAZING);
+            } else if (breezingTreeWindElementDrawer.wasLastIconClicked()) {
+                rayGun.setMode(io.github.eco_warrior.sprite.gardening_equipments.RayGun.RayGunMode.BREEZING);
+            } else if (iceTreeIceElementDrawer.wasLastIconClicked()) {
+                rayGun.setMode(io.github.eco_warrior.sprite.gardening_equipments.RayGun.RayGunMode.ICE);
+            } else if (voltaicTreeLightningDrawer.wasLastIconClicked()) {
+                rayGun.setMode(io.github.eco_warrior.sprite.gardening_equipments.RayGun.RayGunMode.VOLTAIC);
+            }
+            // to set back to useless mode
+            //rayGun.setMode(RayGun.RayGunMode.USELESS);
 
         }
     }

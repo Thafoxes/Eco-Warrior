@@ -14,7 +14,7 @@ import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
 import java.util.ArrayList;
 
 public class TreeControllerManager {
-    ArrayList<TreeController> treeControllers = new ArrayList<>();
+    public ArrayList<TreeController> treeControllers = new ArrayList<>();
     private TreeController currentTreeController;
 
     public void addTreeController(TreeController treeController) {
