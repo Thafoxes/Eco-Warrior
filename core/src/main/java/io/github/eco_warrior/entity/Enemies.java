@@ -16,6 +16,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
 public abstract class Enemies extends GameSprite{
 
 
+    public static Object EnemyType;
 
     public enum EnemyState {
         MOVING,

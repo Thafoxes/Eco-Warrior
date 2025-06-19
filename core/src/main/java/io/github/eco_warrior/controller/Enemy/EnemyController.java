@@ -9,13 +9,16 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.entity.BaseExplosion;
 import io.github.eco_warrior.entity.Enemies;
 import io.github.eco_warrior.enums.EnemyType;
+import io.github.eco_warrior.enums.TreeType;
 
-public class EnemyController {
+import java.util.ArrayList;
+
+public abstract class EnemyController {
     protected Enemies enemy;
-    private static final float moveSpeed = 50f;
-    private BaseExplosion deathEffect;
-    private boolean isExploding = false;
-    private EnemyType enemyType;
+    protected static final float moveSpeed = 50f;
+    protected BaseExplosion deathEffect;
+    protected boolean isExploding = false;
+    protected EnemyType enemyType;
 
     /***
      * This is where you add effects for the worm, such as explosion effects.
@@ -38,7 +41,7 @@ public class EnemyController {
     public void update(float delta) {
         //update worm animation state
         enemy.update(delta);
-        
+
         if (enemy.getCurrentState() == Enemies.EnemyState.MOVING) {
             float direction = enemy.isRightDirection() ? 1 : -1;
             Vector2 position = enemy.getPosition();
@@ -124,6 +127,7 @@ public class EnemyController {
 //        deathEffect.dispose();
         enemy.dispose();
     }
+
 
 
 }

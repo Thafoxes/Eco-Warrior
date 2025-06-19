@@ -14,17 +14,17 @@ import io.github.eco_warrior.controller.Enemy.WormController;
 import io.github.eco_warrior.controller.Manager.EnemyManager;
 import io.github.eco_warrior.controller.Manager.ToolManager;
 import io.github.eco_warrior.controller.Manager.TreeControllerManager;
+import io.github.eco_warrior.controller.Pools.EnemyPool;
+import io.github.eco_warrior.controller.Pools.MetalChuckPool;
 import io.github.eco_warrior.controller.Pools.WormPool;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.controller.Trees.*;
 import io.github.eco_warrior.entity.GameSprite;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import io.github.eco_warrior.enums.GardeningEnums;
+import io.github.eco_warrior.enums.TreeType;
 import io.github.eco_warrior.sprite.*;
 import io.github.eco_warrior.sprite.gardening_equipments.*;
 import io.github.eco_warrior.sprite.gardening_equipments.sapling_variant.*;
@@ -74,6 +74,7 @@ public class LevelTwoScreen implements Screen {
     //enemies
     private EnemyManager enemyManager;
     private WormPool wormPool;
+    private MetalChuckPool metalChuckPool;
     private ArrayList<EnemyController> enemyControllersToBeRemove;
     private float spawnTimer = 0f;
     private float spawnInterval = 4f;
@@ -81,7 +82,7 @@ public class LevelTwoScreen implements Screen {
     private final Random rand = new Random();
 
     private float stateTime = 0f;
-    private Map<String, Vector2> treePositions = new HashMap<>();
+    private Map<TreeType, Vector2> treePositions = new HashMap<>();
 
 
     public LevelTwoScreen(Main main) {
@@ -118,8 +119,22 @@ public class LevelTwoScreen implements Screen {
         enemyManager = new EnemyManager();
         enemyControllersToBeRemove = new ArrayList<>();
         wormPool = new WormPool(enemyManager);
+        metalChuckPool = new MetalChuckPool(enemyManager);
+
+        wormPool.setAttackTreeType(
+            new ArrayList<>(
+                Arrays.asList(TreeType.ORDINARY, TreeType.BLAZING)
+            )
+        );
+
+        metalChuckPool.setAttackTreeType(
+            new ArrayList<>(
+                Arrays.asList(TreeType.BLAZING, TreeType.BREEZING)
+            )
+        );
 
     }
+
 
     private void initializeTools() {
         int toolCount = 5;
@@ -167,30 +182,30 @@ public class LevelTwoScreen implements Screen {
     private void initializeTrees() {
         float treeScale = 0.20f;
 
-        treePositions.put("ordinary", new Vector2(763, 92));
-        treePositions.put("blazing", new Vector2(1048, 256));
-        treePositions.put("breezing", new Vector2(920, 183));
-        treePositions.put("ice", new Vector2(1023, 25));
-        treePositions.put("voltaic", new Vector2(781, 299));
+        treePositions.put(TreeType.ORDINARY, new Vector2(763, 92));
+        treePositions.put(TreeType.BLAZING, new Vector2(1048, 256));
+        treePositions.put(TreeType.BREEZING, new Vector2(920, 183));
+        treePositions.put(TreeType.ICE, new Vector2(1023, 25));
+        treePositions.put(TreeType.VOLTAIC, new Vector2(781, 299));
 
         TreeController<OrdinaryTree> ordinaryTreeController = new OrdinaryTreeController(
-            new OrdinaryTree(treePositions.get("ordinary"), treeScale),
+            new OrdinaryTree(treePositions.get(TreeType.ORDINARY), treeScale),
             wateringCan
         );
         TreeController<BlazingTree> blazingTreeController = new BlazingTreeController(
-            new BlazingTree(treePositions.get("blazing"), treeScale),
+            new BlazingTree(treePositions.get(TreeType.BLAZING), treeScale),
                 wateringCan
         );
         TreeController<BreezingTree> breezingTreeController = new BreezingTreeController(
-            new BreezingTree(treePositions.get("breezing"), treeScale),
+            new BreezingTree(treePositions.get(TreeType.BREEZING), treeScale),
             wateringCan
         );
         TreeController<IceTree> iceTreeController = new IceTreeController(
-            new IceTree(treePositions.get("ice"), treeScale),
+            new IceTree(treePositions.get(TreeType.ICE), treeScale),
             wateringCan
         );
         TreeController<VoltaicTree> voltaicTreeController = new VoltaicTreeController(
-            new VoltaicTree(treePositions.get("voltaic"), treeScale),
+            new VoltaicTree(treePositions.get(TreeType.VOLTAIC), treeScale),
             wateringCan
         );
 
@@ -239,6 +254,7 @@ public class LevelTwoScreen implements Screen {
 
     private void updateEnemyManager(float delta) {
         spawnWorm(delta);
+        spawnMetalChuck(delta);
         enemyManager.update(delta);
 
         for(EnemyController enemy : enemyManager.getEnemies()) {
@@ -260,26 +276,33 @@ public class LevelTwoScreen implements Screen {
 
     }
 
+    private void spawnMetalChuck(float delta) {
+       spawnEnemy(delta, metalChuckPool);
+    }
+
     private void spawnWorm(float delta) {
-        Vector2 treePos = treePositions.get("ordinary");
-        if(treePos == null){
-            throw new RuntimeException("Tree position for 'ordinary' tree not found.");
-        }
-
-        spawnTimer += delta;
-        if (spawnTimer >= spawnInterval && wormPool.getActiveCount() < 5) { // Limit to 5 worms at a time
-            Vector2 spawnPos = new Vector2(WINDOW_WIDTH + 50f, treePos.y);
-            WormController worm = wormPool.getWorm(spawnPos);
-            if(worm != null){
-                System.out.println("L2 - Worm spawned at: " + spawnPos);
-                enemyManager.addEnemy(worm);
-            }
-            spawnTimer = 0; // Reset the timer after spawning an enemy
-
-        }
+        spawnEnemy(delta, wormPool);
 
     }
 
+
+    private <T extends EnemyController> void spawnEnemy(float delta, EnemyPool<T> pool) {
+        spawnTimer += delta;
+        if (spawnTimer >= spawnInterval && pool.getActiveCount() < 5) { // Limit to 5 enemies at a time
+            ArrayList<TreeType> treeTypes = pool.getAttackTreeType();
+
+            int randomIndex = rand.nextInt(0, treeTypes.size());
+            float ypos = treePositions.get(treeTypes.get(randomIndex)).y;
+
+            Vector2 spawnPos = new Vector2(WINDOW_WIDTH + 50f, ypos);
+            T enemy = pool.getEnemy(spawnPos);
+            if(enemy != null){
+                System.out.println("L2 - Enemy spawned at: " + spawnPos + " Type: " + treeTypes.get(randomIndex));
+                enemyManager.addEnemy(enemy);
+            }
+            spawnTimer = 0; // Reset the timer after spawning an enemy
+        }
+    }
 
 
     private void updateTreeManager(float delta) {
@@ -366,7 +389,10 @@ public class LevelTwoScreen implements Screen {
             for(EnemyController enemy : enemyManager.getEnemies()){
                 if(enemy.getCollisionRect().overlaps(draggingTool.getCollisionRect())){
                     if(enemy instanceof WormController){
-                        if(!enemy.isDead()) enemy.die();
+                        if(!enemy.isDead()){
+                            enemy.die();
+                            draggingTool.playSound();
+                        }
                     }
                 }
             }
@@ -439,14 +465,6 @@ public class LevelTwoScreen implements Screen {
         treeControllerManager.drawDebug(shapeRenderer);
         waterFountain.drawDebug(shapeRenderer);
         enemyManager.drawDebug(shapeRenderer);
-//
-//        for (Worm worm : worms) {
-//            worm.drawDebug(shapeRenderer);
-//        }
-
-
-//        debugSpawnArea();
-
         shapeRenderer.end();
     }
 
@@ -460,18 +478,9 @@ public class LevelTwoScreen implements Screen {
         treeControllerManager.dispose();
         enemyManager.dispose();
 
-//
-//        for(GameSprite worm: worms){
-//            worm.dispose();
-//        }
-//
-//        for (BaseTreeHealth treeHealth : treeHealths.values()) {
-//            treeHealth.dispose();
-//        }
-//
-//        wateringCan.dispose();
+
+
         waterFountain.dispose();
-//        shovel.dispose();
         if (currency != null) currency.dispose();
     }
 }

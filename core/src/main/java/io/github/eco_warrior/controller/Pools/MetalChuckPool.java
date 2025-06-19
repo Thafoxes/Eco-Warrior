@@ -2,11 +2,12 @@ package io.github.eco_warrior.controller.Pools;
 
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.controller.Enemy.EnemyController;
+import io.github.eco_warrior.controller.Enemy.MetalChuckController;
 import io.github.eco_warrior.controller.Manager.EnemyManager;
 
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_WIDTH;
 
-public class MetalChuckPool extends EnemyPool{
+public class MetalChuckPool extends EnemyPool<MetalChuckController>{
 
     public MetalChuckPool(EnemyManager enemyManager) {
         super(enemyManager);
@@ -18,7 +19,7 @@ public class MetalChuckPool extends EnemyPool{
 
     }
     @Override
-    protected EnemyController createEnemy(Vector2 vector2) {
-        return null;
+    protected MetalChuckController createEnemy(Vector2 vector2) {
+        return new MetalChuckController(vector2);
     }
 }
