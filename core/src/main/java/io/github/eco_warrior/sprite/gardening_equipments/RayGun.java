@@ -3,13 +3,19 @@ package io.github.eco_warrior.sprite.gardening_equipments;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
+import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.entity.Tool;
+import io.github.eco_warrior.enums.GardeningEnums;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RayGun extends Tool {
     public enum RayGunMode {
         USELESS, BLAZING, BREEZING, ICE, VOLTAIC
     }
 
+    private Map<GardeningEnums, Tool> tools = new HashMap<>();
     private RayGunMode mode = RayGunMode.USELESS;
     private final Sound blazingSound;
     private final Sound breezingSound;
@@ -60,6 +66,16 @@ public class RayGun extends Tool {
                 uselessSound.play();
                 break;
         }
+    }
+
+    //TODO - Fix this method to handle the collision with target
+    public boolean isToolCollideWithTarget(GameSprite target) {
+        if (tools.get(GardeningEnums.RAY_GUN).getCollisionRect().overlaps(target.getCollisionRect())) {
+//            playModeSound();
+            System.out.println("RayGun collided with target");
+            return true;
+        }
+        return false;
     }
 
     public void dispose() {
