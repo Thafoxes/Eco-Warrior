@@ -95,11 +95,4 @@ public class VoltaicTreeLightningElementDrawer {
         return lastClicked;
     }
 
-    public void showIcon() {
-        lightningIconState.visible = true;
-    }
-
-    public void hideIcon() {
-        lightningIconState.visible = false;
-    }
 }

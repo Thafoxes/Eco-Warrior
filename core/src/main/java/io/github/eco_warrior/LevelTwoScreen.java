@@ -358,12 +358,16 @@ public class LevelTwoScreen implements Screen {
             //when the gun element is clicked, set the rayGun mode
             if (blazingTreeFireElementDrawer.wasLastIconClicked()) {
                 rayGun.setMode(io.github.eco_warrior.sprite.gardening_equipments.RayGun.RayGunMode.BLAZING);
+                rayGun.playModeSound();
             } else if (breezingTreeWindElementDrawer.wasLastIconClicked()) {
                 rayGun.setMode(io.github.eco_warrior.sprite.gardening_equipments.RayGun.RayGunMode.BREEZING);
+                rayGun.playModeSound();
             } else if (iceTreeIceElementDrawer.wasLastIconClicked()) {
                 rayGun.setMode(io.github.eco_warrior.sprite.gardening_equipments.RayGun.RayGunMode.ICE);
+                rayGun.playModeSound();
             } else if (voltaicTreeLightningDrawer.wasLastIconClicked()) {
                 rayGun.setMode(io.github.eco_warrior.sprite.gardening_equipments.RayGun.RayGunMode.VOLTAIC);
+                rayGun.playModeSound();
             }
             // to set back to useless mode
             //rayGun.setMode(RayGun.RayGunMode.USELESS);

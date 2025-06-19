@@ -94,11 +94,4 @@ public class BlazingTreeFireElementDrawer {
         return lastClicked;
     }
 
-    public void showIcon() {
-        fireIconState.visible = true;
-    }
-
-    public void hideIcon() {
-        fireIconState.visible = false;
-    }
 }

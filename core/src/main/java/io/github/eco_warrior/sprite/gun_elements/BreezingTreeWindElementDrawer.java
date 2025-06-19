@@ -89,11 +89,4 @@ public class BreezingTreeWindElementDrawer {
         return lastClicked;
     }
 
-    public void showIcon() {
-        windIconState.visible = true;
-    }
-
-    public void hideIcon() {
-        windIconState.visible = false;
-    }
 }

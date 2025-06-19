@@ -186,12 +186,15 @@ sound_effects/correct.mp3
 sound_effects/fill_water_sfx.mp3
 sound_effects/fill_watering_can1.mp3
 sound_effects/fill_watering_can2.mp3
+sound_effects/fire_gun.mp3
 sound_effects/fireball.mp3
 sound_effects/game_finished_sfx.mp3
 sound_effects/happy_wheels_victory.mp3
 sound_effects/hard_slap.mp3
 sound_effects/hitting_bin.mp3
 sound_effects/ice.mp3
+sound_effects/ice_gun.mp3
+sound_effects/lightning_gun.mp3
 sound_effects/pan.mp3
 sound_effects/pour_watering_can.mp3
 sound_effects/sapling_placement.mp3
@@ -201,8 +204,10 @@ sound_effects/sonido-correcto.mp3
 sound_effects/tape_tearing.mp3
 sound_effects/thunder.mp3
 sound_effects/underwater_explosion_sfx.mp3
+sound_effects/useless_gun.mp3
 sound_effects/water_pouring.mp3
 sound_effects/whip.mp3
+sound_effects/wind_gun.mp3
 sound_effects/wrong.mp3
 textures/Pipes.png
 textures/floor.png

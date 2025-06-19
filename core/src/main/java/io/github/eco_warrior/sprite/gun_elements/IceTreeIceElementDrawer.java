@@ -88,11 +88,4 @@ public class IceTreeIceElementDrawer {
         return lastClicked;
     }
 
-    public void showIcon() {
-        iceIconState.visible = true;
-    }
-
-    public void hideIcon() {
-        iceIconState.visible = false;
-    }
 }
