@@ -81,8 +81,10 @@ public class TreeControllerManager {
                         }
                     }
                 }
+                //Fertilizer can only be used if the right condition is met
                 if (!(treeController.getStage() == Trees.TreeStage.HOLE
-                    || treeController.getStage() == Trees.TreeStage.FLAG)) {
+                    || treeController.getStage() == Trees.TreeStage.FLAG
+                    || treeController.getHealth() == 4)) {
                     if (draggingTool instanceof FertilizerController) {
                         treeController.resetHealth();
 

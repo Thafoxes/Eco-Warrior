@@ -33,7 +33,6 @@ import io.github.eco_warrior.sprite.gardening_equipments.*;
 import io.github.eco_warrior.sprite.gardening_equipments.sapling_variant.*;
 import io.github.eco_warrior.sprite.tree_variant.*;
 import io.github.eco_warrior.sprite.UI.Currency;
-import sun.jvm.hotspot.tools.Tool;
 
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_HEIGHT;
 import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_WIDTH;
@@ -367,10 +366,16 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void clickButtonLogic() {
-        if (currency.getMoneyAmount() >= PurchaseButton.MAX_PRICE) {
-            buttonManager.click(currentTouchPos, currency);
+
+        if(buttonManager.purchase(currentTouchPos, currency)) { //check if a purchase is successful
             isReleased = true;
 
+            if (buttonManager.buttonType == ButtonManager.ButtonType.FERTILIZER_BUTTON) {
+                toolManager.addFertilizerController(fertilizerController);
+
+            } else if (buttonManager.buttonType == ButtonManager.ButtonType.UPGRADE_POTION_BUTTON){
+                // add potion function here
+            }
 
         }
     }

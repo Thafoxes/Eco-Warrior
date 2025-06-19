@@ -23,14 +23,14 @@ public abstract class PurchaseButton extends GameSprite {
     }
 
     protected String filePath;
-    protected PurchaseButton.ButtonStage buttonStage = ButtonStage.NOT_PRESSED;
+    protected ButtonStage buttonStage = ButtonStage.NOT_PRESSED;
     protected TextureAtlas atlas;
     protected final Map<ButtonStage, Animation<TextureRegion>> animationMap = new HashMap<>();
     protected float stateTime = 0;
     protected float pressedStateTime = .4f;
     protected Timer.Task clickedTask;
     public int price;
-    public static int MAX_PRICE = 4;
+
 
 
     protected Sound clickSound;
@@ -96,6 +96,7 @@ public abstract class PurchaseButton extends GameSprite {
         return this.buttonStage;
     }
 
+    // Button click animation
     public void click() {
         if (buttonStage == ButtonStage.NOT_PRESSED) {
             clickSound.play(0.5f);

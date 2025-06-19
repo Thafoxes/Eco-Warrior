@@ -17,10 +17,11 @@ import java.util.Map;
 public class ToolManager {
     private Map<GardeningEnums, Tool> tools = new HashMap<>();
     private ArrayList<BaseSaplingController> saplingControllers = new ArrayList<>();
-    private ArrayList<FertilizerController> fertilizerControllers = new ArrayList<>();
+    public static ArrayList<FertilizerController> fertilizerControllers = new ArrayList<>();
     private int saplingIndex = 0;
     private int fertilizerIndex = 0;
     private boolean isPlanting = false;
+
 //    private boolean isFertilizerUsed = false;
 
     public void addTool(GardeningEnums type, Tool tool) {
@@ -80,6 +81,10 @@ public class ToolManager {
 
     public void setIsPlanting(boolean isPlanting) {
         this.isPlanting = isPlanting;
+    }
+
+    public boolean canBuyFertilizer() {
+        return !fertilizerControllers.isEmpty();
     }
 
 //    public void setIsFertilizerUsed(boolean isFertilizerUsed) {this.isFertilizerUsed = isFertilizerUsed;}
