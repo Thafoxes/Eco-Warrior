@@ -111,5 +111,9 @@ public class TreeControllerManager {
     }
 
 
+    public ArrayList<TreeController> getTreeControllers(){
+        return treeControllers;
+    }
+
 }
 

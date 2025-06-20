@@ -50,8 +50,6 @@ public class Currency {
 
         // Smooth number interpolation
         displayedMoney = moneyAmount;
-
-//        }
     }
 
     public void draw(SpriteBatch batch) {

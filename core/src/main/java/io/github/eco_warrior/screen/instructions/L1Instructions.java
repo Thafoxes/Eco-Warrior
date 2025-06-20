@@ -128,6 +128,7 @@ public class L1Instructions implements Screen {
             "1. Sort the recyclables into the correct bins",
             "2. Dispose waste into the red bins as general waste",
             "3. Put wrong items will deduct your score and hearts!",
+            "4. Use slipper to slap the raccoon."
         };
 
         float textY = WINDOW_HEIGHT / (instructions.length * 4); // Position text below the title

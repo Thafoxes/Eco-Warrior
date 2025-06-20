@@ -2,6 +2,7 @@ package io.github.eco_warrior.controller;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -21,6 +22,7 @@ public class NPCManager {
     private List<GameCharacter> NPCs = new ArrayList<>();
     private MapController mapController;
     private boolean isInteracting = false;
+    private FontGenerator fontGenerator;
 
 
     public NPCManager(TiledMap map, int tileWidth, int tileHeight) {
@@ -32,6 +34,8 @@ public class NPCManager {
                 NPCs.add(new Goblin(new Vector2(rect.x, rect.y), tileWidth, tileHeight, true));
             }
         }
+
+        fontGenerator = new FontGenerator(16, Color.WHITE, Color.BLACK);
     }
 
     /**
@@ -92,9 +96,26 @@ public class NPCManager {
         return null;
     }
 
-    public void render(SpriteBatch batch) {
+    public void render(SpriteBatch batch, OrthographicCamera camera) {
         for(GameCharacter npc : NPCs) {
             npc.draw(batch);
+
+            // Draw character name above the sprite
+            Vector2 textPosition = new Vector2(
+                npc.getPosition().x,
+                npc.getPosition().y + 40 // 10 pixels above the sprite
+            );
+
+            batch.end();
+            fontGenerator.objFontDraw(
+                batch,
+                "Press F to " + npc.getName(),
+                5, // font size
+                camera,
+                textPosition
+            );
+            batch.begin();
+
         }
     }
 
@@ -132,6 +153,7 @@ public class NPCManager {
         for (GameCharacter npc : NPCs) {
             npc.dispose();
         }
+        fontGenerator.dispose();
     }
 
 

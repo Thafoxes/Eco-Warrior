@@ -1,7 +1,9 @@
 package io.github.eco_warrior.controller.Trees;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.animation.FireBurningAnim;
 import io.github.eco_warrior.controller.FertilizerController;
@@ -9,6 +11,7 @@ import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.entity.BaseExplosion;
 import io.github.eco_warrior.entity.BaseTreeHealth;
 import io.github.eco_warrior.entity.Trees;
+import io.github.eco_warrior.enums.TreeType;
 import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
 
 public abstract class TreeController <T extends Trees> {
@@ -25,19 +28,21 @@ public abstract class TreeController <T extends Trees> {
     protected Vector2 animPosition;
     protected int wateringTime = 0;
     protected boolean isGrowing = false;
+    protected TreeType treeType;
 
-    public TreeController(T tree, WateringCan wateringCan, BaseTreeHealth treeHealth) {
+    public TreeController(T tree, WateringCan wateringCan, BaseTreeHealth treeHealth, TreeType treeType) {
         this.tree = tree;
         this.wateringCan = wateringCan;
         this.treeHealth = treeHealth;
+        this.treeType = treeType;
         setDeadAnimation();
     }
 
     private void setDeadAnimation() {
         float xPos = tree.getInitPosition().x + (tree.getSprite().getWidth() * tree.getScale() /2);
         float yPos = tree.getInitPosition().y + (tree.getSprite().getHeight() * tree.getScale()/2);
-        animPosition = new Vector2(xPos, yPos);
-        this.deadAnim = new FireBurningAnim(animPosition, 0.5f);
+        animPosition = new Vector2(xPos + 50f, yPos);
+        this.deadAnim = new FireBurningAnim(animPosition, 0.1f);
     }
 
     public void update(float delta){
@@ -176,6 +181,14 @@ public abstract class TreeController <T extends Trees> {
         isDead = false;
     }
 
+    public Sprite getSprite() {
+        return tree.getSprite();
+    }
+
+    public Rectangle getCollisionRect() {
+        return tree.getCollisionRect();
+    }
+
     public boolean isMatured() {
         return tree.isMatured();
     }
@@ -189,6 +202,10 @@ public abstract class TreeController <T extends Trees> {
     public void resetHealth() {
         health = 4;
         isDead = false;
+    }
+
+    public TreeType getTreeType() {
+        return treeType;
     }
 
     public int getHealth() {

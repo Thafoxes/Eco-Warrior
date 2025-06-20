@@ -91,7 +91,7 @@ public class GameSprite extends spriteGenerator {
         this.sprite.setPosition(position.x, position.y);
         this.initPosition = position;
 
-        collisionRect = new Rectangle(position.x, position.y, sprite.getWidth(), sprite.getHeight());
+        this.collisionRect = new Rectangle(position.x, position.y, sprite.getWidth(), sprite.getHeight());
     }
 
     /**
@@ -127,16 +127,6 @@ public class GameSprite extends spriteGenerator {
      * @param shapeRenderer
      */
     public void drawDebug(ShapeRenderer shapeRenderer) {
-//        if (collisionRect != null) {
-//            shapeRenderer.setColor(Color.GREEN);
-//            shapeRenderer.rect(
-//                collisionRect.x - 20f,
-//                collisionRect.y - 20f,
-//                collisionRect.width + 40f,
-//                collisionRect.height + 40f
-//            );
-//        }
-
         if (sprite != null) {
             shapeRenderer.setColor(Color.RED);
             shapeRenderer.rect(
@@ -271,6 +261,13 @@ public class GameSprite extends spriteGenerator {
         this.sprite.setPosition(newPosition.x, newPosition.y);
         this.collisionRect.setPosition(newPosition.x, newPosition.y);
     }
+
+    public void setTranslationPos(Vector2 newPosition){
+        System.out.println();
+        this.sprite.translate(newPosition.x, newPosition.y);
+        this.collisionRect.setPosition(sprite.getX(), sprite.getY());
+    }
+
 
     public Rectangle getCollisionRect(){
         return this.collisionRect;

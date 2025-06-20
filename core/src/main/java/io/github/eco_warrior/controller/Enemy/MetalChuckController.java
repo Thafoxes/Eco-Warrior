@@ -1,23 +1,23 @@
 package io.github.eco_warrior.controller.Enemy;
 
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.entity.Enemies;
 import io.github.eco_warrior.enums.EnemyType;
 import io.github.eco_warrior.enums.TreeType;
-import io.github.eco_warrior.sprite.Enemy.Worm;
+import io.github.eco_warrior.sprite.Enemy.MetalChuck;
 
 import java.util.ArrayList;
 
-public class WormController extends EnemyController {
+public class MetalChuckController extends EnemyController{
 
-    public WormController(Vector2 position) {
-        super(new Worm(position), EnemyType.WORM);
+    public MetalChuckController(Vector2 position) {
+        super(new MetalChuck(position), EnemyType.METAL_CHUCK);
     }
 
 //    @Override
 //    void initializeTreeTypes() {
 //        ArrayList<TreeType> treeTypes = new ArrayList<>();
 //        treeTypes.add(TreeType.ORDINARY);
+//        treeTypes.add(TreeType.VOLTAIC);
 //
 //        this.treeTypes = treeTypes;
 //    }
@@ -25,13 +25,12 @@ public class WormController extends EnemyController {
     @Override
     public void update(float delta) {
         super.update(delta);
+        // Add any MetalChuck specific update logic here if needed
     }
 
     @Override
     public void attack() {
         super.attack();
-        // Implement worm-specific attack logic here
-        // For example, you can call the attack method of the worm sprite
-        // worm.attack();
+        // Implement MetalChuck-specific attack logic here if needed
     }
 }
