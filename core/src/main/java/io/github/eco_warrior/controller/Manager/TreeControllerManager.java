@@ -2,12 +2,12 @@ package io.github.eco_warrior.controller.Manager;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.scenes.scene2d.ui.Tree;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.controller.Trees.TreeController;
 import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.entity.Trees;
-import io.github.eco_warrior.sprite.gardening_equipments.Fertilizer;
+import io.github.eco_warrior.sprite.DebugStick;
+import io.github.eco_warrior.controller.FertilizerController;
 import io.github.eco_warrior.sprite.gardening_equipments.Shovel;
 import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
 
@@ -52,6 +52,7 @@ public class TreeControllerManager {
      */
     public boolean interactWithTrees(GameSprite draggingTool) {
         boolean planted = false;
+        boolean isFertilizerUsed = false;
 
         for (TreeController<?> treeController : treeControllers) {
             if(treeController.getTree().getCollisionRect().overlaps(draggingTool.getCollisionRect())){
@@ -60,11 +61,11 @@ public class TreeControllerManager {
                 if (draggingTool instanceof WateringCan) {
                     treeController.handleWatering();
                 }
-                if(draggingTool instanceof Fertilizer){
-                    treeController.resetHealth();
-                }
                 if(draggingTool instanceof Shovel){
                     treeController.digHole();
+                }
+                if(draggingTool instanceof DebugStick) {
+                    treeController.takeDamage(1);
                 }
                 //if the tree is not hole Condition, return
                 if(treeController.getStage() == Trees.TreeStage.HOLE) {
@@ -77,6 +78,22 @@ public class TreeControllerManager {
                         currentTreeController = treeController;
                         if(planted) {
                             return true; // Return true if a sapling was successfully planted
+                        }
+                    }
+                }
+                //Fertilizer can only be used if the right condition is met
+                if (!(treeController.getStage() == Trees.TreeStage.HOLE
+                    || treeController.getStage() == Trees.TreeStage.FLAG
+                    || treeController.getHealth() == 4)) {
+                    if (draggingTool instanceof FertilizerController) {
+                        treeController.resetHealth();
+
+                        FertilizerController fertilizerController = (FertilizerController) draggingTool;
+                        isFertilizerUsed = treeController.handleFertilizerUsing(fertilizerController);
+
+                        currentTreeController = treeController;
+                        if(isFertilizerUsed) {
+                            return true;
                         }
                     }
                 }

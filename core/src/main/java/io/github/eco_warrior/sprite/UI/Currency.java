@@ -32,11 +32,11 @@ public class Currency {
         this.scale = scale;
         this.camera = camera;
 
-        this.atlas = new TextureAtlas("atlas/coin/coins.atlas");
+        this.atlas = new TextureAtlas("atlas/coin/robux.atlas");
         // Use the first region or a named region, e.g., "coin_pixel"
-        this.coinRegion = atlas.findRegion("coin_pixel");
+        this.coinRegion = atlas.findRegion("robux");
         this.fontGenerator = new FontGenerator(24, Color.WHITE, Color.BLACK);
-        this.coinSound = com.badlogic.gdx.Gdx.audio.newSound(com.badlogic.gdx.Gdx.files.internal("sound_effects/coin.wav"));
+        this.coinSound = com.badlogic.gdx.Gdx.audio.newSound(com.badlogic.gdx.Gdx.files.internal("sound_effects/orb.mp3"));
     }
 
     public void update(float delta) {
@@ -66,7 +66,9 @@ public class Currency {
         this.moneyAmount += amount;
         this.scaleEffect = 1.5f;
         this.scaleTimer = 0.3f; // Reset pop duration
-        if (coinSound != null) coinSound.play();
+        if (coinSound != null) coinSound.play(.5f);
+
+        System.out.println(moneyAmount);
     }
 
     public void spendMoney(int amount) {

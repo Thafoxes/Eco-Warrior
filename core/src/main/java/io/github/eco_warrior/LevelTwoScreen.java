@@ -13,6 +13,9 @@ import io.github.eco_warrior.controller.Enemy.EnemyController;
 import io.github.eco_warrior.controller.Enemy.MetalChuckController;
 import io.github.eco_warrior.controller.Enemy.WormController;
 import io.github.eco_warrior.controller.Manager.EnemyManager;
+import io.github.eco_warrior.controller.FertilizerController;
+import io.github.eco_warrior.controller.GroundTrashController;
+import io.github.eco_warrior.controller.Manager.ButtonManager;
 import io.github.eco_warrior.controller.Manager.ToolManager;
 import io.github.eco_warrior.controller.Manager.TreeControllerManager;
 import io.github.eco_warrior.controller.Pools.EnemyPool;
@@ -24,9 +27,14 @@ import io.github.eco_warrior.entity.GameSprite;
 
 import java.util.*;
 
+import io.github.eco_warrior.enums.ButtonEnums;
 import io.github.eco_warrior.enums.GardeningEnums;
 import io.github.eco_warrior.enums.TreeType;
 import io.github.eco_warrior.sprite.*;
+import io.github.eco_warrior.sprite.Enemy.Worm;
+import io.github.eco_warrior.sprite.buttons.FertilizerButton;
+import io.github.eco_warrior.sprite.buttons.PurchaseButton;
+import io.github.eco_warrior.sprite.buttons.UpgradePotionButton;
 import io.github.eco_warrior.sprite.gardening_equipments.*;
 import io.github.eco_warrior.sprite.gardening_equipments.sapling_variant.*;
 import io.github.eco_warrior.sprite.tree_variant.*;
@@ -58,6 +66,15 @@ public class LevelTwoScreen implements Screen {
 
     private TreeControllerManager treeControllerManager;
 
+    private GroundTrashController groundTrashController;
+
+    private FertilizerController fertilizerController;
+
+    //buttons
+    private ButtonManager buttonManager;
+    private float manipulatorY;
+    private float startX;
+
     //entities declaration
     private WateringCan wateringCan;
     private WaterFountain waterFountain;
@@ -69,6 +86,7 @@ public class LevelTwoScreen implements Screen {
     private Vector2 currentTouchPos;
     private Vector2 lastTouchPos;
     private boolean isDragging = false;
+    private boolean isReleased = true;
     private boolean isReturning = false;
     private GameSprite draggingTool;
 
@@ -90,6 +108,7 @@ public class LevelTwoScreen implements Screen {
         this.game = main;
         this.toolManager = new ToolManager();
         this.treeControllerManager = new TreeControllerManager();
+        this.buttonManager = new ButtonManager();
     }
 
     @Override
@@ -111,7 +130,7 @@ public class LevelTwoScreen implements Screen {
 
         initializeTools();
         initializeTrees();
-        initializeEnemyManager();
+
 
         currency = new Currency(new Vector2(20, WINDOW_HEIGHT - 60), 0.5f, camera);
     }
@@ -152,13 +171,27 @@ public class LevelTwoScreen implements Screen {
         RayGun rayGun = new RayGun(new Vector2(spacing - manipulatorX, startY), toolScale);
         wateringCan = new WateringCan(new Vector2(spacing * 2 - manipulatorX, startY), toolScale);
         Shovel shovel = new Shovel(new Vector2(spacing * 3 - manipulatorX, startY), toolScale);
-        Fertilizer fertilizer = new Fertilizer(new Vector2(spacing * 4 - manipulatorX, startY), toolScale);
+        DebugStick debugStick = new DebugStick(new Vector2(spacing * 6 - manipulatorX, startY), .25f);
         toolManager.addTool(GardeningEnums.WATERING_CAN, wateringCan);
         toolManager.addTool(GardeningEnums.SHOVEL, shovel);
         toolManager.addTool(GardeningEnums.RAY_GUN, rayGun);
-        toolManager.addTool(GardeningEnums.FERTILIZER, fertilizer);
+        toolManager.addTool(GardeningEnums.DEBUG_STICK, debugStick);
 
         initializeSapling(spacing, toolScale);
+    }
+
+    private void initializeButtons() {
+        int buttonCount = 2;
+        float spacing = WINDOW_HEIGHT / (buttonCount + 4); //make it 10 so it look from left to right
+        float buttonScale = .09f;
+
+        startX = WINDOW_WIDTH - 100;
+        manipulatorY = 350;
+
+        FertilizerButton fertilizerButton = new FertilizerButton(new Vector2(startX, spacing + manipulatorY), buttonScale);
+        UpgradePotionButton upgradePotionButton = new UpgradePotionButton(new Vector2(startX, spacing * 2 + manipulatorY), buttonScale);
+        buttonManager.addButton(ButtonEnums.FERTILIZER_BUTTON, fertilizerButton);
+        buttonManager.addButton(ButtonEnums.UPGRADE_POTION_BUTTON, upgradePotionButton);
     }
 
     private void initializeSapling(float spacing, float toolScale) {
@@ -168,6 +201,8 @@ public class LevelTwoScreen implements Screen {
         BaseSaplingController iceSapling = new IceSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
         BaseSaplingController voltaicSapling = new VoltaicSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
 
+        fertilizerController = new FertilizerController(new Vector2(spacing * 4 - manipulatorX, startY), toolScale);
+
 
         //following teir list
         toolManager.addSaplingController(ordinarySapling);
@@ -176,7 +211,7 @@ public class LevelTwoScreen implements Screen {
         toolManager.addSaplingController(iceSapling);
         toolManager.addSaplingController(blazingSapling);
 
-
+        toolManager.addFertilizerController(fertilizerController);
     }
 
     private void initializeTrees() {
@@ -227,96 +262,17 @@ public class LevelTwoScreen implements Screen {
 
         updateToolManager(delta);
         updateTreeManager(delta);
-        updateEnemyManager(delta);
-        updateEnemyTreeLogic(delta);
+//        spawnWorm(delta);
+//        updateEnemyAnimationMovement();
+//
+//        for (TreeHealth treeHealth : treeHealths.values()) {
+//            treeHealth.updateHealth();
+//        }
     }
 
-    private void updateEnemyTreeLogic(float delta) {
-
-        for(EnemyController enemy: enemyManager.getEnemies()){
-            checkTreeCollisionsAndAttack(enemy);
-        }
+    private void controller(float delta) {
+        groundTrashController.update(delta);
     }
-    
-
-    private void checkTreeCollisionsAndAttack(EnemyController enemy) {
-        for (TreeController<?> treeController : treeControllerManager.getTreeControllers()) {
-            TreeType currentTreeType = treeController.getTreeType();
-
-            if (enemy.getCurrentAttackTreeType() == currentTreeType &&
-                treeController.getCollisionRect().overlaps(enemy.getCollisionRect())) {
-
-                if(!enemy.isAttacking()){
-                    enemy.attack();
-                }
-                if (enemy.isAnimDoneAttacking()) {
-                    treeController.takeDamage(1);
-                    enemy.resetAttackState();
-                     // Reset the attack state after attacking
-                }
-            }
-        }
-    }
-
-    private void updateEnemyManager(float delta) {
-        spawnWorm(delta);
-        spawnMetalChuck(delta);
-        enemyManager.update(delta);
-
-        for(EnemyController enemy : enemyManager.getEnemies()) {
-            if(enemy.isDead()){
-                addBackEnemyToPool(enemy);
-                enemyControllersToBeRemove.add(enemy);
-            }
-        }
-
-        if(!enemyControllersToBeRemove.isEmpty()){
-            for(EnemyController enemy : enemyControllersToBeRemove) {
-                enemyManager.getEnemies().remove(enemy);
-            }
-            enemyControllersToBeRemove.clear();
-        }
-
-    }
-
-    private <T extends EnemyPool> void addBackEnemyToPool(EnemyController enemy) {
-        if(enemy instanceof WormController) {
-            wormPool.returnEnemy((WormController) enemy);
-        } else if(enemy instanceof MetalChuckController) {
-            metalChuckPool.returnEnemy((MetalChuckController) enemy);
-        } else {
-            throw new IllegalArgumentException("Unknown enemy type: " + enemy.getClass().getSimpleName());
-        }
-    }
-
-    private void spawnMetalChuck(float delta) {
-       spawnEnemy(delta, metalChuckPool);
-    }
-
-    private void spawnWorm(float delta) {
-        spawnEnemy(delta, wormPool);
-
-    }
-
-
-    private <T extends EnemyController> void spawnEnemy(float delta, EnemyPool<T> pool) {
-        spawnTimer += delta;
-        if (spawnTimer >= spawnInterval && pool.getActiveCount() < 5) { // Limit to 5 enemies at a time
-            ArrayList<TreeType> treeTypes = pool.getAttackTreeType();
-
-            int randomIndex = rand.nextInt(0, treeTypes.size());
-            float ypos = treePositions.get(treeTypes.get(randomIndex)).y;
-
-            Vector2 spawnPos = new Vector2(WINDOW_WIDTH + 50f, ypos);
-            T enemy = pool.getEnemy(spawnPos, treeTypes.get(randomIndex));
-            if(enemy != null){
-//                System.out.println("L2 - Enemy spawned at: " + spawnPos + " Type: " + treeTypes.get(randomIndex));
-                enemyManager.addEnemy(enemy);
-            }
-            spawnTimer = 0; // Reset the timer after spawning an enemy
-        }
-    }
-
 
     private void updateTreeManager(float delta) {
         treeControllerManager.update(delta);
@@ -325,6 +281,10 @@ public class LevelTwoScreen implements Screen {
     private void updateToolManager(float delta) {
         toolManager.update(delta);
         toolManager.setIsPlanting(treeControllerManager.isCurrentTreeMatured());
+    }
+
+    private void updateButtonManager(float delta) {
+        buttonManager.update(delta);
     }
 
 
@@ -341,7 +301,6 @@ public class LevelTwoScreen implements Screen {
         backgroundSprite.draw(batch);
         toolManager.render(batch);
         treeControllerManager.draw(batch);
-        enemyManager.draw(batch);
 
         batch.end();
         debugSprite();
@@ -356,6 +315,7 @@ public class LevelTwoScreen implements Screen {
 
     private void input() {
         if (Gdx.input.isTouched()) {
+            isReleased = false;
             currentTouchPos.set(Gdx.input.getX(), Gdx.input.getY());
             viewport.unproject(currentTouchPos);
 
@@ -366,13 +326,18 @@ public class LevelTwoScreen implements Screen {
                     isDragging = true;
                     isReturning = false;
                 }
-            }else if (isDragging && draggingTool != null){ //ensure the tool is not null
+            } else if (isDragging && draggingTool != null){ //ensure the tool is not null
                 // Update tool position while dragging
                 float xPos = currentTouchPos.x - draggingTool.getSprite().getWidth() / 2;
                 float yPos = currentTouchPos.y - draggingTool.getSprite().getHeight() / 2;
                 draggingTool.setPosition(new Vector2(xPos, yPos));
             }
-        }else if(isDragging){
+
+
+//            //trash is removed when clicked
+//            groundTrashController.removeItem(currentTouchPos);
+
+        } else if(isDragging){
             //on mouse release, check for interaction
             if(draggingTool != null){
                 //handle tool interactions
@@ -380,6 +345,34 @@ public class LevelTwoScreen implements Screen {
             }
             isDragging = false;
             isReturning = true;
+        }else if (!isReleased && !Gdx.input.isTouched()){
+            //if click released
+            collectTrashLogic();
+            clickButtonLogic();
+        }
+    }
+
+    private void collectTrashLogic() {
+        //trash is removed when clicked
+        if(groundTrashController.removeItem(currentTouchPos)){
+            currency.addMoney(1);
+            isReleased = true;
+        }
+
+    }
+
+    private void clickButtonLogic() {
+
+        if(buttonManager.purchase(currentTouchPos, currency)) { //check if a purchase is successful
+            isReleased = true;
+
+            if (buttonManager.buttonType == ButtonManager.ButtonType.FERTILIZER_BUTTON) {
+                toolManager.addFertilizerController(fertilizerController);
+
+            } else if (buttonManager.buttonType == ButtonManager.ButtonType.UPGRADE_POTION_BUTTON){
+                // add potion function here
+            }
+
         }
     }
 
@@ -388,8 +381,13 @@ public class LevelTwoScreen implements Screen {
         if (treeControllerManager.interactWithTrees(draggingTool)) {
             //because the is tree who change the image, so treeControllerManager is used to perform action
             // If a sapling was successfully planted, handle the planting logic
+            // If a fertilizer interacts with a tree, handle the fertilizer using logic
+            // If a debug stick touches a tree, its tree health is decremented
             System.out.println("L2Screen: Is planted");
+            System.out.println("L2Screen: Fertilizer is used");
+            System.out.println("L2Screen: Tree health is deducted");
             toolManager.handleSaplingPlanting(draggingTool);
+            toolManager.handleFertilizerUsing(draggingTool);
 
         }
 
@@ -472,8 +470,16 @@ public class LevelTwoScreen implements Screen {
 
         toolManager.drawDebug(shapeRenderer);
         treeControllerManager.drawDebug(shapeRenderer);
+        buttonManager.drawDebug(shapeRenderer);
         waterFountain.drawDebug(shapeRenderer);
-        enemyManager.drawDebug(shapeRenderer);
+//
+//        for (Worm worm : worms) {
+//            worm.drawDebug(shapeRenderer);
+//        }
+
+
+//        debugSpawnArea();
+
         shapeRenderer.end();
     }
 
@@ -485,10 +491,17 @@ public class LevelTwoScreen implements Screen {
         shapeRenderer.dispose();
         toolManager.dispose();
         treeControllerManager.dispose();
-        enemyManager.dispose();
 
-
-
+//
+//        for(GameSprite worm: worms){
+//            worm.dispose();
+//        }
+//
+//        for (BaseTreeHealth treeHealth : treeHealths.values()) {
+//            treeHealth.dispose();
+//        }
+//
+//        wateringCan.dispose();
         waterFountain.dispose();
         if (currency != null) currency.dispose();
     }
