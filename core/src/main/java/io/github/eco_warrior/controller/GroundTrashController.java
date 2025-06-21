@@ -61,7 +61,7 @@ public class GroundTrashController {
 
             long endTime = System.nanoTime();
             float elapsedMs = (endTime - startTime) / 1_000_000f;
-            System.out.println("spawnGroundTrash() execution time: " + elapsedMs + " ms");
+//            System.out.println("spawnGroundTrash() execution time: " + elapsedMs + " ms");
         }
 
         // Update trash items
@@ -95,7 +95,7 @@ public class GroundTrashController {
         }
     }
 
-    public boolean removeItem(Vector2 touchPos) {
+    public boolean isCollected(Vector2 touchPos) {
         for(GroundTrash item : groundTrash) {
 
             if(item.getCollisionRect().contains(touchPos)) {
@@ -122,7 +122,7 @@ public class GroundTrashController {
         spawnRectangleDebug(shapeRenderer);
     }
 
-    public void spawnRectangleDebug (ShapeRenderer shapeRenderer) {
+    private void spawnRectangleDebug (ShapeRenderer shapeRenderer) {
         shapeRenderer.setColor(0, 0, 1, 1); // Red color
         shapeRenderer.rect(minX, minY, maxX - minX, maxY - minY);
 

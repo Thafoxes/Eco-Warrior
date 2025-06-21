@@ -34,7 +34,7 @@ public class ButtonManager {
 
     }
 
-    public void render(SpriteBatch batch) {
+    public void draw(SpriteBatch batch) {
 
         for (PurchaseButton button : buttons.values()) {
             button.render(batch);

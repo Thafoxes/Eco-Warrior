@@ -35,6 +35,7 @@ public class ToolManager {
 
     public void addFertilizerController(FertilizerController fertilizerController) {
         fertilizerControllers.add(fertilizerController);
+        System.out.println("ToolManager: Added fertilizer controller, total count: " + fertilizerControllers.size());
     }
 
     public void update(float delta) {
