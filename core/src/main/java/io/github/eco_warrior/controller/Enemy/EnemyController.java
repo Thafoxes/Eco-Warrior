@@ -75,10 +75,13 @@ public abstract class EnemyController {
     }
 
     public boolean isAnimDoneAttacking() {
-        if(enemy.isDoneAttacking()){
+
+        if(enemy.isDoneAttacking() || enemy.isCanAttack()){
             isAttacking = false;
+            return true;
+        }else{
+            return false;
         }
-        return enemy.isDoneAttacking();
     }
 
     public void move(){

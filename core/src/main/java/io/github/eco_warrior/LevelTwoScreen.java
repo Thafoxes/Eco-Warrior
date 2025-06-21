@@ -280,8 +280,8 @@ public class LevelTwoScreen implements Screen {
         updateEnemyTreeLogic(delta);
 
 
-//        updateTrashController(delta);
-//        updateButtonManager(delta);
+        updateTrashController(delta);
+        updateButtonManager(delta);
 
     }
 
@@ -304,8 +304,8 @@ public class LevelTwoScreen implements Screen {
                     //System.out.println("L2 - Enemy " + enemy.getClass().getSimpleName() + " is attacking tree: " + currentTreeType);
                 }
                 //TODO - solve the issue of enemy done attack then take damage
-                if ( enemy.isAttacking()) {
-                    System.out.println("L2 - Enemy " + enemy.getClass().getSimpleName() + " has finished attacking tree: " + currentTreeType);
+                if ( enemy.isAnimDoneAttacking()) {
+                    System.out.println("L2 - called!");
                     treeController.takeDamage(1);
                     enemy.resetAttackState();
                     // Reset the attack state after attacking
@@ -357,7 +357,8 @@ public class LevelTwoScreen implements Screen {
 
     private <T extends EnemyController> void spawnEnemy(float delta, EnemyPool<T> pool) {
         spawnTimer += delta;
-        if (spawnTimer >= spawnInterval && pool.getActiveCount() < 5) { // Limit to 5 enemies at a time
+        //TODO - DEBUG CHECK LIMIT ENEMIES EDIT
+        if (spawnTimer >= spawnInterval && pool.getActiveCount() < 1) { // Limit to 5 enemies at a time
             ArrayList<TreeType> treeTypes = pool.getAttackTreeType();
 
             int randomIndex = rand.nextInt(0, treeTypes.size());
