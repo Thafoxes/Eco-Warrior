@@ -31,7 +31,7 @@ public abstract class Enemies extends GameSprite{
     protected float stateTime;
     // Direction of movement, true for right, false for left
     protected boolean isRightDirection = false;
-    protected float movementSpeed = 50f;
+    protected final static float movementSpeed = 50f;
     protected float attackCooldown = 1.5f;
     protected boolean canAttack = true;
 
@@ -53,6 +53,7 @@ public abstract class Enemies extends GameSprite{
     protected abstract void loadAudio();
 
     public void resetState(){
+        System.out.println("Enemies: stateTime reset: " + stateTime);
         this.currentState = EnemyState.IDLE;
         this.previousState = EnemyState.IDLE;
         this.stateTime = 0f;

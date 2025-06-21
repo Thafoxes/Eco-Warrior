@@ -75,6 +75,9 @@ public abstract class EnemyController {
     }
 
     public boolean isAnimDoneAttacking() {
+        if(enemy.isDoneAttacking()){
+            isAttacking = false;
+        }
         return enemy.isDoneAttacking();
     }
 
@@ -153,7 +156,6 @@ public abstract class EnemyController {
     public boolean isAttacking() {
         return isAttacking;
     }
-
 
 
 }

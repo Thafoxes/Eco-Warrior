@@ -68,7 +68,6 @@ public class Currency {
         this.scaleTimer = 0.3f; // Reset pop duration
         if (coinSound != null) coinSound.play(.5f);
 
-        System.out.println(moneyAmount);
     }
 
     public void spendMoney(int amount) {

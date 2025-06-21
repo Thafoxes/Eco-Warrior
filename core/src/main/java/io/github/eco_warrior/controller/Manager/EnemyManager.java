@@ -32,21 +32,12 @@ public class EnemyManager {
 
 
     public void update(float delta) {
-
-        Array<EnemyController> enemiesToRemove = new Array<>();
-
+        
         for(EnemyController enemy : enemies) {
             enemy.update(delta);
-            if(enemy.isDead()){
-                enemiesToRemove.add(enemy);
-            }
+
         }
 
-        for(EnemyController enemy : enemiesToRemove) {
-            //reset back to IDLE state before removing
-            enemy.setState(Enemies.EnemyState.IDLE);
-            enemies.remove(enemy);
-        }
     }
 
     public void draw(SpriteBatch batch) {
