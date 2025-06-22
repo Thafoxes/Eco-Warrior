@@ -14,7 +14,7 @@ public class Main extends Game {
     @Override
     public void create() {
         buttonGenerator = new buttonGenerator();
-        setScreen(new WorldMap(this));
+        setScreen(new MainMenuScreen(this));
     }
 
     public buttonGenerator getButtonFactory() {
@@ -26,6 +26,6 @@ public class Main extends Game {
     }
 
     public void setLevel(int level) {
-        level = level;
+        Main.level = level;
     }
 }

@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.Main;
+import io.github.eco_warrior.WorldMap;
 import io.github.eco_warrior.controller.buttonGenerator;
 import io.github.eco_warrior.controller.FontGenerator;
 import io.github.eco_warrior.enums.textEnum;
@@ -115,7 +116,7 @@ public class ResultScreen implements Screen {
         stage = new Stage(viewport, batch);
         Gdx.input.setInputProcessor(stage);
 
-        createReturnButton();
+        setupButtons();
     }
 
     private void createReturnButton() {
@@ -127,15 +128,90 @@ public class ResultScreen implements Screen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-//                game.setScreen();
                 //return back to main menu
                 game.setScreen(new MainMenuScreen(game));
-//                System.out.println("back button clicked");
             }
         });
 
 
         stage.addActor(backButton);
+    }
+
+    private void createReturnWorldMap() {
+        TextButton backButton = buttonGenerator.createDefaultButton(
+            "Return to world map",
+            WINDOW_WIDTH,
+            WINDOW_HEIGHT
+        );
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new WorldMap(game));
+            }
+        });
+
+
+        stage.addActor(backButton);
+    }
+
+    private void setupButtons() {
+        // Create buttons
+        TextButton worldMapButton = createReturnWorldMapButton();
+        TextButton mainMenuButton = createReturnMainMenuButton();
+
+        // Position buttons in the center with equal spacing
+        float buttonHeight = worldMapButton.getHeight();
+        float spacing = 20; // Space between buttons
+
+        // Calculate y positions for centered vertical alignment
+        float totalHeight = (2 * buttonHeight) + spacing;
+        float startY = (WINDOW_HEIGHT / 2) + (totalHeight / 2) - buttonHeight;
+
+        // Position world map button
+        worldMapButton.setPosition(
+            (WINDOW_WIDTH / 2) - (worldMapButton.getWidth() / 2),
+            startY
+        );
+
+        // Position main menu button
+        mainMenuButton.setPosition(
+            (WINDOW_WIDTH / 2) - (mainMenuButton.getWidth() / 2),
+            startY - buttonHeight - spacing
+        );
+
+        // Add buttons to stage
+        stage.addActor(worldMapButton);
+        stage.addActor(mainMenuButton);
+    }
+
+    private TextButton createReturnWorldMapButton() {
+        TextButton button = buttonGenerator.createDefaultButton(
+            "Return to World Map",
+            WINDOW_WIDTH,
+            WINDOW_HEIGHT
+        );
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new WorldMap(game));
+            }
+        });
+        return button;
+    }
+
+    private TextButton createReturnMainMenuButton() {
+        TextButton button = buttonGenerator.createDefaultButton(
+            "Return to Main Menu",
+            WINDOW_WIDTH,
+            WINDOW_HEIGHT
+        );
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new MainMenuScreen(game));
+            }
+        });
+        return button;
     }
 
 

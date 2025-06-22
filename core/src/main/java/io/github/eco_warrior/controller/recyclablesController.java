@@ -15,7 +15,7 @@ public class recyclablesController {
 
     // Spawn parameters
     private float spawnTimer = 0f;
-    private float spawnInterval = 1.5f;
+    private float spawnInterval = 1.0f;
     private float startX;
     private float startY;
 

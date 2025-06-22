@@ -228,7 +228,7 @@ public class GameSprite extends spriteGenerator {
 
     public void playCorrectSound(){
         if(correctSoundFX != null){
-            correctSoundFX.play();
+            correctSoundFX.play(0.5f);
 
         }
 //        soundPlayed = true;
@@ -237,7 +237,7 @@ public class GameSprite extends spriteGenerator {
 
     public void playSound(){
         if(correctSoundFX != null){
-            correctSoundFX.play();
+            correctSoundFX.play(0.5f);
 
         }
 
@@ -246,7 +246,7 @@ public class GameSprite extends spriteGenerator {
     public void playWrongSound(){
 
         if (wrongSoundFx != null) {
-            wrongSoundFx.play();
+            wrongSoundFx.play(0.5f);
         }
 //        soundPlayed = true;
 

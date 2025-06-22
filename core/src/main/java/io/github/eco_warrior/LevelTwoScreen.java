@@ -323,7 +323,6 @@ public class LevelTwoScreen implements Screen {
                 addBackEnemyToPool(enemy);
             }
         }
-        System.out.println("Active Enemies Count: " + enemyManager.getEnemies().size());
 
     }
 
@@ -398,7 +397,7 @@ public class LevelTwoScreen implements Screen {
 
 
         batch.end();
-        debugSprite();
+//        debugSprite();
 
         uiBatch.setProjectionMatrix(camera.combined);
         uiBatch.begin();

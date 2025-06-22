@@ -209,6 +209,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         //show wins
         conveyorBelt.stopAnimation();
         backgroundMusic.stop();
+        game.setLevel(2);
         game.setScreen(new ResultScreen(game, score, false,
             "You have successfully recycled all the items!",
             new Texture(Gdx.files.internal("Image/recycle_manager_happy_v2.png"))));
@@ -408,7 +409,7 @@ public class FirstLevelScreen extends LevelMaker implements Screen {
         batch.end();
         binController.drawLabels(batch, camera);
         //debugging draw green line
-        debugSprite();
+//        debugSprite();
 
 
         scoreFont.fontDraw(uiBatch, "Score: " + score , camera, new Vector2(WINDOW_WIDTH, WINDOW_HEIGHT - 10f), textEnum.LEFT, textEnum.TOP);

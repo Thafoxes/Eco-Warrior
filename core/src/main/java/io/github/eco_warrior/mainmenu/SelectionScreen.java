@@ -13,10 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import io.github.eco_warrior.FirstLevelScreen;
-import io.github.eco_warrior.LevelThreeScreen;
-import io.github.eco_warrior.LevelTwoScreen;
-import io.github.eco_warrior.Main;
+import io.github.eco_warrior.*;
 import io.github.eco_warrior.screen.instructions.L1Instructions;
 import io.github.eco_warrior.screen.instructions.L3Instructions;
 
@@ -44,7 +41,7 @@ public class SelectionScreen implements Screen {
     @Override
     public void show() {
 
-        stage = new Stage(new FitViewport(1280, 720));
+        stage = new Stage(new FitViewport(WINDOW_WIDTH, WINDOW_HEIGHT));
         Gdx.input.setInputProcessor(stage);
 
         // Use the global MusicManager to play the music
@@ -105,6 +102,7 @@ public class SelectionScreen implements Screen {
 
         // Create buttons for levels
         buttons = new ArrayList<>();
+        buttons.add(createLevelButton(buttonStyle, "Begin Story Mode", new WorldMap(game)));
         buttons.add(createLevelButton(buttonStyle, "Level 1", new L1Instructions(game))); // Navigate to Level1Screen
         buttons.add(createLevelButton(buttonStyle, "Level 2", new LevelTwoScreen(game))); // Navigate to Level2Screen
         buttons.add(createLevelButton(buttonStyle, "Level 3", new L3Instructions(game))); // Navigate to L3Instructions
@@ -128,10 +126,11 @@ public class SelectionScreen implements Screen {
     private TextButton createLevelButton(TextButton.TextButtonStyle buttonStyle, String buttonName, Screen targetScreen) {
         // Create a level button
         TextButton levelButton = new TextButton(buttonName, buttonStyle);
-        levelButton.setSize(200, 80);
+        levelButton.setSize(400, 80);
         levelButton.addListener(new ClickListener() {
             @Override
             public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
+                System.out.println("Button clicked: " + buttonName); // Add debug output
                 MusicManager.getInstance().stopMusic();
                 clickSound.play(SettingsManager.getInstance().getClickSoundVolume());
                 // Navigate to LoadingScreen first, and then to targetScreen
@@ -147,17 +146,18 @@ public class SelectionScreen implements Screen {
         float viewportHeight = stage.getViewport().getWorldHeight();
 
         // Calculate spacing between buttons
-        float totalHeight = buttons.size() * buttons.get(0).getHeight(); // Total height occupied by buttons
-        float padding = (viewportHeight - totalHeight) / (buttons.size() + 1); // Padding between buttons
+        float buttonHeight = buttons.get(0).getHeight();
+        float totalButtonsHeight = buttons.size() * buttonHeight;
+        float spacing = Math.min(30, (viewportHeight - totalButtonsHeight) / (buttons.size() + 1));
 
-        // Position each button
-        float currentY = viewportHeight - padding; // Start from top with padding
-        for (TextButton button : buttons) {
+        float startY = viewportHeight / 2 + totalButtonsHeight /2;
+
+        for(int i = 0; i < buttons.size(); i++) {
+            TextButton button = buttons.get(i);
             button.setPosition(
-                viewportWidth / 2 - button.getWidth() / 2, // Center horizontally
-                currentY - button.getHeight() // Place button and subtract its height
+                viewportWidth / 2 - button.getWidth() / 2,
+                startY - i * (buttonHeight + spacing)
             );
-            currentY -= (button.getHeight() + padding); // Move to next position
         }
 
         // Position the closeButton at the bottom-left corner

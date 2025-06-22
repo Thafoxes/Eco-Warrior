@@ -123,11 +123,11 @@ public class L2Instructions implements Screen {
 
         // Draw instruction text
         String[] instructions = {
-            "1. Use the bucket to catch water drops",
-            "2. Use the spray to defeat spiders",
-            "3. Use the correct tools to fix pipe leaks",
-            "4. Use wrench to fix big leaks, duct tape for small leaks",
-            "5. Dump collected water to the water reservoir to empty the bucket!",
+            "1. Use shovel to dig the hole accodring to the flag and sapling",
+            "2. Use the shovel to hit the monsters!",
+            "3. Water the plants to grow them",
+            "4. Use fertilizer to revive the plants",
+            "5. Plant all the trees to complete the level",
         };
 
         float textY = WINDOW_HEIGHT / (instructions.length * 4); // Position text below the title
