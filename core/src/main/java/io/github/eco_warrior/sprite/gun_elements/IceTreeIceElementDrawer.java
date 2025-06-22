@@ -46,8 +46,8 @@ public class IceTreeIceElementDrawer {
         return hideMs;
     }
 
-    public void draw(SpriteBatch batch, float delta, RayGun.RayGunMode currentMode) {
-        for (TreeController<?> controller : treeControllerManager.treeControllers) {
+    public void draw(SpriteBatch batch, float delta/*, RayGun.RayGunMode currentMode*/) {
+        for (TreeController<?> controller : treeControllerManager.getTreeControllers()) {
             Trees tree = controller.getTree();
             if (tree instanceof IceTree) {
                 boolean isMature = tree.getStage() == IceTree.TreeStage.MATURED_TREE;
@@ -56,7 +56,7 @@ public class IceTreeIceElementDrawer {
                     || tree.getStage() == IceTree.TreeStage.DEAD_SAPLING;
 
                 long now = System.currentTimeMillis();
-                if (!isMature || isDead || currentMode == RayGun.RayGunMode.ICE) {
+                if (!isMature || isDead /*|| currentMode == RayGun.RayGunMode.ICE*/) {
                     iceIconState.visible = false;
                     return;
                 }

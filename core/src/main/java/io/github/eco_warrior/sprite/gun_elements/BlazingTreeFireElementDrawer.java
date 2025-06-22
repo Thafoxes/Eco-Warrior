@@ -52,8 +52,8 @@ public class BlazingTreeFireElementDrawer {
         return hideMs;
     }
 
-    public void draw(SpriteBatch batch, float delta, RayGun.RayGunMode currentMode) {
-        for (TreeController<?> controller : treeControllerManager.treeControllers) {
+    public void draw(SpriteBatch batch, float delta/*, RayGun.RayGunMode currentMode*/) {
+        for (TreeController<?> controller : treeControllerManager.getTreeControllers()) {
             Trees tree = controller.getTree();
             if (tree instanceof BlazingTree) {
                 boolean isMature = tree.getStage() == BlazingTree.TreeStage.MATURED_TREE;
@@ -62,7 +62,7 @@ public class BlazingTreeFireElementDrawer {
                     || tree.getStage() == BlazingTree.TreeStage.DEAD_SAPLING;
 
                 long now = System.currentTimeMillis();
-                if (!isMature || isDead || currentMode == RayGun.RayGunMode.BLAZING) {
+                if (!isMature || isDead /*|| currentMode == RayGun.RayGunMode.BLAZING*/) {
                     fireIconState.visible = false;
                     return;
                 }

@@ -46,8 +46,8 @@ public class BreezingTreeWindElementDrawer {
         return hideMs;
     }
 
-    public void draw(SpriteBatch batch, float delta, RayGun.RayGunMode currentMode) {
-        for (TreeController<?> controller : treeControllerManager.treeControllers) {
+    public void draw(SpriteBatch batch, float delta/*, RayGun.RayGunMode currentMode*/) {
+        for (TreeController<?> controller : treeControllerManager.getTreeControllers()) {
             Trees tree = controller.getTree();
             if (tree instanceof BreezingTree) {
                 boolean isMature = tree.getStage() == BreezingTree.TreeStage.MATURED_TREE;
@@ -56,7 +56,7 @@ public class BreezingTreeWindElementDrawer {
                     || tree.getStage() == BreezingTree.TreeStage.DEAD_SAPLING;
 
                 long now = System.currentTimeMillis();
-                if (!isMature || isDead || currentMode == RayGun.RayGunMode.BREEZING) {
+                if (!isMature || isDead /*|| currentMode == RayGun.RayGunMode.BREEZING*/) {
                     windIconState.visible = false;
                     return;
                 }

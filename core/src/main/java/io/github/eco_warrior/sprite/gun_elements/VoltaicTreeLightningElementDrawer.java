@@ -51,8 +51,8 @@ public class VoltaicTreeLightningElementDrawer {
         return hideMs;
     }
 
-    public void draw(SpriteBatch batch, float delta, RayGun.RayGunMode currentMode) {
-        for (TreeController<?> controller : treeControllerManager.treeControllers) {
+    public void draw(SpriteBatch batch, float delta/*, RayGun.RayGunMode currentMode*/) {
+        for (TreeController<?> controller : treeControllerManager.getTreeControllers()) {
             Trees tree = controller.getTree();
             if (tree instanceof VoltaicTree) {
                 boolean isMature = tree.getStage() == VoltaicTree.TreeStage.MATURED_TREE;
@@ -61,7 +61,7 @@ public class VoltaicTreeLightningElementDrawer {
                     || tree.getStage() == VoltaicTree.TreeStage.DEAD_SAPLING;
 
                 long now = System.currentTimeMillis();
-                if (!isMature || isDead || currentMode == RayGun.RayGunMode.VOLTAIC) {
+                if (!isMature || isDead /*|| currentMode == RayGun.RayGunMode.VOLTAIC*/) {
                     lightningIconState.visible = false;
                     return;
                 }

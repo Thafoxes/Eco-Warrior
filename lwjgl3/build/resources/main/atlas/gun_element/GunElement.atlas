@@ -1,0 +1,15 @@
+GunElement.png
+size:256,512
+repeat:none
+fire element
+bounds:2,142,133,173
+offsets:64,44,260,261
+ice element
+bounds:2,2,137,138
+offsets:62,63,260,263
+lighting element
+bounds:137,176,82,139
+offsets:90,59,260,259
+wind element
+bounds:2,317,175,175
+offsets:46,33,260,254

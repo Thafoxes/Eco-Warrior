@@ -32,6 +32,7 @@ import io.github.eco_warrior.enums.ButtonEnums;
 import io.github.eco_warrior.enums.GardeningEnums;
 import io.github.eco_warrior.enums.TreeType;
 import io.github.eco_warrior.sprite.*;
+import io.github.eco_warrior.sprite.UI.GunElementUI;
 import io.github.eco_warrior.sprite.buttons.FertilizerButton;
 import io.github.eco_warrior.sprite.buttons.UpgradePotionButton;
 import io.github.eco_warrior.sprite.gardening_equipments.*;
@@ -80,7 +81,7 @@ public class LevelTwoScreen implements Screen {
 
     //currency
     private Currency currency;
-
+    private float stateTime;
     //gun elements
     private GunElementUI gunElementUI;
 
@@ -106,7 +107,7 @@ public class LevelTwoScreen implements Screen {
     private MetalChuckPool metalChuckPool;
     private ArrayList<EnemyController> enemyControllersToBeRemove;
     private float spawnTimer = 0f;
-    private float spawnInterval = 4f;
+    private float spawnInterval = 10f;
 
     private final Random rand = new Random();
 
@@ -136,6 +137,10 @@ public class LevelTwoScreen implements Screen {
 
         //setup camera to middle
         camera.position.set(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0);
+
+        //initialize GunElement atlas
+        gunElementUI = new GunElementUI("atlas/gun_element/GunElement.atlas", "atlas/gun_element/Lighting.atlas", "atlas/gun_element/Fire.atlas", "atlas/gun_element/Wind.atlas", "atlas/gun_element/Ice.atlas");
+
 
         initializeTools();
         initializeTrees();
@@ -376,7 +381,7 @@ public class LevelTwoScreen implements Screen {
     private <T extends EnemyController> void spawnEnemy(float delta, EnemyPool<T> pool) {
         spawnTimer += delta;
 
-        if (spawnTimer >= spawnInterval && pool.getActiveCount() < 5) { // Limit to 5 enemies at a time
+        if (spawnTimer >= spawnInterval && pool.getActiveCount() < 1) { // Limit to 5 enemies at a time
             ArrayList<TreeType> treeTypes = pool.getAttackTreeType();
 
             int randomIndex = rand.nextInt(0, treeTypes.size());
@@ -414,6 +419,7 @@ public class LevelTwoScreen implements Screen {
         camera.update();
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        stateTime = Gdx.graphics.getDeltaTime();
 
         batch.setProjectionMatrix(camera.combined);
 
@@ -426,10 +432,10 @@ public class LevelTwoScreen implements Screen {
         enemyManager.draw(batch);
 
         //draw the elements for gun
-        blazingTreeFireElementDrawer.draw(batch, stateTime, rayGun.getMode());
-        voltaicTreeLightningDrawer.draw(batch, stateTime, rayGun.getMode());
-        breezingTreeWindElementDrawer.draw(batch, stateTime, rayGun.getMode());
-        iceTreeIceElementDrawer.draw(batch, stateTime, rayGun.getMode());
+        blazingTreeFireElementDrawer.draw(batch, stateTime/*, rayGun.getMode()*/);
+        voltaicTreeLightningDrawer.draw(batch, stateTime/*, rayGun.getMode()*/);
+        breezingTreeWindElementDrawer.draw(batch, stateTime/*, rayGun.getMode()*/);
+        iceTreeIceElementDrawer.draw(batch, stateTime/*, rayGun.getMode()*/);
 
         batch.end();
         debugSprite();
@@ -521,7 +527,15 @@ public class LevelTwoScreen implements Screen {
                 toolManager.addFertilizerController(fertilizerController);
 
             } else if (buttonManager.buttonType == ButtonManager.ButtonType.UPGRADE_POTION_BUTTON){
-                // add potion function here
+                long newHideMs;
+                newHideMs = blazingTreeFireElementDrawer.getHideMs() - 1000;
+                blazingTreeFireElementDrawer.setHideMs(newHideMs);
+                newHideMs = breezingTreeWindElementDrawer.getHideMs() - 1000;
+                breezingTreeWindElementDrawer.setHideMs(newHideMs);
+                newHideMs = iceTreeIceElementDrawer.getHideMs() - 1000;
+                iceTreeIceElementDrawer.setHideMs(newHideMs);
+                newHideMs = voltaicTreeLightningDrawer.getHideMs() - 1000;
+                voltaicTreeLightningDrawer.setHideMs(newHideMs);
             }
             isReleased = true;
 
@@ -561,6 +575,29 @@ public class LevelTwoScreen implements Screen {
                     }
                 }
             }
+
+        }
+
+        if(draggingTool instanceof RayGun){
+            if (rayGun.getMode() != RayGun.RayGunMode.USELESS) {
+                for(EnemyController enemy : enemyManager.getEnemies()){
+                    if(enemy.getCollisionRect().overlaps(draggingTool.getCollisionRect())){
+                        if(enemy instanceof WormController){
+                            if(!enemy.isDead()){
+                                enemy.die();
+                                rayGun.playModeSound();
+                            }
+                        }
+                        if(enemy instanceof MetalChuckController){
+                            if(!enemy.isDead()){
+                                enemy.die();
+                                rayGun.playModeSound();
+                            }
+                        }
+                    }
+                }
+            }
+
 
         }
         // Check if the tool is a watering can and if it can water a fountain
