@@ -32,7 +32,7 @@ public abstract class Enemies extends GameSprite{
     // Direction of movement, true for right, false for left
     protected boolean isRightDirection = false;
     protected final static float movementSpeed = 50f;
-    protected float attackCooldown = 1.5f;
+    protected float attackCooldown = 3.0f;
     protected boolean canAttack = true;
     protected boolean isDoneAnimation = false;
     protected TextureAtlas atlas;

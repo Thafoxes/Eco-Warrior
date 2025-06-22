@@ -95,7 +95,7 @@ public class LevelTwoScreen implements Screen {
     private MetalChuckPool metalChuckPool;
     private List<EnemyController> hiddenEnemies;
     private float spawnTimer = 0f;
-    private float spawnInterval = 4f;
+    private float spawnInterval = 8f;
 
     private final Random rand = new Random();
 

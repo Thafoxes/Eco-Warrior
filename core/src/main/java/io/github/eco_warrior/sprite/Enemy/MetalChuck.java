@@ -30,6 +30,7 @@ public class MetalChuck extends Enemies {
         isRightDirection = true;
 
         loadAnimations();
+        loadAudio();
     }
 
     /**
