@@ -313,19 +313,21 @@ public class LevelTwoScreen implements Screen {
         spawnMetalChuck(delta);
         enemyManager.update(delta);
 
+        //TODO - Issue stacking here
         Iterator<EnemyController> activeIterator = enemyManager.getEnemies().iterator();
         while (activeIterator.hasNext()) {
             EnemyController enemy = activeIterator.next();
             if (enemy.isDead()) {
-                enemy.resetState();
-                enemy.setSpritePosition(new Vector2(-100, -100));
                 activeIterator.remove();
+                //reset and return to pool
+                addBackEnemyToPool(enemy);
             }
         }
+        System.out.println("Active Enemies Count: " + enemyManager.getEnemies().size());
 
     }
 
-    private <T extends EnemyPool> void returnEnemyToHideScreen(EnemyController enemy) {
+    private <T extends EnemyPool> void addBackEnemyToPool(EnemyController enemy) {
         if (enemy instanceof WormController) {
             wormPool.returnEnemy((WormController) enemy);
         } else if (enemy instanceof MetalChuckController) {
@@ -336,15 +338,15 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void spawnMetalChuck(float delta) {
-        spawnEnemy(delta, metalChuckPool);
+        spawnEnemy(delta, metalChuckPool, spawnInterval);
     }
 
     private void spawnWorm(float delta) {
-        spawnEnemy(delta, wormPool);
+        spawnEnemy(delta, wormPool, spawnInterval);
 
     }
 
-    private <T extends EnemyController> void spawnEnemy(float delta, EnemyPool<T> pool) {
+    private <T extends EnemyController> void spawnEnemy(float delta, EnemyPool<T> pool, float spawnInterval) {
         spawnTimer += delta;
 
         if (spawnTimer >= spawnInterval && pool.getActiveCount() < 5) { // Limit to 5 enemies at a time
@@ -352,11 +354,9 @@ public class LevelTwoScreen implements Screen {
 
             int randomIndex = rand.nextInt(0, treeTypes.size());
             float ypos = treePositions.get(treeTypes.get(randomIndex)).y;
+
             Vector2 spawnPos = new Vector2(WINDOW_WIDTH + 50f, ypos);
-            T enemy = pool.getEnemy(spawnPos, treeTypes.get(randomIndex));
-            if(enemy != null){
-                enemyManager.addEnemy(enemy);
-            }
+            pool.getEnemy(spawnPos, treeTypes.get(randomIndex));
             spawnTimer = 0; // Reset the timer after spawning an enemy
         }
 

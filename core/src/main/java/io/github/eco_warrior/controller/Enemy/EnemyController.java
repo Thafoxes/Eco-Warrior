@@ -14,7 +14,7 @@ import io.github.eco_warrior.enums.TreeType;
 
 public abstract class EnemyController {
     protected Enemies enemy;
-    protected static final float moveSpeed = 50f;
+    protected static final float moveSpeed = 100f;
     protected BaseExplosion deathEffect;
     protected boolean isExploding = false;
     protected EnemyType enemyType;
