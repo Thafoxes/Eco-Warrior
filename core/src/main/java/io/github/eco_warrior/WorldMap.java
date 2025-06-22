@@ -27,7 +27,7 @@ import java.util.Arrays;
 
 import static io.github.eco_warrior.constant.ConstantsVar.*;
 
-public class WorldTestsV2 implements Screen {
+public class WorldMap implements Screen {
 
     public static final int LAYER_MAP = 4;
     private MapLoader map;
@@ -62,7 +62,7 @@ public class WorldTestsV2 implements Screen {
     //fade
     private ScreenTransition transition;
 
-    public WorldTestsV2(Game game) {
+    public WorldMap(Game game) {
         this.game = game;
         this.shapeRenderer = new ShapeRenderer();
         this.transition = new ScreenTransition(game);
