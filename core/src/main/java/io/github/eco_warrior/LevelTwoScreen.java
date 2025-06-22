@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.Tree;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.controller.Enemy.EnemyController;
@@ -304,9 +305,8 @@ public class LevelTwoScreen implements Screen {
                     //System.out.println("L2 - Enemy " + enemy.getClass().getSimpleName() + " is attacking tree: " + currentTreeType);
                 }
                 //TODO - solve the issue of enemy done attack then take damage
-                if ( enemy.isAnimDoneAttacking()) {
+                if ( enemy.isAnimDoneAttacking(treeController)) {
                     System.out.println("L2 - called!");
-                    treeController.takeDamage(1);
                     enemy.resetAttackState();
                     // Reset the attack state after attacking
                 }
@@ -357,8 +357,8 @@ public class LevelTwoScreen implements Screen {
 
     private <T extends EnemyController> void spawnEnemy(float delta, EnemyPool<T> pool) {
         spawnTimer += delta;
-        //TODO - DEBUG CHECK LIMIT ENEMIES EDIT
-        if (spawnTimer >= spawnInterval && pool.getActiveCount() < 1) { // Limit to 5 enemies at a time
+
+        if (spawnTimer >= spawnInterval && pool.getActiveCount() < 5) { // Limit to 5 enemies at a time
             ArrayList<TreeType> treeTypes = pool.getAttackTreeType();
 
             int randomIndex = rand.nextInt(0, treeTypes.size());

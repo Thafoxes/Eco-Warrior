@@ -34,12 +34,14 @@ public abstract class Enemies extends GameSprite{
     protected final static float movementSpeed = 50f;
     protected float attackCooldown = 1.5f;
     protected boolean canAttack = true;
-
+    protected boolean isDoneAnimation = false;
     protected TextureAtlas atlas;
     protected Map<EnemyState, Animation<TextureRegion>> animationMap = new HashMap<>();
 
     //sound effects
     protected Sound attackSound;
+
+    private final float attackDuration = 0.5f; // Adjust this value based on your animation length
 
     public Enemies(String atlasPath, String regionBaseName, int frameCount, Vector2 position, float scale) {
         super(atlasPath,
@@ -87,6 +89,7 @@ public abstract class Enemies extends GameSprite{
     public void attack() {
         if (canAttack && currentState != EnemyState.DEAD && currentState != EnemyState.ATTACKING) {
             setState(EnemyState.ATTACKING);
+            isDoneAnimation = false;
             canAttack = false;
             stateTime = 0;
         }
@@ -133,7 +136,8 @@ public abstract class Enemies extends GameSprite{
     }
 
     public boolean isDoneAttacking() {
-        return currentState == EnemyState.ATTACKING && animationMap.get(currentState).isAnimationFinished(stateTime);
+        return currentState == EnemyState.ATTACKING && animationMap.get(currentState).isAnimationFinished(stateTime)
+            || stateTime >= attackDuration;
     }
 
     public EnemyState getCurrentState() {
@@ -167,6 +171,7 @@ public abstract class Enemies extends GameSprite{
 
         if(currentState == EnemyState.ATTACKING && currentAnimation.isAnimationFinished(stateTime)){
             setState(EnemyState.IDLE);
+            isDoneAnimation = true;
             stateTime = 0f;
             canAttack = false;
             Timer.schedule(new Timer.Task() {

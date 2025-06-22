@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import io.github.eco_warrior.controller.Trees.TreeController;
 import io.github.eco_warrior.entity.BaseExplosion;
 import io.github.eco_warrior.entity.Enemies;
 import io.github.eco_warrior.enums.EnemyType;
@@ -74,10 +75,11 @@ public abstract class EnemyController {
         }
     }
 
-    public boolean isAnimDoneAttacking() {
+    public boolean isAnimDoneAttacking(TreeController<?> treeController) {
 
-        if(enemy.isDoneAttacking() || enemy.isCanAttack()){
+        if(isAttacking && (enemy.isDoneAttacking() || enemy.getCurrentState() == Enemies.EnemyState.IDLE)) {
             isAttacking = false;
+            treeController.takeDamage(1);
             return true;
         }else{
             return false;
