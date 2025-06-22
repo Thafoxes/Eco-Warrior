@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.ui.Tree;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.controller.Enemy.EnemyController;
@@ -24,6 +23,7 @@ import io.github.eco_warrior.controller.Pools.MetalChuckPool;
 import io.github.eco_warrior.controller.Pools.WormPool;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.controller.Trees.*;
+import io.github.eco_warrior.entity.Enemies;
 import io.github.eco_warrior.entity.GameSprite;
 
 import java.util.*;
@@ -93,7 +93,7 @@ public class LevelTwoScreen implements Screen {
     private EnemyManager enemyManager;
     private WormPool wormPool;
     private MetalChuckPool metalChuckPool;
-    private ArrayList<EnemyController> enemyControllersToBeRemove;
+    private List<EnemyController> hiddenEnemies;
     private float spawnTimer = 0f;
     private float spawnInterval = 4f;
 
@@ -151,7 +151,7 @@ public class LevelTwoScreen implements Screen {
 
     private void initializeEnemyManager() {
         enemyManager = new EnemyManager();
-        enemyControllersToBeRemove = new ArrayList<>();
+        hiddenEnemies = new ArrayList<>();
         wormPool = new WormPool(enemyManager);
         metalChuckPool = new MetalChuckPool(enemyManager);
 
@@ -302,14 +302,8 @@ public class LevelTwoScreen implements Screen {
 
                 if(!enemy.isAttacking()){
                     enemy.attack();
-                    //System.out.println("L2 - Enemy " + enemy.getClass().getSimpleName() + " is attacking tree: " + currentTreeType);
                 }
-                //TODO - solve the issue of enemy done attack then take damage
-                if ( enemy.isAnimDoneAttacking(treeController)) {
-                    System.out.println("L2 - called!");
-                    enemy.resetAttackState();
-                    // Reset the attack state after attacking
-                }
+                enemy.isAnimDoneAttacking(treeController);
             }
         }
     }
@@ -319,24 +313,19 @@ public class LevelTwoScreen implements Screen {
         spawnMetalChuck(delta);
         enemyManager.update(delta);
 
-        for(EnemyController enemy : enemyManager.getEnemies()) {
-            if(enemy.isDead()){
-                addBackEnemyToPool(enemy);
-                enemyControllersToBeRemove.add(enemy);
+        Iterator<EnemyController> activeIterator = enemyManager.getEnemies().iterator();
+        while (activeIterator.hasNext()) {
+            EnemyController enemy = activeIterator.next();
+            if (enemy.isDead()) {
+                enemy.resetState();
+                enemy.setSpritePosition(new Vector2(-100, -100));
+                activeIterator.remove();
             }
-        }
-
-        if(!enemyControllersToBeRemove.isEmpty()){
-            System.out.println("L2 - Removing enemies from enemy manager: " + enemyControllersToBeRemove.size());
-            for(EnemyController enemy : enemyControllersToBeRemove) {
-                enemyManager.getEnemies().remove(enemy);
-            }
-            enemyControllersToBeRemove.clear();
         }
 
     }
 
-    private <T extends EnemyPool> void addBackEnemyToPool(EnemyController enemy) {
+    private <T extends EnemyPool> void returnEnemyToHideScreen(EnemyController enemy) {
         if (enemy instanceof WormController) {
             wormPool.returnEnemy((WormController) enemy);
         } else if (enemy instanceof MetalChuckController) {
@@ -363,7 +352,6 @@ public class LevelTwoScreen implements Screen {
 
             int randomIndex = rand.nextInt(0, treeTypes.size());
             float ypos = treePositions.get(treeTypes.get(randomIndex)).y;
-
             Vector2 spawnPos = new Vector2(WINDOW_WIDTH + 50f, ypos);
             T enemy = pool.getEnemy(spawnPos, treeTypes.get(randomIndex));
             if(enemy != null){
@@ -371,6 +359,7 @@ public class LevelTwoScreen implements Screen {
             }
             spawnTimer = 0; // Reset the timer after spawning an enemy
         }
+
     }
 
     private void updateTrashController(float delta) {

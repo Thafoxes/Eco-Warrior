@@ -34,9 +34,9 @@ public class WormTestScreen implements Screen {
 
         collisionAreas = new Array<Rectangle>();
         // Add some target areas for collision testing
-        collisionAreas.add(new Rectangle(0, 200, 500, 500));
-        collisionAreas.add(new Rectangle(300, 400, 500, 500));
-        collisionAreas.add(new Rectangle(1000, 300, 500, 500));
+        collisionAreas.add(new Rectangle(0, 200, 100, 100));
+        collisionAreas.add(new Rectangle(300, 400, 100, 100));
+        collisionAreas.add(new Rectangle(1000, 300, 100, 100));
 
         initializeEnemies();
     }

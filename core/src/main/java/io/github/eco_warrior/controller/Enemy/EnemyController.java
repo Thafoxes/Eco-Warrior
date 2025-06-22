@@ -80,6 +80,7 @@ public abstract class EnemyController {
         if(isAttacking && (enemy.isDoneAttacking() || enemy.getCurrentState() == Enemies.EnemyState.IDLE)) {
             isAttacking = false;
             treeController.takeDamage(1);
+            resetAttackState();
             return true;
         }else{
             return false;

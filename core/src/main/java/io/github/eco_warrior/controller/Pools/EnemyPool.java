@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public abstract class EnemyPool<T extends EnemyController> {
     protected Array<EnemyController> enemyPool;
-    protected final int maxPoolSize = 5;
+    protected final int maxPoolSize = 20;
     protected EnemyManager enemyManager;
     protected int poolSent = 0;
     protected ArrayList<TreeType> treeTypeToAttack;

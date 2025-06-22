@@ -55,15 +55,11 @@ public abstract class Enemies extends GameSprite{
     protected abstract void loadAudio();
 
     public void resetState(){
-        System.out.println("Enemies: stateTime reset: " + stateTime);
         this.currentState = EnemyState.IDLE;
         this.previousState = EnemyState.IDLE;
         this.stateTime = 0f;
         this.isRightDirection = false;
         this.canAttack = true;
-        // Reset animations
-        loadAnimations();
-        loadAudio();
     }
 
     public void setState(EnemyState newState) {
@@ -102,11 +98,15 @@ public abstract class Enemies extends GameSprite{
 
     public void update(float delta) {
 
+        if (!isDead()) {
+            stateTime += delta;
+        }
         updateState(delta);
 
     }
 
     public void updateState(float delta){
+
         if(previousState != currentState) {
             stateTime = 0;
         }
@@ -117,10 +117,11 @@ public abstract class Enemies extends GameSprite{
                 handleAttackingAnimation(currentAnimation);
             }
             updateAnimationFrame(currentAnimation);
+
         }
 
         previousState = currentState;
-        stateTime += delta;
+
     }
 
     public void move() {
