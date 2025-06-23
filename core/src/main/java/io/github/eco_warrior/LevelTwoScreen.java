@@ -34,6 +34,7 @@ import io.github.eco_warrior.enums.GardeningEnums;
 import io.github.eco_warrior.enums.TreeType;
 import io.github.eco_warrior.screen.ResultScreen;
 import io.github.eco_warrior.sprite.*;
+import io.github.eco_warrior.sprite.UI.CooldownReductionTimer;
 import io.github.eco_warrior.sprite.UI.GunElementUI;
 import io.github.eco_warrior.sprite.buttons.FertilizerButton;
 import io.github.eco_warrior.sprite.buttons.UpgradePotionButton;
@@ -84,6 +85,10 @@ public class LevelTwoScreen implements Screen {
     //currency
     private Currency currency;
     private float stateTime;
+
+    //cooldown reduction timer
+    private CooldownReductionTimer cooldownReductionTimer;
+
     //gun elements
     private GunElementUI gunElementUI;
 
@@ -160,6 +165,7 @@ public class LevelTwoScreen implements Screen {
 
         initializeCurrencyUI();
         initializeButtons();
+        initializeCooldownReductionTimerUI();
 
 //initialize for drawing gun elements + elements hiding time
         blazingTreeFireElementDrawer = new io.github.eco_warrior.sprite.gun_elements.BlazingTreeFireElementDrawer(treeControllerManager, gunElementUI, 3000); // 3 seconds
@@ -171,6 +177,10 @@ public class LevelTwoScreen implements Screen {
 
     private void initializeCurrencyUI() {
         currency = new Currency(new Vector2(20, WINDOW_HEIGHT - 60), 0.2f, camera);
+    }
+
+    private void initializeCooldownReductionTimerUI() {
+        cooldownReductionTimer = new CooldownReductionTimer(new Vector2(WINDOW_WIDTH / 2 + 250, WINDOW_HEIGHT / 2), 0.5f);
     }
 
     private void initializeTrashArea() {
@@ -216,7 +226,7 @@ public class LevelTwoScreen implements Screen {
         waterFountain = new WaterFountain(new Vector2(1, 180), lakeScale);
 
 
-        rayGun = new io.github.eco_warrior.sprite.gardening_equipments.RayGun(new Vector2(spacing - manipulatorX, startY), toolScale);        wateringCan = new WateringCan(new Vector2(spacing * 2 - manipulatorX, startY), toolScale);
+        rayGun = new io.github.eco_warrior.sprite.gardening_equipments.RayGun(new Vector2(spacing - manipulatorX, startY), toolScale);
         wateringCan = new WateringCan(new Vector2(spacing * 2 - manipulatorX, startY), toolScale);
         Shovel shovel = new Shovel(new Vector2(spacing * 3 - manipulatorX, startY), toolScale);
         fertilizerController = new FertilizerController(new Vector2(spacing * 4 - manipulatorX, startY), toolScale);
@@ -318,6 +328,7 @@ public class LevelTwoScreen implements Screen {
 
         updateTrashController(delta);
         updateButtonManager(delta);
+        updateTimerAnimation(delta);
         winningCondition(delta);
 
     }
@@ -458,6 +469,10 @@ public class LevelTwoScreen implements Screen {
         groundTrashController.update(delta);
     }
 
+    private void updateTimerAnimation(float delta) {
+        cooldownReductionTimer.update(delta);
+    }
+
     private void updateTreeManager(float delta) {
         treeControllerManager.update(delta);
     }
@@ -487,6 +502,7 @@ public class LevelTwoScreen implements Screen {
         treeControllerManager.draw(batch);
         groundTrashController.draw(batch);
         buttonManager.draw(batch);
+        drawCooldownReductionTimer();
         enemyManager.draw(batch);
 
         //draw the elements for gun
@@ -496,8 +512,14 @@ public class LevelTwoScreen implements Screen {
         iceTreeIceElementDrawer.draw(batch, stateTime/*, rayGun.getMode()*/);
 
         batch.end();
-        debugSprite();
+//        debugSprite();
 
+    }
+
+    private void drawCooldownReductionTimer() {
+        if (CooldownReductionTimer.isAnimationPlayed) {
+            cooldownReductionTimer.draw(batch);
+        }
     }
 
     private void drawUI(float delta) {
@@ -541,8 +563,16 @@ public class LevelTwoScreen implements Screen {
                 // Only try to pick up a tool if we're not already dragging
                 draggingTool = toolManager.getToolAt(currentTouchPos);
                 if (draggingTool != null) {
-                    isDragging = true;
-                    isReturning = false;
+                    // Not drawn sapling cannot be dragged
+                    if (draggingTool instanceof BaseSaplingController) {
+                        if (toolManager.canDragSaplingAt(currentTouchPos)) {
+                            isDragging = true;
+                            isReturning = false;
+                        }
+                    } else {
+                        isDragging = true;
+                        isReturning = false;
+                    }
                 }
             } else if (isDragging && draggingTool != null){ //ensure the tool is not null
                 // Update tool position while dragging
@@ -619,6 +649,8 @@ public class LevelTwoScreen implements Screen {
                 iceTreeIceElementDrawer.setHideMs(newHideMs);
                 newHideMs = voltaicTreeLightningDrawer.getHideMs() - 1000;
                 voltaicTreeLightningDrawer.setHideMs(newHideMs);
+
+                cooldownReductionTimer.clockRun();
             }
             isReleased = true;
 
@@ -746,6 +778,7 @@ public class LevelTwoScreen implements Screen {
         toolManager.drawDebug(shapeRenderer);
         treeControllerManager.drawDebug(shapeRenderer);
         buttonManager.drawDebug(shapeRenderer);
+        cooldownReductionTimer.drawDebug(shapeRenderer);
         waterFountain.drawDebug(shapeRenderer);
         groundTrashController.drawDebug(shapeRenderer);
         enemyManager.drawDebug(shapeRenderer);
@@ -763,6 +796,7 @@ public class LevelTwoScreen implements Screen {
         treeControllerManager.dispose();
         groundTrashController.dispose();
         buttonManager.dispose();
+        cooldownReductionTimer.dispose();
         enemyManager.dispose();
         wateringCan.dispose();
         if(timerFont != null) timerFont.dispose();

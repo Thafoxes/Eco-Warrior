@@ -1,4 +1,4 @@
-package io.github.eco_warrior.sprite.buttons;
+package io.github.eco_warrior.sprite.UI;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
@@ -15,42 +15,39 @@ import io.github.eco_warrior.entity.GameSprite;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class PurchaseButton extends GameSprite {
+public class CooldownReductionTimer extends GameSprite {
 
-    public enum ButtonStage {
-        NOT_PRESSED,
-        PRESSED
+    public enum TimerStage {
+        STATIC,
+        RUN
     }
 
-    protected String filePath;
-    protected ButtonStage buttonStage = ButtonStage.NOT_PRESSED;
+    protected TimerStage timerStage = TimerStage.STATIC;
     protected TextureAtlas atlas;
-    protected final Map<ButtonStage, Animation<TextureRegion>> animationMap = new HashMap<>();
+    protected final Map<TimerStage, Animation<TextureRegion>> animationMap = new HashMap<>();
     protected float stateTime = 0;
-    protected float pressedStateTime = .7f;
-    protected Timer.Task clickedTask;
-    public int price;
+    protected float clockAnimationTime = 1.6f;
+    protected Timer.Task runTask;
+    public static boolean isAnimationPlayed = false;
 
 
 
-    protected Sound clickSound;
+    protected Sound speedUpSound;
 
-    public PurchaseButton(String atlasPath, String regionBaseName, int frameCount, Vector2 position, float scale, int price){
-        super(atlasPath,
-            regionBaseName,
-            frameCount,
+    public CooldownReductionTimer(Vector2 position, float scale){
+        super("atlas/cooldown_reduction_timer/clock.atlas",
+            "static",
+            1,
             position,
             scale);
 
-        this.filePath = atlasPath;
-        this.price = price;
+        speedUpSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/CooldownReduction.mp3"));
 
-        clickSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/Stone_button_unpress.mp3"));
         try{
             loadAnimation();
             loadAudio();
         } catch (RuntimeException e) {
-            Gdx.app.error("Trees", "Failed to load animations: " + e.getMessage());
+            Gdx.app.error("Timer", "Failed to load animations: " + e.getMessage());
             e.printStackTrace(); // Rethrow the exception to indicate failure
         }
     }
@@ -62,15 +59,24 @@ public abstract class PurchaseButton extends GameSprite {
      *
      * @throws RuntimeException if there is an error loading animations.
      */
-    protected abstract void loadAnimation() throws RuntimeException;
 
-    protected abstract void loadAudio() throws RuntimeException;
+    protected void loadAnimation() {
+        // Load animations directly here
+        atlas = new TextureAtlas(Gdx.files.internal("atlas/cooldown_reduction_timer/clock.atlas"));
+
+        animationMap.put(TimerStage.STATIC, new Animation<>(0f, atlas.findRegions("static"), Animation.PlayMode.NORMAL));
+        animationMap.put(TimerStage.RUN, new Animation<>(.4f, atlas.findRegions("run"), Animation.PlayMode.NORMAL));
+    }
+
+    protected void loadAudio() throws RuntimeException {
+        this.speedUpSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/CooldownReduction.mp3"));
+    }
 
     @Override
     public void update(float delta) {
         stateTime += delta;
-        if (animationMap.containsKey(buttonStage)) {
-            Animation<TextureRegion> animation = animationMap.get(buttonStage);
+        if (animationMap.containsKey(timerStage)) {
+            Animation<TextureRegion> animation = animationMap.get(timerStage);
             TextureRegion currentFrame = animation.getKeyFrame(stateTime, true);
             getSprite().setRegion(currentFrame);
         }
@@ -83,8 +89,8 @@ public abstract class PurchaseButton extends GameSprite {
      *
      * @param stage The new stage of the tree.
      */
-    protected void setStage(ButtonStage stage) {
-        buttonStage = stage;
+    protected void setStage(TimerStage stage) {
+        timerStage = stage;
         stateTime = 0;
         if (animationMap.containsKey(stage)) {
             Animation<TextureRegion> animation = animationMap.get(stage);
@@ -92,22 +98,24 @@ public abstract class PurchaseButton extends GameSprite {
         }
     }
 
-    public ButtonStage getStage(){
-        return this.buttonStage;
+    public TimerStage getStage(){
+        return this.timerStage;
     }
 
-    // Button click animation
-    public void click() {
-        if (buttonStage == ButtonStage.NOT_PRESSED) {
-            clickSound.play(0.5f);
-            setStage(ButtonStage.PRESSED);
-            // Schedule to revert to NOT_PRESSED after 0.7s
-            clickedTask = Timer.schedule(new Timer.Task() {
+    // Clock run animation
+    public void clockRun() {
+        if (timerStage == TimerStage.STATIC) {
+            speedUpSound.play(0.5f);
+            setStage(TimerStage.RUN);
+            isAnimationPlayed = true;
+            // Schedule to revert to STATIC after 1.6s
+            runTask = Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
-                    setStage(ButtonStage.NOT_PRESSED);
+                    setStage(TimerStage.STATIC);
+                    isAnimationPlayed = false;
                 }
-            }, pressedStateTime);
+            }, clockAnimationTime);
         }
     }
 
@@ -121,7 +129,7 @@ public abstract class PurchaseButton extends GameSprite {
     @Override
     public void dispose() {
         super.dispose();
-        clickSound.dispose();
+        speedUpSound.dispose();
         if (atlas != null) {
             atlas.dispose();
         }

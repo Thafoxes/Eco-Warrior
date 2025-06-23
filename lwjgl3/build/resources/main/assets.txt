@@ -61,6 +61,8 @@ atlas/conveyor/conveyor_belt.png
 atlas/conveyor/conveyor_belt2.png
 atlas/conveyor/conveyor_belt3.png
 atlas/conveyor/conveyor_belt4.png
+atlas/cooldown_reduction_timer/clock.atlas
+atlas/cooldown_reduction_timer/clock.png
 atlas/crack/crackx64.atlas
 atlas/crack/crackx64.png
 atlas/crack/crackx64v2.atlas
@@ -187,6 +189,7 @@ maps/world_map/water_detilazation.png
 maps/world_map/water_detilazation_v2.png
 sound_effects/Bonemeal1.mp3
 sound_effects/Button_Click.mp3
+sound_effects/CooldownReduction.mp3
 sound_effects/Game_over_sfx.mp3
 sound_effects/Gravel_dig1.mp3
 sound_effects/Stone_button_unpress.mp3
