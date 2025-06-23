@@ -125,7 +125,7 @@ public class LevelTwoScreen implements Screen {
 
     //winning condition timer
     private float gameTimer = 0f;
-    private final float MAX_GAME_TIME = 180f; // 3 minutes in seconds
+    private final float MAX_GAME_TIME = 60f; // 3 minutes in seconds
     private boolean gameOver = false;
 
     public LevelTwoScreen(Main main) {
@@ -226,7 +226,7 @@ public class LevelTwoScreen implements Screen {
         waterFountain = new WaterFountain(new Vector2(1, 180), lakeScale);
 
 
-        rayGun = new io.github.eco_warrior.sprite.gardening_equipments.RayGun(new Vector2(spacing - manipulatorX, startY), toolScale);
+        rayGun = new io.github.eco_warrior.sprite.gardening_equipments.RayGun(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
         wateringCan = new WateringCan(new Vector2(spacing * 2 - manipulatorX, startY), toolScale);
         Shovel shovel = new Shovel(new Vector2(spacing * 3 - manipulatorX, startY), toolScale);
         fertilizerController = new FertilizerController(new Vector2(spacing * 4 - manipulatorX, startY), toolScale);
@@ -256,11 +256,11 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void initializeSapling(float spacing, float toolScale) {
-        BaseSaplingController ordinarySapling = new OrdinarySapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
-        BaseSaplingController blazingSapling = new BlazingSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
-        BaseSaplingController breezingSapling = new BreezingSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
-        BaseSaplingController iceSapling = new IceSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
-        BaseSaplingController voltaicSapling = new VoltaicSapling(new Vector2(spacing * 5 - manipulatorX, startY), toolScale);
+        BaseSaplingController ordinarySapling = new OrdinarySapling(new Vector2(spacing - manipulatorX, startY), toolScale);
+        BaseSaplingController blazingSapling = new BlazingSapling(new Vector2(spacing - manipulatorX, startY), toolScale);
+        BaseSaplingController breezingSapling = new BreezingSapling(new Vector2(spacing - manipulatorX, startY), toolScale);
+        BaseSaplingController iceSapling = new IceSapling(new Vector2(spacing - manipulatorX, startY), toolScale);
+        BaseSaplingController voltaicSapling = new VoltaicSapling(new Vector2(spacing - manipulatorX, startY), toolScale);
 
 
 
@@ -346,13 +346,11 @@ public class LevelTwoScreen implements Screen {
             }
         }
 
-        if(allTreesMatured){
+        if(allTreesMatured && gameTimer >= MAX_GAME_TIME){
             gameOver = true;
             showWinScreen();
             return;
-        }
-
-        if(gameTimer >= MAX_GAME_TIME) {
+        } else if (gameTimer >= MAX_GAME_TIME) {
             gameOver = true;
             showLoseScreen();
             return;

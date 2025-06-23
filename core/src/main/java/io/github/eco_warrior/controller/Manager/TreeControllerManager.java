@@ -31,6 +31,11 @@ public class TreeControllerManager {
     public void draw(SpriteBatch batch) {
         for (TreeController treeController : treeControllers) {
             treeController.draw(batch);
+
+            if(!(treeController.getStage() == Trees.TreeStage.FLAG
+                || treeController.getStage() == Trees.TreeStage.HOLE)) {
+                treeController.getTreeHealth().draw(batch);
+            }
         }
     }
 
