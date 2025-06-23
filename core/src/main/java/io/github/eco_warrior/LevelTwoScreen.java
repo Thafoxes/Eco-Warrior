@@ -395,46 +395,38 @@ public class LevelTwoScreen implements Screen {
     private <T extends EnemyController> void spawnEnemy(float delta, EnemyPool<T> pool, float spawnInterval) {
         spawnTimer += delta;
 
-        boolean anyTreeReadyForAttack = false;
+        if(spawnTimer < spawnInterval && pool.getActiveCount() >= 5){
+            return; // Early exit if conditions aren't met
+        }
+
+        TreeController<?> selectedTree = null;
         ArrayList<TreeType> targetTreeTypes = pool.getAttackTreeType();
+        ArrayList<TreeController> readyTrees = new ArrayList<>();
 
-        //get the enemy attack tree type and check if any one of the tree is ready for attack
-        for(TreeController<?> treeController : treeControllerManager.getTreeControllers()) {
+        // Find a random tree ready for attack
+        ArrayList<TreeController> treeControllers = treeControllerManager.getTreeControllers();
+
+        for (TreeController<?> treeController : treeControllers) {
             if (targetTreeTypes.contains(treeController.getTreeType()) && treeController.isPlanted()) {
-                anyTreeReadyForAttack = true;
-                break;
+                readyTrees.add(treeController);
             }
         }
 
-        //if there is one, get that one that is ready for attack. if ,more, do random selection
-        if (anyTreeReadyForAttack && spawnTimer >= spawnInterval && pool.getActiveCount() < 5) { // Limit to 5 enemies at a time
-            ArrayList<TreeType> treeTypes = targetTreeTypes;
-
-            // Find available trees to attack (those that have grown past sapling stage)
-            ArrayList<TreeType> availableTreeTypes = new ArrayList<>();
-
-
-            for (TreeController<?> tree : treeControllerManager.getTreeControllers()) {
-                if (tree.isPlanted()) {
-                    availableTreeTypes.add(tree.getTreeType());
-                }
-            }
-
-
-           if(!availableTreeTypes.isEmpty()) {
-                int randomIndex = rand.nextInt(availableTreeTypes.size());
-                TreeType selectedType = availableTreeTypes.get(randomIndex);
-                System.out.println("L2 - spawning in tree" + selectedType.name());
-                float ypos = treePositions.get(selectedType).y;
-
-               Vector2 spawnPos = new Vector2(WINDOW_WIDTH + 50f, ypos);
-               pool.getEnemy(spawnPos, selectedType);
-               spawnTimer = 0; // Reset the timer after spawning an enemy
-
-            }
-
-
+        if (!readyTrees.isEmpty()) {
+            selectedTree = readyTrees.get(rand.nextInt(readyTrees.size()));
+        }else{
+            return;
         }
+
+        if (selectedTree != null) {
+            TreeType selectedType = selectedTree.getTreeType();
+            float ypos = treePositions.get(selectedType).y;
+
+            Vector2 spawnPos = new Vector2(WINDOW_WIDTH + 50f, ypos);
+            pool.getEnemy(spawnPos, selectedType);
+            spawnTimer = 0; // Reset the timer after spawning an enemy
+        }
+
 
     }
 
