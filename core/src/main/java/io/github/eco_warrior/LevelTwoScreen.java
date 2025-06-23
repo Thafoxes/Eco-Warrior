@@ -108,7 +108,7 @@ public class LevelTwoScreen implements Screen {
     private MetalChuckPool metalChuckPool;
     private List<EnemyController> hiddenEnemies;
     private float spawnTimer = 0f;
-    private float spawnInterval = 8f;
+    private float averageSpawnInterval = 5f;
 
     private final Random rand = new Random();
 
@@ -407,11 +407,11 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void spawnMetalChuck(float delta) {
-        spawnEnemy(delta, metalChuckPool, spawnInterval);
+        spawnEnemy(delta, metalChuckPool, averageSpawnInterval);
     }
 
     private void spawnWorm(float delta) {
-        spawnEnemy(delta, wormPool, spawnInterval);
+        spawnEnemy(delta, wormPool, averageSpawnInterval);
 
     }
 
@@ -495,7 +495,7 @@ public class LevelTwoScreen implements Screen {
         iceTreeIceElementDrawer.draw(batch, stateTime/*, rayGun.getMode()*/);
 
         batch.end();
-//        debugSprite();
+        debugSprite();
 
     }
 

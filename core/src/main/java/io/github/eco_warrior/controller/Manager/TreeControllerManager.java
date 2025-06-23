@@ -6,6 +6,7 @@ import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.controller.Trees.TreeController;
 import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.entity.Trees;
+import io.github.eco_warrior.enums.TreeType;
 import io.github.eco_warrior.sprite.DebugStick;
 import io.github.eco_warrior.controller.FertilizerController;
 import io.github.eco_warrior.sprite.gardening_equipments.Shovel;
@@ -112,6 +113,15 @@ public class TreeControllerManager {
 
     public ArrayList<TreeController> getTreeControllers(){
         return treeControllers;
+    }
+
+    public TreeController<?> getTreeController(TreeType type) {
+        for (TreeController<?> controller : getTreeControllers()) {
+            if (controller.getTreeType() == type) {
+                return controller;
+            }
+        }
+        return null;
     }
 
 }
