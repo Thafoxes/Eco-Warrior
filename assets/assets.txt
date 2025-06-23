@@ -205,6 +205,7 @@ sound_effects/breeze.mp3
 sound_effects/cartoon_splat.mp3
 sound_effects/coin.wav
 sound_effects/correct.mp3
+sound_effects/drill.mp3
 sound_effects/fill_water_sfx.mp3
 sound_effects/fill_watering_can1.mp3
 sound_effects/fill_watering_can2.mp3

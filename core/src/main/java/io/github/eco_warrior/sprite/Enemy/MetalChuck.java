@@ -14,7 +14,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
 public class MetalChuck extends Enemies {
 
     //sound effects
-    private final Sound attackSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/whip.mp3"));
+    private final Sound attackSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/drill.mp3"));
 
     public MetalChuck(Vector2 position, float scale) {
         super("atlas/worm/worm.atlas",

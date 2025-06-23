@@ -6,9 +6,11 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import io.github.eco_warrior.controller.Enemy.BombPeckerController;
 import io.github.eco_warrior.controller.Enemy.EnemyController;
 import io.github.eco_warrior.controller.Enemy.MetalChuckController;
 import io.github.eco_warrior.controller.Enemy.WormController;
@@ -16,6 +18,7 @@ import io.github.eco_warrior.controller.FontGenerator;
 import io.github.eco_warrior.controller.Manager.*;
 import io.github.eco_warrior.controller.FertilizerController;
 import io.github.eco_warrior.controller.GroundTrashController;
+import io.github.eco_warrior.controller.Pools.BombPeckerPool;
 import io.github.eco_warrior.controller.Pools.EnemyPool;
 import io.github.eco_warrior.controller.Pools.MetalChuckPool;
 import io.github.eco_warrior.controller.Pools.WormPool;
@@ -103,9 +106,14 @@ public class LevelTwoScreen implements Screen {
     private EnemyManager enemyManager;
     private WormPool wormPool;
     private MetalChuckPool metalChuckPool;
+    private BombPeckerPool bombPeckerPool;
     private List<EnemyController> hiddenEnemies;
     private float spawnTimer = 0f;
     private float averageSpawnInterval = 10f;
+
+    private float wormSpawnTimer = 0f;
+    private float metalChuckSpawnTimer = 0f;
+    private float bombPeckerSpawnTimer = 0f;
 
     private final Random rand = new Random();
 
@@ -181,6 +189,7 @@ public class LevelTwoScreen implements Screen {
         hiddenEnemies = new ArrayList<>();
         wormPool = new WormPool(enemyManager);
         metalChuckPool = new MetalChuckPool(enemyManager);
+        bombPeckerPool = new BombPeckerPool(enemyManager);
 
         wormPool.setAttackTreeType(
             new ArrayList<>(
@@ -191,6 +200,12 @@ public class LevelTwoScreen implements Screen {
         metalChuckPool.setAttackTreeType(
             new ArrayList<>(
                 Arrays.asList(TreeType.VOLTAIC, TreeType.BREEZING, TreeType.ICE, TreeType.BLAZING)
+            )
+        );
+
+        bombPeckerPool.setAttackTreeType(
+            new ArrayList<>(
+                Arrays.asList(TreeType.BLAZING, TreeType.BREEZING, TreeType.ICE)
             )
         );
 
@@ -249,10 +264,10 @@ public class LevelTwoScreen implements Screen {
 
         //following teir list
         //TODO - Change back later
-        toolManager.addSaplingController(voltaicSapling);
+//        toolManager.addSaplingController(blazingSapling);
 
         toolManager.addSaplingController(ordinarySapling);
-//        toolManager.addSaplingController(voltaicSapling);
+        toolManager.addSaplingController(voltaicSapling);
         toolManager.addSaplingController(breezingSapling);
         toolManager.addSaplingController(iceSapling);
         toolManager.addSaplingController(blazingSapling);
@@ -364,13 +379,31 @@ public class LevelTwoScreen implements Screen {
         for (TreeController<?> treeController : treeControllerManager.getTreeControllers()) {
             TreeType currentTreeType = treeController.getTreeType();
 
-            if (enemy.getCurrentAttackTreeType() == currentTreeType &&
-                treeController.getCollisionRect().overlaps(enemy.getCollisionRect())) {
+            if (enemy.getCurrentAttackTreeType() == currentTreeType) {
 
-                if(!enemy.isAttacking()){
-                    enemy.attack();
+                if(enemy instanceof BombPeckerController){
+                    BombPeckerController bombPecker = (BombPeckerController) enemy;
+                    float treeBottomY = treeController.getCollisionRect().y;
+                    float bombPeckerY = bombPecker.getSprite().getY();
+
+                    // When BombPecker reaches slightly above the tree's bottom
+                    if (bombPeckerY <= treeBottomY + 20 && !bombPecker.isAttacking()) {
+
+                        if(treeController.getCollisionRect().overlaps(enemy.getCollisionRect())){
+                            bombPecker.attack();
+                        }
+
+                    }
+                    bombPecker.isAnimDoneAttacking(treeController);
+
                 }
-                enemy.isAnimDoneAttacking(treeController);
+                else if(treeController.getCollisionRect().overlaps(enemy.getCollisionRect())){
+                    if(!enemy.isAttacking()){
+                        enemy.attack();
+                    }
+                    enemy.isAnimDoneAttacking(treeController);
+                }
+
             }
         }
     }
@@ -378,15 +411,25 @@ public class LevelTwoScreen implements Screen {
     private void updateEnemyManager(float delta) {
         spawnWorm(delta);
         spawnMetalChuck(delta);
+        spawnBombPecker(delta);
         enemyManager.update(delta);
 
 
         Iterator<EnemyController> activeIterator = enemyManager.getEnemies().iterator();
         while (activeIterator.hasNext()) {
             EnemyController enemy = activeIterator.next();
-            if (enemy.isDead()) {
+
+            if(enemy instanceof BombPeckerController){
+                BombPeckerController bombPecker = (BombPeckerController) enemy;
+
+                // Check if Bomb Pecker is dead or done attacking
+                if (bombPecker.isDead()) {
+                    activeIterator.remove();
+                    addBackEnemyToPool(enemy);
+                }
+            }
+            else if (enemy.isDead()) {
                 activeIterator.remove();
-                //reset and return to pool
                 addBackEnemyToPool(enemy);
             }
         }
@@ -398,26 +441,40 @@ public class LevelTwoScreen implements Screen {
             wormPool.returnEnemy((WormController) enemy);
         } else if (enemy instanceof MetalChuckController) {
             metalChuckPool.returnEnemy((MetalChuckController) enemy);
+        } else if (enemy instanceof BombPeckerController) {
+            bombPeckerPool.returnEnemy((BombPeckerController) enemy);
         } else {
             throw new IllegalArgumentException("Unknown enemy type: " + enemy.getClass().getSimpleName());
         }
     }
 
     private void spawnMetalChuck(float delta) {
-        spawnEnemy(delta, metalChuckPool, averageSpawnInterval);
+        metalChuckSpawnTimer += delta;
+        if (metalChuckSpawnTimer >= averageSpawnInterval + 13 && metalChuckPool.getActiveCount() < 5) {
+            spawnEnemy(delta, metalChuckPool);
+            metalChuckSpawnTimer = 0;
+        }
+    }
+
+    private void spawnBombPecker(float delta) {
+        bombPeckerSpawnTimer += delta;
+        if( bombPeckerSpawnTimer >= averageSpawnInterval + 5 && bombPeckerPool.getActiveCount() < 3) {
+            spawnEnemy(delta, bombPeckerPool); // Bomb Pecker has a longer spawn interval
+
+            bombPeckerSpawnTimer = 0;
+        }
     }
 
     private void spawnWorm(float delta) {
-        spawnEnemy(delta, wormPool, averageSpawnInterval);
+        wormSpawnTimer += delta;
+        if (wormSpawnTimer >= averageSpawnInterval && wormPool.getActiveCount() < 5) {
+            spawnEnemy(delta, wormPool);
+            wormSpawnTimer = 0;
+        }
 
     }
 
-    private <T extends EnemyController> void spawnEnemy(float delta, EnemyPool<T> pool, float spawnInterval) {
-        spawnTimer += delta;
-
-        if(spawnTimer < spawnInterval || pool.getActiveCount() >= 5){
-            return; // Early exit if conditions aren't met
-        }
+    private <T extends EnemyController> void spawnEnemy(float spawnTimer, EnemyPool<T> pool) {
 
         TreeController<?> selectedTree = null;
         ArrayList<TreeType> targetTreeTypes = pool.getAttackTreeType();
@@ -440,11 +497,17 @@ public class LevelTwoScreen implements Screen {
 
         if (selectedTree != null) {
             TreeType selectedType = selectedTree.getTreeType();
+            float xpos = treePositions.get(selectedType).x;
             float ypos = treePositions.get(selectedType).y;
+            Vector2 spawnPos;
+            if (pool instanceof BombPeckerPool){
+                spawnPos = new Vector2( xpos, WINDOW_HEIGHT + 50F);
 
-            Vector2 spawnPos = new Vector2(WINDOW_WIDTH + 50f, ypos);
+            }else{
+                spawnPos = new Vector2(WINDOW_WIDTH + 50f, ypos);
+
+            }
             pool.getEnemy(spawnPos, selectedType);
-            spawnTimer = 0; // Reset the timer after spawning an enemy
         }
 
 
@@ -564,7 +627,6 @@ public class LevelTwoScreen implements Screen {
         if (Gdx.input.justTouched()) {
             float sx = Gdx.input.getX();
             float sy = Gdx.graphics.getHeight() - Gdx.input.getY(); // flip y
-            System.out.println("is clicked at: " + sx + ", " + sy);
             gunManager.handleClick(sx, sy);
         }
     }
@@ -630,29 +692,33 @@ public class LevelTwoScreen implements Screen {
         }
 
         if(draggingTool instanceof RayGun){
-            if (rayGun.getMode() != RayGun.RayGunMode.USELESS) {
-                for(EnemyController enemy : enemyManager.getEnemies()){
-                    if(enemy.getCollisionRect().overlaps(draggingTool.getCollisionRect())){
-                        if(enemy instanceof WormController){
-                            if(!enemy.isDead()){
-                                enemy.die();
-                                rayGun.playModeSound();
-                            }
-                        }
-                        if(enemy instanceof MetalChuckController){
-                            if(!enemy.isDead()){
-                                enemy.die();
-                                rayGun.playModeSound();
-                            }
-                        }
-                    }
-                }
-            }
+            ShotRayGun(draggingTool);
 
 
         }
         // Check if the tool is a watering can and if it can water a fountain
         toolManager.isWaterCansCollideRefillWater(waterFountain);
+    }
+
+    private void ShotRayGun(GameSprite draggingTool) {
+        if (rayGun.getMode() != RayGun.RayGunMode.USELESS) {
+            for(EnemyController enemy : enemyManager.getEnemies()){
+                if(enemy.getCollisionRect().overlaps(draggingTool.getCollisionRect())){
+                    if(enemy instanceof WormController){
+                        if(!enemy.isDead()){
+                            enemy.die();
+                            rayGun.playModeSound();
+                        }
+                    }
+                    if(enemy instanceof MetalChuckController){
+                        if(!enemy.isDead()){
+                            enemy.die();
+                            rayGun.playModeSound();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void returnOriginalPosition() {

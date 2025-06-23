@@ -121,7 +121,6 @@ public abstract class Trees extends GameSprite {
                 growTask.cancel();
             }
             isGrowing = true;
-            System.out.println("Tree is done growing");
             growTask = Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {

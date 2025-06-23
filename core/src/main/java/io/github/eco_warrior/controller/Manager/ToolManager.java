@@ -92,7 +92,6 @@ public class ToolManager {
 
     public boolean isWaterCansCollideRefillWater(GameSprite waterPool) {
         if(tools.get(GardeningEnums.WATERING_CAN).getCollisionRect().overlaps(waterPool.getCollisionRect())){
-            System.out.println("ToolManager: Watering can collided with water pool");
             WateringCan wateringCan = (WateringCan) tools.get(GardeningEnums.WATERING_CAN);
             wateringCan.updateWateringCan();
             return true;

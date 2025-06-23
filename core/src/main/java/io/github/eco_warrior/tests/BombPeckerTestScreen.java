@@ -37,9 +37,9 @@ public class BombPeckerTestScreen implements Screen {
 
         collisionAreas = new Array<Rectangle>();
 //        // Add some target areas for collision testing
-        collisionAreas.add(new Rectangle(0, 200, 100, 50));
-        collisionAreas.add(new Rectangle(500, 200, 100, 50));
-        collisionAreas.add(new Rectangle(1000, 200, 100, 50));
+        collisionAreas.add(new Rectangle(0, 400, 100, 50));
+        collisionAreas.add(new Rectangle(500, 400, 100, 50));
+        collisionAreas.add(new Rectangle(1000, 400, 100, 50));
 
 //        initializeEnemies();
     }
@@ -72,10 +72,11 @@ public class BombPeckerTestScreen implements Screen {
             if(enemy instanceof BombPeckerController){
                 BombPeckerController bombPecker = (BombPeckerController) enemy;
                 if(bombPecker.isDead()){
-                    iterator.remove();
-                    Rectangle enemyBounds = bombPecker.getSprite().getBoundingRectangle();
-                    collisionAreas.removeValue(enemyBounds, false);
                     System.out.println("Enemy removed: " + bombPecker.getClass().getSimpleName());
+
+                    iterator.remove();
+//                    Rectangle enemyBounds = bombPecker.getSprite().getBoundingRectangle();
+//                    collisionAreas.removeValue(enemyBounds, false);
 
                 }
             }
