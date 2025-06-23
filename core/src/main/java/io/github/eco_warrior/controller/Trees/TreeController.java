@@ -201,7 +201,7 @@ public abstract class TreeController <T extends Trees> {
     }
 
     public boolean isMaturedAliveTree() {
-        return tree.isFullyMaturedAlive();
+        return tree.isFullyMaturedAlive() && health > 0;
     }
 
     public void drawDebug(ShapeRenderer shapeRenderer) {
@@ -225,7 +225,10 @@ public abstract class TreeController <T extends Trees> {
     }
 
     public boolean isDead() {
-        return isDead;
+        if(tree.isDeadPlant() && isDead){
+            return true;
+        }
+        return false;
     }
 
 

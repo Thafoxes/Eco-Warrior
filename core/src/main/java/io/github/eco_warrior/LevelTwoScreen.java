@@ -13,12 +13,9 @@ import io.github.eco_warrior.controller.Enemy.EnemyController;
 import io.github.eco_warrior.controller.Enemy.MetalChuckController;
 import io.github.eco_warrior.controller.Enemy.WormController;
 import io.github.eco_warrior.controller.FontGenerator;
-import io.github.eco_warrior.controller.Manager.EnemyManager;
+import io.github.eco_warrior.controller.Manager.*;
 import io.github.eco_warrior.controller.FertilizerController;
 import io.github.eco_warrior.controller.GroundTrashController;
-import io.github.eco_warrior.controller.Manager.ButtonManager;
-import io.github.eco_warrior.controller.Manager.ToolManager;
-import io.github.eco_warrior.controller.Manager.TreeControllerManager;
 import io.github.eco_warrior.controller.Pools.EnemyPool;
 import io.github.eco_warrior.controller.Pools.MetalChuckPool;
 import io.github.eco_warrior.controller.Pools.WormPool;
@@ -40,6 +37,10 @@ import io.github.eco_warrior.sprite.buttons.FertilizerButton;
 import io.github.eco_warrior.sprite.buttons.UpgradePotionButton;
 import io.github.eco_warrior.sprite.gardening_equipments.*;
 import io.github.eco_warrior.sprite.gardening_equipments.sapling_variant.*;
+import io.github.eco_warrior.sprite.gun_elements.BlazingTreeFireElementDrawer;
+import io.github.eco_warrior.sprite.gun_elements.BreezingTreeWindElementDrawer;
+import io.github.eco_warrior.sprite.gun_elements.IceTreeIceElementDrawer;
+import io.github.eco_warrior.sprite.gun_elements.VoltaicTreeLightningElementDrawer;
 import io.github.eco_warrior.sprite.tree_variant.*;
 import io.github.eco_warrior.sprite.UI.Currency;
 
@@ -93,12 +94,8 @@ public class LevelTwoScreen implements Screen {
     private GunElementUI gunElementUI;
 
     //gun elements drawers
-    private io.github.eco_warrior.sprite.gun_elements.BlazingTreeFireElementDrawer blazingTreeFireElementDrawer;
-    private io.github.eco_warrior.sprite.gun_elements.BreezingTreeWindElementDrawer breezingTreeWindElementDrawer;
-    private io.github.eco_warrior.sprite.gun_elements.IceTreeIceElementDrawer iceTreeIceElementDrawer;
-    private io.github.eco_warrior.sprite.gun_elements.VoltaicTreeLightningElementDrawer voltaicTreeLightningDrawer;
-
-    private io.github.eco_warrior.sprite.gardening_equipments.RayGun rayGun;
+    private GunManager gunManager;
+    private RayGun rayGun;
 
     //input selection
     private Vector2 currentTouchPos;
@@ -114,7 +111,7 @@ public class LevelTwoScreen implements Screen {
     private MetalChuckPool metalChuckPool;
     private List<EnemyController> hiddenEnemies;
     private float spawnTimer = 0f;
-    private float averageSpawnInterval = 5f;
+    private float averageSpawnInterval = 10f;
 
     private final Random rand = new Random();
 
@@ -154,8 +151,6 @@ public class LevelTwoScreen implements Screen {
         //setup camera to middle
         camera.position.set(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0);
 
-        //initialize GunElement atlas
-        gunElementUI = new GunElementUI("atlas/gun_element/GunElement.atlas", "atlas/gun_element/Lighting.atlas", "atlas/gun_element/Fire.atlas", "atlas/gun_element/Wind.atlas", "atlas/gun_element/Ice.atlas");
 
 
         initializeTools();
@@ -167,12 +162,13 @@ public class LevelTwoScreen implements Screen {
         initializeButtons();
         initializeCooldownReductionTimerUI();
 
-//initialize for drawing gun elements + elements hiding time
-        blazingTreeFireElementDrawer = new io.github.eco_warrior.sprite.gun_elements.BlazingTreeFireElementDrawer(treeControllerManager, gunElementUI, 3000); // 3 seconds
-        breezingTreeWindElementDrawer = new io.github.eco_warrior.sprite.gun_elements.BreezingTreeWindElementDrawer(treeControllerManager, gunElementUI, 3000); // 3 seconds
-        iceTreeIceElementDrawer = new io.github.eco_warrior.sprite.gun_elements.IceTreeIceElementDrawer(treeControllerManager, gunElementUI, 3000); // 3 seconds
-        voltaicTreeLightningDrawer = new io.github.eco_warrior.sprite.gun_elements.VoltaicTreeLightningElementDrawer(treeControllerManager, gunElementUI, 3000); // 3 seconds
+        initializeGun();
 
+    }
+
+    private void initializeGun() {
+        //initialize for drawing gun elements + elements hiding time
+        gunManager = new GunManager(treeControllerManager, rayGun, 3000);// 3 seconds
     }
 
     private void initializeCurrencyUI() {
@@ -201,13 +197,13 @@ public class LevelTwoScreen implements Screen {
 
         wormPool.setAttackTreeType(
             new ArrayList<>(
-                Arrays.asList(TreeType.ORDINARY, TreeType.ICE)
+                Arrays.asList(TreeType.ORDINARY, TreeType.VOLTAIC, TreeType.BLAZING, TreeType.BREEZING, TreeType.ICE)
             )
         );
 
         metalChuckPool.setAttackTreeType(
             new ArrayList<>(
-                Arrays.asList(TreeType.BLAZING, TreeType.BREEZING)
+                Arrays.asList(TreeType.VOLTAIC, TreeType.BREEZING, TreeType.ICE, TreeType.BLAZING)
             )
         );
 
@@ -265,8 +261,11 @@ public class LevelTwoScreen implements Screen {
 
 
         //following teir list
-        toolManager.addSaplingController(ordinarySapling);
+        //TODO - Change back later
         toolManager.addSaplingController(voltaicSapling);
+
+        toolManager.addSaplingController(ordinarySapling);
+//        toolManager.addSaplingController(voltaicSapling);
         toolManager.addSaplingController(breezingSapling);
         toolManager.addSaplingController(iceSapling);
         toolManager.addSaplingController(blazingSapling);
@@ -428,7 +427,7 @@ public class LevelTwoScreen implements Screen {
     private <T extends EnemyController> void spawnEnemy(float delta, EnemyPool<T> pool, float spawnInterval) {
         spawnTimer += delta;
 
-        if(spawnTimer < spawnInterval && pool.getActiveCount() >= 5){
+        if(spawnTimer < spawnInterval || pool.getActiveCount() >= 5){
             return; // Early exit if conditions aren't met
         }
 
@@ -504,10 +503,7 @@ public class LevelTwoScreen implements Screen {
         enemyManager.draw(batch);
 
         //draw the elements for gun
-        blazingTreeFireElementDrawer.draw(batch, stateTime/*, rayGun.getMode()*/);
-        voltaicTreeLightningDrawer.draw(batch, stateTime/*, rayGun.getMode()*/);
-        breezingTreeWindElementDrawer.draw(batch, stateTime/*, rayGun.getMode()*/);
-        iceTreeIceElementDrawer.draw(batch, stateTime/*, rayGun.getMode()*/);
+        gunManager.draw(batch, stateTime);
 
         batch.end();
 //        debugSprite();
@@ -599,26 +595,8 @@ public class LevelTwoScreen implements Screen {
         if (Gdx.input.justTouched()) {
             float sx = Gdx.input.getX();
             float sy = Gdx.graphics.getHeight() - Gdx.input.getY(); // flip y
-            blazingTreeFireElementDrawer.handleClick(sx, sy);
-            breezingTreeWindElementDrawer.handleClick(sx, sy);
-            iceTreeIceElementDrawer.handleClick(sx, sy);
-            voltaicTreeLightningDrawer.handleClick(sx, sy);
-            //when the gun element is clicked, set the rayGun mode
-            if (blazingTreeFireElementDrawer.wasLastIconClicked()) {
-                rayGun.setMode(io.github.eco_warrior.sprite.gardening_equipments.RayGun.RayGunMode.BLAZING);
-                rayGun.playModeSound();
-            } else if (breezingTreeWindElementDrawer.wasLastIconClicked()) {
-                rayGun.setMode(io.github.eco_warrior.sprite.gardening_equipments.RayGun.RayGunMode.BREEZING);
-                rayGun.playModeSound();
-            } else if (iceTreeIceElementDrawer.wasLastIconClicked()) {
-                rayGun.setMode(io.github.eco_warrior.sprite.gardening_equipments.RayGun.RayGunMode.ICE);
-                rayGun.playModeSound();
-            } else if (voltaicTreeLightningDrawer.wasLastIconClicked()) {
-                rayGun.setMode(io.github.eco_warrior.sprite.gardening_equipments.RayGun.RayGunMode.VOLTAIC);
-                rayGun.playModeSound();
-            }
-            // to set back to useless mode
-            //rayGun.setMode(RayGun.RayGunMode.USELESS);
+            System.out.println("is clicked at: " + sx + ", " + sy);
+            gunManager.handleClick(sx, sy);
         }
     }
 
@@ -638,17 +616,8 @@ public class LevelTwoScreen implements Screen {
                 toolManager.addFertilizerController(fertilizerController);
 
             } else if (buttonManager.buttonType == ButtonManager.ButtonType.UPGRADE_POTION_BUTTON){
-                long newHideMs;
-                newHideMs = blazingTreeFireElementDrawer.getHideMs() - 1000;
-                blazingTreeFireElementDrawer.setHideMs(newHideMs);
-                newHideMs = breezingTreeWindElementDrawer.getHideMs() - 1000;
-                breezingTreeWindElementDrawer.setHideMs(newHideMs);
-                newHideMs = iceTreeIceElementDrawer.getHideMs() - 1000;
-                iceTreeIceElementDrawer.setHideMs(newHideMs);
-                newHideMs = voltaicTreeLightningDrawer.getHideMs() - 1000;
-                voltaicTreeLightningDrawer.setHideMs(newHideMs);
 
-                cooldownReductionTimer.clockRun();
+                gunManager.decreaseHideTime(1000); // 1 second
             }
             isReleased = true;
 
@@ -797,6 +766,7 @@ public class LevelTwoScreen implements Screen {
         cooldownReductionTimer.dispose();
         enemyManager.dispose();
         wateringCan.dispose();
+        gunManager.dispose();
         if(timerFont != null) timerFont.dispose();
 
         waterFountain.dispose();
