@@ -80,15 +80,12 @@ public abstract class EnemyController {
      * @param treeController The TreeController to apply damage to.
      * @return true if the attack animation is done and damage was applied, false otherwise.
      */
-    public boolean isAnimDoneAttacking(TreeController<?> treeController) {
+    public void isAnimDoneAttacking(TreeController<?> treeController) {
 
         if(isAttacking && (enemy.isDoneAttacking() || enemy.getCurrentState() == Enemies.EnemyState.IDLE)) {
             isAttacking = false;
             treeController.takeDamage(1);
             resetAttackState();
-            return true;
-        }else{
-            return false;
         }
     }
 
@@ -129,9 +126,6 @@ public abstract class EnemyController {
 
     public void draw(SpriteBatch batch) {
         enemy.draw(batch);
-//        if (isExploding && !deathEffect.isFinished()) {
-//            deathEffect.draw(batch);
-//        }
     }
 
     public void changeDirection(){

@@ -12,16 +12,7 @@ public class MetalChuckController extends EnemyController{
     public MetalChuckController(Vector2 position) {
         super(new MetalChuck(position), EnemyType.METAL_CHUCK);
     }
-
-//    @Override
-//    void initializeTreeTypes() {
-//        ArrayList<TreeType> treeTypes = new ArrayList<>();
-//        treeTypes.add(TreeType.ORDINARY);
-//        treeTypes.add(TreeType.VOLTAIC);
-//
-//        this.treeTypes = treeTypes;
-//    }
-
+    
     @Override
     public void update(float delta) {
         super.update(delta);
