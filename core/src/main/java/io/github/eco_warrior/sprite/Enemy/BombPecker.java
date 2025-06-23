@@ -77,8 +77,7 @@ public class BombPecker extends Enemies {
         if(currentState == EnemyState.ATTACKING){
 
             if(currentAnimation.isAnimationFinished(stateTime)){
-                currentState = EnemyState.DEAD;
-                previousState = EnemyState.ATTACKING;
+                //no animation, just dead
                 stateTime = 0;
             }
         }

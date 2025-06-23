@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Array;
 import io.github.eco_warrior.controller.Enemy.BombPeckerController;
 import io.github.eco_warrior.controller.Enemy.EnemyController;
 import io.github.eco_warrior.controller.Manager.EnemyManager;
+import io.github.eco_warrior.entity.Enemies;
 
 import java.util.Iterator;
 
@@ -68,10 +69,17 @@ public class BombPeckerTestScreen implements Screen {
         Iterator <EnemyController> iterator = enemyManager.getEnemies().iterator();
         while(iterator.hasNext()) {
             EnemyController enemy = iterator.next();
-            if(enemy.isDead()){
-                iterator.remove();
-                System.out.println("Enemy removed: " + enemy.getClass().getSimpleName());
+            if(enemy instanceof BombPeckerController){
+                BombPeckerController bombPecker = (BombPeckerController) enemy;
+                if(bombPecker.isDead()){
+                    iterator.remove();
+                    Rectangle enemyBounds = bombPecker.getSprite().getBoundingRectangle();
+                    collisionAreas.removeValue(enemyBounds, false);
+                    System.out.println("Enemy removed: " + bombPecker.getClass().getSimpleName());
+
+                }
             }
+
         }
 
         batch.end();

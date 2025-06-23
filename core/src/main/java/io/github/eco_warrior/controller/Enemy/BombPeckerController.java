@@ -35,8 +35,9 @@ public class BombPeckerController extends EnemyController{
         }
     }
 
+    @Override
     public boolean isDead(){
-        return enemy.isDead();
+        return enemy.isDoneAttacking();
     }
 
 
@@ -44,7 +45,6 @@ public class BombPeckerController extends EnemyController{
     @Override
     public void update(float delta) {
         enemy.update(delta);
-
 
         if (enemy.getCurrentState() == Enemies.EnemyState.MOVING) {
             Vector2 position = enemy.getPosition();

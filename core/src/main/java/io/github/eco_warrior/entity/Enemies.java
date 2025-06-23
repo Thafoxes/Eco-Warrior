@@ -138,8 +138,7 @@ public abstract class Enemies extends GameSprite{
 
     public boolean isDoneAttacking() {
         return currentState == EnemyState.ATTACKING &&
-            animationMap.get(currentState).isAnimationFinished(stateTime)
-            || stateTime >= attackDuration;
+            animationMap.get(currentState).isAnimationFinished(stateTime);
     }
 
     public EnemyState getCurrentState() {
