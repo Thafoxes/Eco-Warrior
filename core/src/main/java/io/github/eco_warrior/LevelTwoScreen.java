@@ -398,7 +398,7 @@ public class LevelTwoScreen implements Screen {
         boolean anyTreeReadyForAttack = false;
         ArrayList<TreeType> targetTreeTypes = pool.getAttackTreeType();
 
-        //get the enemy attack tree type and check if any tree is ready for attack
+        //get the enemy attack tree type and check if any one of the tree is ready for attack
         for(TreeController<?> treeController : treeControllerManager.getTreeControllers()) {
             if (targetTreeTypes.contains(treeController.getTreeType()) && treeController.isPlanted()) {
                 anyTreeReadyForAttack = true;
@@ -408,24 +408,24 @@ public class LevelTwoScreen implements Screen {
 
         //if there is one, get that one that is ready for attack. if ,more, do random selection
         if (anyTreeReadyForAttack && spawnTimer >= spawnInterval && pool.getActiveCount() < 5) { // Limit to 5 enemies at a time
-            ArrayList<TreeType> treeTypes = pool.getAttackTreeType();
+            ArrayList<TreeType> treeTypes = targetTreeTypes;
 
             // Find available trees to attack (those that have grown past sapling stage)
             ArrayList<TreeType> availableTreeTypes = new ArrayList<>();
 
-            for (TreeType type : treeTypes) {
-                for (TreeController<?> tree : treeControllerManager.getTreeControllers()) {
-                    if (tree.isPlanted()) {
-                        availableTreeTypes.add(type);
-                        break;
-                    }
+
+            for (TreeController<?> tree : treeControllerManager.getTreeControllers()) {
+                if (tree.isPlanted()) {
+                    availableTreeTypes.add(tree.getTreeType());
                 }
             }
+
 
            if(!availableTreeTypes.isEmpty()) {
                 int randomIndex = rand.nextInt(availableTreeTypes.size());
                 TreeType selectedType = availableTreeTypes.get(randomIndex);
-                float ypos = treePositions.get(treeTypes.get(randomIndex)).y;
+                System.out.println("L2 - spawning in tree" + selectedType.name());
+                float ypos = treePositions.get(selectedType).y;
 
                Vector2 spawnPos = new Vector2(WINDOW_WIDTH + 50f, ypos);
                pool.getEnemy(spawnPos, selectedType);

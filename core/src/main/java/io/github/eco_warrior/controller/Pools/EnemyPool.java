@@ -67,7 +67,6 @@ public abstract class EnemyPool<T extends EnemyController> {
             // Reset enemy state
             enemy.setSpritePosition(new Vector2(-100, -100)); // Move off-screen
             enemy.resetState();// Use a proper method instead of direct field access
-            System.out.println("EnemyPool - - Returning enemy to pool: " + enemy.getClass());
             enemyPool.add(enemy);
             poolSent--;
         }
