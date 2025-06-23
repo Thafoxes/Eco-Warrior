@@ -80,6 +80,8 @@ public class L1Instructions implements Screen {
                 // Play sound effect
                 Gdx.audio.newSound(Gdx.files.internal("sound_effects/Button_Click.mp3")).play(0.5f);
 
+                Gdx.input.setInputProcessor(null);
+
                 // Proceed to Level Three Screen
                 game.setScreen(new FirstLevelScreen(game));
             }

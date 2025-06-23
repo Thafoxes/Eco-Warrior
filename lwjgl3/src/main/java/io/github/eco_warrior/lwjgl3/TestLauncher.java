@@ -3,13 +3,12 @@ package io.github.eco_warrior.lwjgl3;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import io.github.eco_warrior.tests.TreeControllerTest;
-import io.github.eco_warrior.tests.WormTestScreen;
+import io.github.eco_warrior.tests.BombPeckerTestScreen;
 
 public class TestLauncher extends Game {
     @Override
     public void create() {
-        setScreen(new WormTestScreen());
+        setScreen(new BombPeckerTestScreen());
     }
 
     public static void main(String[] args) {

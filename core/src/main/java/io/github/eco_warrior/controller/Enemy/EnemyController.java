@@ -75,6 +75,11 @@ public abstract class EnemyController {
         }
     }
 
+    /**
+     * Check if the enemy is done attacking and apply damage to the tree.
+     * @param treeController The TreeController to apply damage to.
+     * @return true if the attack animation is done and damage was applied, false otherwise.
+     */
     public boolean isAnimDoneAttacking(TreeController<?> treeController) {
 
         if(isAttacking && (enemy.isDoneAttacking() || enemy.getCurrentState() == Enemies.EnemyState.IDLE)) {

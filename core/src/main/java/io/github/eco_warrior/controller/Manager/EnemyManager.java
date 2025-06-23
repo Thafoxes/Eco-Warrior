@@ -32,10 +32,9 @@ public class EnemyManager {
 
 
     public void update(float delta) {
-        
+
         for(EnemyController enemy : enemies) {
             enemy.update(delta);
-
         }
 
     }
@@ -49,10 +48,6 @@ public class EnemyManager {
         }
     }
 
-    public void spawnEnemy(Vector2 vector2) {
-        WormController enemyController = new WormController(vector2);
-        addEnemy(enemyController);
-    }
 
     public void drawDebug(ShapeRenderer shapeRenderer) {
         for (EnemyController enemy : enemies) {
