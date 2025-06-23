@@ -24,7 +24,6 @@ import io.github.eco_warrior.controller.Pools.MetalChuckPool;
 import io.github.eco_warrior.controller.Pools.WormPool;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.controller.Trees.*;
-import io.github.eco_warrior.entity.Enemies;
 import io.github.eco_warrior.entity.GameSprite;
 
 import java.util.*;
@@ -396,15 +395,45 @@ public class LevelTwoScreen implements Screen {
     private <T extends EnemyController> void spawnEnemy(float delta, EnemyPool<T> pool, float spawnInterval) {
         spawnTimer += delta;
 
-        if (spawnTimer >= spawnInterval && pool.getActiveCount() < 5) { // Limit to 5 enemies at a time
+        boolean anyTreeReadyForAttack = false;
+        ArrayList<TreeType> targetTreeTypes = pool.getAttackTreeType();
+
+        //get the enemy attack tree type and check if any tree is ready for attack
+        for(TreeController<?> treeController : treeControllerManager.getTreeControllers()) {
+            if (targetTreeTypes.contains(treeController.getTreeType()) && treeController.isPlanted()) {
+                anyTreeReadyForAttack = true;
+                break;
+            }
+        }
+
+        //if there is one, get that one that is ready for attack. if ,more, do random selection
+        if (anyTreeReadyForAttack && spawnTimer >= spawnInterval && pool.getActiveCount() < 5) { // Limit to 5 enemies at a time
             ArrayList<TreeType> treeTypes = pool.getAttackTreeType();
 
-            int randomIndex = rand.nextInt(0, treeTypes.size());
-            float ypos = treePositions.get(treeTypes.get(randomIndex)).y;
+            // Find available trees to attack (those that have grown past sapling stage)
+            ArrayList<TreeType> availableTreeTypes = new ArrayList<>();
 
-            Vector2 spawnPos = new Vector2(WINDOW_WIDTH + 50f, ypos);
-            pool.getEnemy(spawnPos, treeTypes.get(randomIndex));
-            spawnTimer = 0; // Reset the timer after spawning an enemy
+            for (TreeType type : treeTypes) {
+                for (TreeController<?> tree : treeControllerManager.getTreeControllers()) {
+                    if (tree.isPlanted()) {
+                        availableTreeTypes.add(type);
+                        break;
+                    }
+                }
+            }
+
+           if(!availableTreeTypes.isEmpty()) {
+                int randomIndex = rand.nextInt(availableTreeTypes.size());
+                TreeType selectedType = availableTreeTypes.get(randomIndex);
+                float ypos = treePositions.get(treeTypes.get(randomIndex)).y;
+
+               Vector2 spawnPos = new Vector2(WINDOW_WIDTH + 50f, ypos);
+               pool.getEnemy(spawnPos, selectedType);
+               spawnTimer = 0; // Reset the timer after spawning an enemy
+
+            }
+
+
         }
 
     }
@@ -419,7 +448,7 @@ public class LevelTwoScreen implements Screen {
 
     private void updateToolManager(float delta) {
         toolManager.update(delta);
-        toolManager.setIsPlanting(treeControllerManager.isCurrentTreeMatured());
+        toolManager.setIsPlanting(treeControllerManager.isPlanting());
     }
 
     private void updateButtonManager(float delta) {

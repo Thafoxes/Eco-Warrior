@@ -101,11 +101,11 @@ public class TreeControllerManager {
         return planted;
     }
 
-    public boolean isCurrentTreeMatured(){
+    public boolean isPlanting(){
         if(currentTreeController == null) {
             return false; // No current tree controller set
         }
-        boolean matured =  currentTreeController.isMatured();
+        boolean matured =  currentTreeController.isPlanting();
         return matured;
     }
 
