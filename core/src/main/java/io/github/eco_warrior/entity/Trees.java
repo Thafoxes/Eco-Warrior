@@ -164,6 +164,9 @@ public abstract class Trees extends GameSprite {
             || treeStage == TreeStage.SAPLING || treeStage == TreeStage.DEAD_SAPLING;
     }
 
+    public boolean isFullyMaturedAlive(){
+        return treeStage == TreeStage.MATURED_TREE;
+    }
 
     public void revivePlant() {
         switch (treeStage){

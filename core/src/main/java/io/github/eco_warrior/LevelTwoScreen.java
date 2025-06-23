@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.controller.Enemy.EnemyController;
 import io.github.eco_warrior.controller.Enemy.MetalChuckController;
 import io.github.eco_warrior.controller.Enemy.WormController;
+import io.github.eco_warrior.controller.FontGenerator;
 import io.github.eco_warrior.controller.Manager.EnemyManager;
 import io.github.eco_warrior.controller.FertilizerController;
 import io.github.eco_warrior.controller.GroundTrashController;
@@ -31,6 +32,7 @@ import java.util.*;
 import io.github.eco_warrior.enums.ButtonEnums;
 import io.github.eco_warrior.enums.GardeningEnums;
 import io.github.eco_warrior.enums.TreeType;
+import io.github.eco_warrior.screen.ResultScreen;
 import io.github.eco_warrior.sprite.*;
 import io.github.eco_warrior.sprite.buttons.FertilizerButton;
 import io.github.eco_warrior.sprite.buttons.UpgradePotionButton;
@@ -101,6 +103,13 @@ public class LevelTwoScreen implements Screen {
 
     private Map<TreeType, Vector2> treePositions = new HashMap<>();
 
+    //font
+    private FontGenerator timerFont;
+
+    //winning condition timer
+    private float gameTimer = 0f;
+    private final float MAX_GAME_TIME = 180f; // 3 minutes in seconds
+    private boolean gameOver = false;
 
     public LevelTwoScreen(Main main) {
         this.game = main;
@@ -122,6 +131,8 @@ public class LevelTwoScreen implements Screen {
         lastTouchPos = new Vector2();
         currentTouchPos = new Vector2();
         shapeRenderer = new ShapeRenderer();
+
+        timerFont = new FontGenerator(32, Color.WHITE, Color.BLACK);
 
         //setup camera to middle
         camera.position.set(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0);
@@ -273,6 +284,7 @@ public class LevelTwoScreen implements Screen {
     public void render(float delta) {
         input();
         draw(delta);
+        drawUI(delta);
         returnOriginalPosition();
 
         updateToolManager(delta);
@@ -283,7 +295,43 @@ public class LevelTwoScreen implements Screen {
 
         updateTrashController(delta);
         updateButtonManager(delta);
+        winningCondition(delta);
 
+    }
+
+    private void winningCondition(float delta) {
+        if(gameOver) return;
+
+        gameTimer += delta;
+
+        boolean allTreesMatured = true;
+        for(TreeController<?> treeController : treeControllerManager.getTreeControllers()) {
+            if (!treeController.isMaturedAliveTree()) {
+                allTreesMatured = false;
+                break;
+            }
+        }
+
+        if(allTreesMatured){
+            gameOver = true;
+            showWinScreen();
+            return;
+        }
+
+        if(gameTimer >= MAX_GAME_TIME) {
+            gameOver = true;
+            showLoseScreen();
+            return;
+        }
+    }
+
+    private void showLoseScreen() {
+        game.setScreen(new ResultScreen(game, 0, true, "Time out! You lose!"));
+    }
+
+    private void showWinScreen() {
+        game.setLevel(3);
+        game.setScreen(new ResultScreen(game, 0, false, "All trees are matured! You win!"));
     }
 
     private void updateEnemyTreeLogic(float delta) {
@@ -313,7 +361,7 @@ public class LevelTwoScreen implements Screen {
         spawnMetalChuck(delta);
         enemyManager.update(delta);
 
-        //TODO - Issue stacking here
+
         Iterator<EnemyController> activeIterator = enemyManager.getEnemies().iterator();
         while (activeIterator.hasNext()) {
             EnemyController enemy = activeIterator.next();
@@ -399,11 +447,36 @@ public class LevelTwoScreen implements Screen {
         batch.end();
 //        debugSprite();
 
+    }
+
+    private void drawUI(float delta) {
+        //Currency UI
         uiBatch.setProjectionMatrix(camera.combined);
         uiBatch.begin();
         currency.update(delta);
         currency.draw(uiBatch);
+        drawTimer(delta);
+
         uiBatch.end();
+    }
+
+    private void drawTimer(float delta) {
+        if (gameOver) return;
+
+        // Calculate time left
+        float timeLeft = Math.max(0, MAX_GAME_TIME - gameTimer);
+        int minutes = (int)(timeLeft / 60);
+        int seconds = (int)(timeLeft % 60);
+
+        // Format time as MM:SS
+        String timeText = "Time left: " + String.format("%02d:%02d", minutes, seconds);
+
+        // Draw timer at top right
+        Vector2 timerPosition = new Vector2(WINDOW_WIDTH - 130, WINDOW_HEIGHT - 20);
+
+        // Use the fontDraw method with RIGHT alignment
+        timerFont.fontDraw(uiBatch, timeText, camera, timerPosition);
+
     }
 
 
@@ -577,6 +650,7 @@ public class LevelTwoScreen implements Screen {
         buttonManager.dispose();
         enemyManager.dispose();
         wateringCan.dispose();
+        if(timerFont != null) timerFont.dispose();
 
         waterFountain.dispose();
         if (currency != null) currency.dispose();
