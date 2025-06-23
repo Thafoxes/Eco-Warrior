@@ -48,6 +48,16 @@ atlas/bins/bins.atlas
 atlas/bins/bins.png
 atlas/bins/recyclables_bin.atlas
 atlas/bins/recyclables_bin.png
+atlas/bomb_pecker/bomber_pecker.atlas
+atlas/bomb_pecker/bomber_pecker.png
+atlas/bomb_pecker/bomber_pecker2.png
+atlas/bomb_pecker/bomber_pecker3.png
+atlas/bomb_pecker/bomber_pecker4.png
+atlas/bomb_pecker/bomber_pecker5.png
+atlas/bomb_pecker/bomber_pecker6.png
+atlas/bomb_pecker/bomber_pecker7.png
+atlas/bomb_pecker/bomber_pecker8.png
+atlas/bomb_pecker/bomber_pecker9.png
 atlas/bucket/bucket_anim.atlas
 atlas/bucket/bucket_anim.png
 atlas/coin/coins.atlas
@@ -193,6 +203,7 @@ sound_effects/CooldownReduction.mp3
 sound_effects/Game_over_sfx.mp3
 sound_effects/Gravel_dig1.mp3
 sound_effects/Stone_button_unpress.mp3
+sound_effects/bomb_pecker_explosion_sfx.mp3
 sound_effects/breeze.mp3
 sound_effects/cartoon_splat.mp3
 sound_effects/coin.wav

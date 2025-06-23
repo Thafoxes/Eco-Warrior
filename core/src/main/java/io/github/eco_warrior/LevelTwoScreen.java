@@ -157,7 +157,6 @@ public class LevelTwoScreen implements Screen {
         initializeTrees();
         initializeTrashArea();
         initializeEnemyManager();
-
         initializeCurrencyUI();
         initializeButtons();
         initializeCooldownReductionTimerUI();

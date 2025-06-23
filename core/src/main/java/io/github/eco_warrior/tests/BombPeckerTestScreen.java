@@ -9,11 +9,15 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import io.github.eco_warrior.controller.Enemy.BombPeckerController;
 import io.github.eco_warrior.controller.Enemy.EnemyController;
-import io.github.eco_warrior.controller.Enemy.WormController;
 import io.github.eco_warrior.controller.Manager.EnemyManager;
 
-public class WormTestScreen implements Screen {
+import java.util.Iterator;
+
+import static io.github.eco_warrior.constant.ConstantsVar.WINDOW_HEIGHT;
+
+public class BombPeckerTestScreen implements Screen {
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
     private EnemyManager enemyManager;
@@ -21,8 +25,6 @@ public class WormTestScreen implements Screen {
 
     //testing collision area
     private Array<Rectangle> collisionAreas;
-    private float spawnTimer = 0f;
-    private float spawnInterval = 5f; // Time in seconds between enemy spawns
 
 
 
@@ -33,20 +35,20 @@ public class WormTestScreen implements Screen {
         enemyManager = new EnemyManager();
 
         collisionAreas = new Array<Rectangle>();
-        // Add some target areas for collision testing
-        collisionAreas.add(new Rectangle(0, 200, 100, 100));
-        collisionAreas.add(new Rectangle(300, 400, 100, 100));
-        collisionAreas.add(new Rectangle(1000, 300, 100, 100));
+//        // Add some target areas for collision testing
+        collisionAreas.add(new Rectangle(0, 200, 100, 50));
+        collisionAreas.add(new Rectangle(500, 200, 100, 50));
+        collisionAreas.add(new Rectangle(1000, 200, 100, 50));
 
-        initializeEnemies();
+//        initializeEnemies();
     }
 
     private void initializeEnemies() {
 
         float x = (float) (Math.random() * (Gdx.graphics.getWidth() - 100));
         float y = (float) (Math.random() * (Gdx.graphics.getHeight() - 100));
-        WormController wormController = new WormController(new Vector2(x, y));
-        enemyManager.addEnemy(wormController);
+        BombPeckerController enemy = new BombPeckerController(new Vector2(x, WINDOW_HEIGHT));
+        enemyManager.addEnemy(enemy);
     }
 
     @Override
@@ -54,20 +56,24 @@ public class WormTestScreen implements Screen {
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         deltaTime += delta;
-        spawnTimer += delta;
 
-        //udpates
+        //updates
         enemyManager.update(delta);
-        if(spawnTimer >= spawnInterval){
-            spawnRandomEnemy();
-            spawnTimer = 0; // Reset the timer after spawning an enemy
-        }
 
         checkCollisions();
 
         //draw
         batch.begin();
         enemyManager.draw(batch);
+        Iterator <EnemyController> iterator = enemyManager.getEnemies().iterator();
+        while(iterator.hasNext()) {
+            EnemyController enemy = iterator.next();
+            if(enemy.isDead()){
+                iterator.remove();
+                System.out.println("Enemy removed: " + enemy.getClass().getSimpleName());
+            }
+        }
+
         batch.end();
 
 
@@ -83,24 +89,15 @@ public class WormTestScreen implements Screen {
         for (EnemyController enemy : enemyManager.getEnemies()) {
             Rectangle enemyBounds = enemy.getSprite().getBoundingRectangle();
             for (Rectangle area : collisionAreas) {
-                if(enemy instanceof WormController) {
+                if(enemy instanceof BombPeckerController) {
                     if (enemyBounds.overlaps(area)) {
-                        // Handle collision logic here
-                        // For example, you can change the enemy's state or position
-                        enemy.die(); // Example action on collision
+                        enemy.attack(); // Example action on collision
                         break;
                     }
                 }
             }
         }
 
-
-    }
-
-    private void spawnRandomEnemy() {
-        float x = (float) (Math.random() * Gdx.graphics.getWidth());
-        float y = (float) (Math.random() * Gdx.graphics.getHeight());
-        enemyManager.spawnEnemy(new Vector2(x, y));
     }
 
     private void drawDebug() {
@@ -114,24 +111,21 @@ public class WormTestScreen implements Screen {
     }
 
     private void HandleInput() {
-        // Test controls
-        for(EnemyController enemy : enemyManager.getEnemies()) {
-            if (enemy instanceof WormController) {
-                // Debug controls for the worm
-                if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
-                    ((WormController) enemy).setRightDirection(false);
-                }
-                if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
-                    ((WormController) enemy).setRightDirection(true);
-                }
-                if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
-                    ((WormController) enemy).move();
-                }
-                if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-                    ((WormController) enemy).attack();
-                }
-            }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            System.out.println("Space key pressed, spawning BombPecker");
+            // Spawn a BombPecker when space is pressed
+            spawnBombPecker();
         }
+    }
+
+    private void spawnBombPecker() {
+
+        // Set target Y where the bomb will explode (near one of the collision areas)
+        Rectangle targetArea = collisionAreas.get((int)(Math.random() * collisionAreas.size));
+        BombPeckerController bombPeckerController = new BombPeckerController(new Vector2(targetArea.x, targetArea.y - targetArea.height));
+        bombPeckerController.setTargetPosition(targetArea.getPosition(new Vector2()));
+
+        enemyManager.addEnemy(bombPeckerController);
     }
 
     @Override
