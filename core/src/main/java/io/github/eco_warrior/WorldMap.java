@@ -20,6 +20,8 @@ import io.github.eco_warrior.MapLoader.MapLoader;
 import io.github.eco_warrior.animation.Screen.ScreenTransition;
 import io.github.eco_warrior.controller.*;
 import io.github.eco_warrior.screen.instructions.L1Instructions;
+import io.github.eco_warrior.screen.instructions.L2Instructions;
+import io.github.eco_warrior.screen.instructions.L3Instructions;
 import io.github.eco_warrior.sprite.Characters.GameCharacter;
 import io.github.eco_warrior.sprite.Characters.AdventurerGirl;
 
@@ -27,7 +29,7 @@ import java.util.Arrays;
 
 import static io.github.eco_warrior.constant.ConstantsVar.*;
 
-public class WorldTestsV2 implements Screen {
+public class WorldMap implements Screen {
 
     public static final int LAYER_MAP = 4;
     private MapLoader map;
@@ -62,23 +64,9 @@ public class WorldTestsV2 implements Screen {
     //fade
     private ScreenTransition transition;
 
-    public WorldTestsV2(Game game) {
+    public WorldMap(Game game) {
         this.game = game;
-        this.shapeRenderer = new ShapeRenderer();
-        this.transition = new ScreenTransition(game);
 
-        LoadMap();
-        CreateCharacter();
-        setupCamera();
-        initializeNPCs();
-        batch = new SpriteBatch();
-        playerController = new PlayerController(adventurerGirl);
-        Gdx.input.setInputProcessor(playerController);
-
-        // --- Dialog Box Setup (auto-sizing) ---
-        dialogFont = new FontGenerator(DIALOG_FONT_SIZE, Color.WHITE, Color.BLACK);
-        speakerFont = new FontGenerator(SPEAKER_FONT_SIZE, Color.YELLOW, Color.BLACK);
-        dialogBox = new DialogBox(dialogFont.getFont(), speakerFont.getFont());
     }
 
     private void initializeNPCs() {
@@ -178,7 +166,23 @@ public class WorldTestsV2 implements Screen {
     }
 
     @Override
-    public void show() {}
+    public void show() {
+        this.shapeRenderer = new ShapeRenderer();
+        this.transition = new ScreenTransition(game);
+
+        LoadMap();
+        CreateCharacter();
+        setupCamera();
+        initializeNPCs();
+        batch = new SpriteBatch();
+        playerController = new PlayerController(adventurerGirl);
+        Gdx.input.setInputProcessor(playerController);
+
+        // --- Dialog Box Setup (auto-sizing) ---
+        dialogFont = new FontGenerator(DIALOG_FONT_SIZE, Color.WHITE, Color.BLACK);
+        speakerFont = new FontGenerator(SPEAKER_FONT_SIZE, Color.YELLOW, Color.BLACK);
+        dialogBox = new DialogBox(dialogFont.getFont(), speakerFont.getFont());
+    }
 
     @Override
     public void render(float delta) {
@@ -186,9 +190,6 @@ public class WorldTestsV2 implements Screen {
         input();
         draw(delta);
         update(delta);
-
-
-
     }
 
     private void draw(float delta) {
@@ -246,25 +247,79 @@ public class WorldTestsV2 implements Screen {
             }
             npcManager.setInteracting(true);
 
-            if(level <= 1) {
-                dialogBox.startDialog(character.getName(), Arrays.asList(
-                    "Help!",
-                    "Please help us to reduce waste!"
-                ), () -> {
-                    //trigger after dialog is completed
-                    npcManager.setInteracting(false);
-                    triggerLevel(1);
-                });
+            int currentLevel = ((Main)game).getLevel();
+
+            switch (character.getName()) {
+                case "Goblin Warrior":
+                        dialogBox.startDialog(character.getName(), Arrays.asList(
+                            "Help!",
+                            "Please help us to reduce waste!"
+                        ), () -> {
+                            //trigger after dialog is completed
+                            npcManager.setInteracting(false);
+                            triggerLevel(currentLevel);
+                        });
+                    break;
+                case "Goblin Warrior 2":
+                    if(currentLevel <= 1) {
+                        levelNotHighEnough(character.getName());
+                        break;
+                    }
+                    dialogBox.startDialog(character.getName(), Arrays.asList(
+                        "Our forest is polluted!",
+                        "Can you help clean it?"
+                    ), () -> {
+                        npcManager.setInteracting(false);
+                        triggerLevel(currentLevel);
+                    });
+                    break;
+                case "Goblin Warrior King":
+                    if(currentLevel <= 2) {
+                        levelNotHighEnough(character.getName());
+                        break;
+                    }
+                    dialogBox.startDialog(character.getName(), Arrays.asList(
+                        "I need help on saving the clean water!",
+                        "The monsters are polluting it!"
+                    ), () -> {
+                        npcManager.setInteracting(false);
+                        triggerLevel(currentLevel);
+                    });
+                    break;
+                default:
+                    dialogBox.startDialog(character.getName(), Arrays.asList(
+                        "Hello adventurer!",
+                        "Welcome to our forest."
+                    ), () -> {
+                        npcManager.setInteracting(false);
+                    });
+                    break;
+
             }
 
         }
         return false;
     }
 
-    private void triggerLevel(int i) {
+    private void levelNotHighEnough(String characterName) {
+        dialogBox.startDialog(characterName, Arrays.asList(
+            "You need to complete the previous level before talking to me!",
+            "Please come back after you have completed the previous level."
+        ), () -> {
+            npcManager.setInteracting(false);
+        });
+    }
+
+    private void triggerLevel(int level) {
         System.out.println("Dialog completed, triggering level transition");
-        if (i == 1) {
+        if (level == 1) {
             transition.startTransition(new L1Instructions((Main)game));
+        }
+        if( level == 2) {
+            transition.startTransition(new L2Instructions((Main)game));
+        }
+        if( level == 3) {
+            transition.startTransition(new L3Instructions((Main)game));
         }
     }
 

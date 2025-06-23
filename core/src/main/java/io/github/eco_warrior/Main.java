@@ -10,13 +10,22 @@ import io.github.eco_warrior.screen.instructions.L3Instructions;
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
     private buttonGenerator buttonGenerator;
+    private static int level = 1;
     @Override
     public void create() {
         buttonGenerator = new buttonGenerator();
-        setScreen(new LevelTwoScreen(this));
+        setScreen(new MainMenuScreen(this));
     }
 
     public buttonGenerator getButtonFactory() {
         return buttonGenerator;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        Main.level = level;
     }
 }

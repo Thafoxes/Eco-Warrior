@@ -14,6 +14,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.sprite.Characters.GameCharacter;
 import io.github.eco_warrior.sprite.Characters.Goblin;
+import io.github.eco_warrior.sprite.Characters.Goblin2;
+import io.github.eco_warrior.sprite.Characters.Goblin3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,14 @@ public class NPCManager {
             if ("Level_1".equals(obj.getName()) && obj instanceof RectangleMapObject) {
                 Rectangle rect = ((RectangleMapObject) obj).getRectangle();
                 NPCs.add(new Goblin(new Vector2(rect.x, rect.y), tileWidth, tileHeight, true));
+            }
+            if ("Level_2".equals(obj.getName()) && obj instanceof RectangleMapObject) {
+                Rectangle rect = ((RectangleMapObject) obj).getRectangle();
+                NPCs.add(new Goblin2(new Vector2(rect.x, rect.y), tileWidth, tileHeight, true));
+            }
+            if ("Level_3".equals(obj.getName()) && obj instanceof RectangleMapObject) {
+                Rectangle rect = ((RectangleMapObject) obj).getRectangle();
+                NPCs.add(new Goblin3(new Vector2(rect.x, rect.y), tileWidth, tileHeight, true));
             }
         }
 

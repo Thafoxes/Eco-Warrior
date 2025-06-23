@@ -48,9 +48,9 @@ public class Worm extends Enemies {
 
         // Create animations for different states
         animationMap.put(EnemyState.MOVING, new Animation<>(0.2f, atlas.findRegions("moving"), Animation.PlayMode.LOOP));
-        animationMap.put(EnemyState.ATTACKING, new Animation<>(0.25f, atlas.findRegions("attack"), Animation.PlayMode.NORMAL));
-        animationMap.put(EnemyState.DEAD, new Animation<>(0.15f, atlas.findRegions("death"), Animation.PlayMode.NORMAL));
-        animationMap.put(EnemyState.IDLE, new Animation<>(0.15f, atlas.findRegions("idle"), Animation.PlayMode.LOOP));
+        animationMap.put(EnemyState.ATTACKING, new Animation<>(0.2f, atlas.findRegions("attack"), Animation.PlayMode.NORMAL));
+        animationMap.put(EnemyState.DEAD, new Animation<>(0.1f, atlas.findRegions("death"), Animation.PlayMode.NORMAL));
+        animationMap.put(EnemyState.IDLE, new Animation<>(0.1f, atlas.findRegions("idle"), Animation.PlayMode.LOOP));
 
         currentState = EnemyState.MOVING;
 

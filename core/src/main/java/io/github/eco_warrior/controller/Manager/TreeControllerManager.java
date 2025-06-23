@@ -74,7 +74,6 @@ public class TreeControllerManager {
                         BaseSaplingController sapling = (BaseSaplingController) draggingTool;
                         planted = treeController.handleSaplingPlanting(sapling);
                         // If a sapling was successfully planted, remove it from the tool manager.
-                        //TODO - check this
                         currentTreeController = treeController;
                         if(planted) {
                             return true; // Return true if a sapling was successfully planted
@@ -102,11 +101,11 @@ public class TreeControllerManager {
         return planted;
     }
 
-    public boolean isCurrentTreeMatured(){
+    public boolean isPlanting(){
         if(currentTreeController == null) {
             return false; // No current tree controller set
         }
-        boolean matured =  currentTreeController.isMatured();
+        boolean matured =  currentTreeController.isPlanting();
         return matured;
     }
 

@@ -189,8 +189,16 @@ public abstract class TreeController <T extends Trees> {
         return tree.getCollisionRect();
     }
 
-    public boolean isMatured() {
-        return tree.isMatured();
+    public boolean isPlanted(){
+        return tree.isPlanted();
+    }
+
+    public boolean isPlanting() {
+        return tree.isPlanting();
+    }
+
+    public boolean isMaturedAliveTree() {
+        return tree.isFullyMaturedAlive() && health <= 0;
     }
 
     public void drawDebug(ShapeRenderer shapeRenderer) {

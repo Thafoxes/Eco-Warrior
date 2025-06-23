@@ -7,12 +7,12 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.ui.Tree;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.eco_warrior.controller.Enemy.EnemyController;
 import io.github.eco_warrior.controller.Enemy.MetalChuckController;
 import io.github.eco_warrior.controller.Enemy.WormController;
+import io.github.eco_warrior.controller.FontGenerator;
 import io.github.eco_warrior.controller.Manager.EnemyManager;
 import io.github.eco_warrior.controller.FertilizerController;
 import io.github.eco_warrior.controller.GroundTrashController;
@@ -31,6 +31,7 @@ import java.util.*;
 import io.github.eco_warrior.enums.ButtonEnums;
 import io.github.eco_warrior.enums.GardeningEnums;
 import io.github.eco_warrior.enums.TreeType;
+import io.github.eco_warrior.screen.ResultScreen;
 import io.github.eco_warrior.sprite.*;
 import io.github.eco_warrior.sprite.UI.GunElementUI;
 import io.github.eco_warrior.sprite.buttons.FertilizerButton;
@@ -105,14 +106,21 @@ public class LevelTwoScreen implements Screen {
     private EnemyManager enemyManager;
     private WormPool wormPool;
     private MetalChuckPool metalChuckPool;
-    private ArrayList<EnemyController> enemyControllersToBeRemove;
+    private List<EnemyController> hiddenEnemies;
     private float spawnTimer = 0f;
-    private float spawnInterval = 10f;
+    private float spawnInterval = 8f;
 
     private final Random rand = new Random();
 
     private Map<TreeType, Vector2> treePositions = new HashMap<>();
 
+    //font
+    private FontGenerator timerFont;
+
+    //winning condition timer
+    private float gameTimer = 0f;
+    private final float MAX_GAME_TIME = 180f; // 3 minutes in seconds
+    private boolean gameOver = false;
 
     public LevelTwoScreen(Main main) {
         this.game = main;
@@ -134,6 +142,8 @@ public class LevelTwoScreen implements Screen {
         lastTouchPos = new Vector2();
         currentTouchPos = new Vector2();
         shapeRenderer = new ShapeRenderer();
+
+        timerFont = new FontGenerator(32, Color.WHITE, Color.BLACK);
 
         //setup camera to middle
         camera.position.set(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0);
@@ -174,7 +184,7 @@ public class LevelTwoScreen implements Screen {
 
     private void initializeEnemyManager() {
         enemyManager = new EnemyManager();
-        enemyControllersToBeRemove = new ArrayList<>();
+        hiddenEnemies = new ArrayList<>();
         wormPool = new WormPool(enemyManager);
         metalChuckPool = new MetalChuckPool(enemyManager);
 
@@ -296,6 +306,7 @@ public class LevelTwoScreen implements Screen {
     public void render(float delta) {
         input();
         draw(delta);
+        drawUI(delta);
         returnOriginalPosition();
 
         updateToolManager(delta);
@@ -306,7 +317,43 @@ public class LevelTwoScreen implements Screen {
 
         updateTrashController(delta);
         updateButtonManager(delta);
+        winningCondition(delta);
 
+    }
+
+    private void winningCondition(float delta) {
+        if(gameOver) return;
+
+        gameTimer += delta;
+
+        boolean allTreesMatured = true;
+        for(TreeController<?> treeController : treeControllerManager.getTreeControllers()) {
+            if (!treeController.isMaturedAliveTree()) {
+                allTreesMatured = false;
+                break;
+            }
+        }
+
+        if(allTreesMatured){
+            gameOver = true;
+            showWinScreen();
+            return;
+        }
+
+        if(gameTimer >= MAX_GAME_TIME) {
+            gameOver = true;
+            showLoseScreen();
+            return;
+        }
+    }
+
+    private void showLoseScreen() {
+        game.setScreen(new ResultScreen(game, 0, true, "Time out! You lose!"));
+    }
+
+    private void showWinScreen() {
+        game.setLevel(3);
+        game.setScreen(new ResultScreen(game, 0, false, "All trees are matured! You win!"));
     }
 
     private void updateEnemyTreeLogic(float delta) {
@@ -325,14 +372,8 @@ public class LevelTwoScreen implements Screen {
 
                 if(!enemy.isAttacking()){
                     enemy.attack();
-                    //System.out.println("L2 - Enemy " + enemy.getClass().getSimpleName() + " is attacking tree: " + currentTreeType);
                 }
-                //TODO - solve the issue of enemy done attack then take damage
-                if ( enemy.isAnimDoneAttacking(treeController)) {
-                    System.out.println("L2 - called!");
-                    enemy.resetAttackState();
-                    // Reset the attack state after attacking
-                }
+                enemy.isAnimDoneAttacking(treeController);
             }
         }
     }
@@ -342,19 +383,15 @@ public class LevelTwoScreen implements Screen {
         spawnMetalChuck(delta);
         enemyManager.update(delta);
 
-        for(EnemyController enemy : enemyManager.getEnemies()) {
-            if(enemy.isDead()){
-                addBackEnemyToPool(enemy);
-                enemyControllersToBeRemove.add(enemy);
-            }
-        }
 
-        if(!enemyControllersToBeRemove.isEmpty()){
-            System.out.println("L2 - Removing enemies from enemy manager: " + enemyControllersToBeRemove.size());
-            for(EnemyController enemy : enemyControllersToBeRemove) {
-                enemyManager.getEnemies().remove(enemy);
+        Iterator<EnemyController> activeIterator = enemyManager.getEnemies().iterator();
+        while (activeIterator.hasNext()) {
+            EnemyController enemy = activeIterator.next();
+            if (enemy.isDead()) {
+                activeIterator.remove();
+                //reset and return to pool
+                addBackEnemyToPool(enemy);
             }
-            enemyControllersToBeRemove.clear();
         }
 
     }
@@ -370,30 +407,50 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void spawnMetalChuck(float delta) {
-        spawnEnemy(delta, metalChuckPool);
+        spawnEnemy(delta, metalChuckPool, spawnInterval);
     }
 
     private void spawnWorm(float delta) {
-        spawnEnemy(delta, wormPool);
+        spawnEnemy(delta, wormPool, spawnInterval);
 
     }
 
-    private <T extends EnemyController> void spawnEnemy(float delta, EnemyPool<T> pool) {
+    private <T extends EnemyController> void spawnEnemy(float delta, EnemyPool<T> pool, float spawnInterval) {
         spawnTimer += delta;
 
-        if (spawnTimer >= spawnInterval && pool.getActiveCount() < 1) { // Limit to 5 enemies at a time
-            ArrayList<TreeType> treeTypes = pool.getAttackTreeType();
+        if(spawnTimer < spawnInterval && pool.getActiveCount() >= 5){
+            return; // Early exit if conditions aren't met
+        }
 
-            int randomIndex = rand.nextInt(0, treeTypes.size());
-            float ypos = treePositions.get(treeTypes.get(randomIndex)).y;
+        TreeController<?> selectedTree = null;
+        ArrayList<TreeType> targetTreeTypes = pool.getAttackTreeType();
+        ArrayList<TreeController> readyTrees = new ArrayList<>();
+
+        // Find a random tree ready for attack
+        ArrayList<TreeController> treeControllers = treeControllerManager.getTreeControllers();
+
+        for (TreeController<?> treeController : treeControllers) {
+            if (targetTreeTypes.contains(treeController.getTreeType()) && treeController.isPlanted()) {
+                readyTrees.add(treeController);
+            }
+        }
+
+        if (!readyTrees.isEmpty()) {
+            selectedTree = readyTrees.get(rand.nextInt(readyTrees.size()));
+        }else{
+            return;
+        }
+
+        if (selectedTree != null) {
+            TreeType selectedType = selectedTree.getTreeType();
+            float ypos = treePositions.get(selectedType).y;
 
             Vector2 spawnPos = new Vector2(WINDOW_WIDTH + 50f, ypos);
-            T enemy = pool.getEnemy(spawnPos, treeTypes.get(randomIndex));
-            if(enemy != null){
-                enemyManager.addEnemy(enemy);
-            }
+            pool.getEnemy(spawnPos, selectedType);
             spawnTimer = 0; // Reset the timer after spawning an enemy
         }
+
+
     }
 
     private void updateTrashController(float delta) {
@@ -406,7 +463,7 @@ public class LevelTwoScreen implements Screen {
 
     private void updateToolManager(float delta) {
         toolManager.update(delta);
-        toolManager.setIsPlanting(treeControllerManager.isCurrentTreeMatured());
+        toolManager.setIsPlanting(treeControllerManager.isPlanting());
     }
 
     private void updateButtonManager(float delta) {
@@ -438,13 +495,38 @@ public class LevelTwoScreen implements Screen {
         iceTreeIceElementDrawer.draw(batch, stateTime/*, rayGun.getMode()*/);
 
         batch.end();
-        debugSprite();
+//        debugSprite();
 
+    }
+
+    private void drawUI(float delta) {
+        //Currency UI
         uiBatch.setProjectionMatrix(camera.combined);
         uiBatch.begin();
         currency.update(delta);
         currency.draw(uiBatch);
+        drawTimer(delta);
+
         uiBatch.end();
+    }
+
+    private void drawTimer(float delta) {
+        if (gameOver) return;
+
+        // Calculate time left
+        float timeLeft = Math.max(0, MAX_GAME_TIME - gameTimer);
+        int minutes = (int)(timeLeft / 60);
+        int seconds = (int)(timeLeft % 60);
+
+        // Format time as MM:SS
+        String timeText = "Time left: " + String.format("%02d:%02d", minutes, seconds);
+
+        // Draw timer at top right
+        Vector2 timerPosition = new Vector2(WINDOW_WIDTH - 130, WINDOW_HEIGHT - 20);
+
+        // Use the fontDraw method with RIGHT alignment
+        timerFont.fontDraw(uiBatch, timeText, camera, timerPosition);
+
     }
 
 
@@ -675,6 +757,7 @@ public class LevelTwoScreen implements Screen {
         buttonManager.dispose();
         enemyManager.dispose();
         wateringCan.dispose();
+        if(timerFont != null) timerFont.dispose();
 
         waterFountain.dispose();
         if (currency != null) currency.dispose();

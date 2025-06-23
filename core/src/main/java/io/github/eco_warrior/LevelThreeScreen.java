@@ -330,6 +330,7 @@ public class LevelThreeScreen implements Screen, SpiderSprite.CrackCreationCallb
 
     private void WinningResult() {
         StopMusic();
+        game.setLevel(3);
         game.setScreen(new ResultScreen(game, score, false,
             "Score hit!",
             winningImage)); // true indicates game over

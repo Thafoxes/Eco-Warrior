@@ -138,6 +138,10 @@ atlas/watering_can/watering_can.png
 atlas/worm/worm.atlas
 atlas/worm/worm.png
 atlas/worm/worm2.png
+character/goblin2/Goblin2.atlas
+character/goblin2/Goblin2.png
+character/goblin3/Goblin3.atlas
+character/goblin3/Goblin3.png
 character/goblins/Globlins.atlas
 character/goblins/Globlins.png
 character/goblins/goblins.tpproj
