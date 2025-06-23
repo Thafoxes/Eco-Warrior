@@ -28,6 +28,7 @@ import io.github.eco_warrior.entity.GameSprite;
 
 import java.util.*;
 
+import io.github.eco_warrior.entity.Trees;
 import io.github.eco_warrior.enums.ButtonEnums;
 import io.github.eco_warrior.enums.GardeningEnums;
 import io.github.eco_warrior.enums.TreeType;
@@ -636,9 +637,16 @@ public class LevelTwoScreen implements Screen {
         }
 
         //watercan from toolManager, so perform it on toolManager
-        if(draggingTool instanceof WateringCan){
-            //after interact with trees using watering can, empty the water can
-            toolManager.emptyWaterCan();
+        if (draggingTool instanceof WateringCan) {
+            for (TreeController<?> treeController : treeControllerManager.getTreeControllers()) {
+                // Empty watering can on appropriate tree stages
+                if (draggingTool.getCollisionRect().overlaps(treeController.getCollisionRect())
+                    && (treeController.getStage() == Trees.TreeStage.SAPLING
+                    || treeController.getStage() == Trees.TreeStage.YOUNG_TREE)) {
+                    toolManager.emptyWaterCan();
+                    break; // Only need to empty once per overlap
+                }
+            }
         }
         if(draggingTool instanceof Shovel){
             for(EnemyController enemy : enemyManager.getEnemies()){

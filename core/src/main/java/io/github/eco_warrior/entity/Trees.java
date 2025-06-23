@@ -173,19 +173,22 @@ public abstract class Trees extends GameSprite {
     }
 
     public void revivePlant() {
+        TreeStage deadStage;
         switch (treeStage){
             case DEAD_SAPLING:
-                setStage(TreeStage.SAPLING);
+                deadStage = TreeStage.SAPLING;
                 break;
             case DEAD_YOUNG_TREE:
-                setStage(TreeStage.YOUNG_TREE);
+                deadStage = TreeStage.YOUNG_TREE;
                 break;
-                case DEAD_MATURE_TREE:
-                setStage(TreeStage.MATURED_TREE);
+            case DEAD_MATURE_TREE:
+                deadStage = TreeStage.MATURED_TREE;
                 break;
             default:
-                setStage(treeStage);
-        }
+                deadStage = treeStage;
+                break;
+        };
+        setStage(deadStage);
     }
 
     /**
@@ -204,6 +207,9 @@ public abstract class Trees extends GameSprite {
         switch (treeStage){
             case SAPLING:
                 deadStage = TreeStage.DEAD_SAPLING;
+                break;
+            case YOUNG_TREE:
+                deadStage = TreeStage.DEAD_YOUNG_TREE;
                 break;
             case MATURED_TREE:
                 deadStage = TreeStage.DEAD_MATURE_TREE;

@@ -208,6 +208,7 @@ public abstract class TreeController <T extends Trees> {
     }
 
     public void resetHealth() {
+        tree.revivePlant();
         health = 4;
         isDead = false;
     }
