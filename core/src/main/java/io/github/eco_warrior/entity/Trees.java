@@ -159,6 +159,10 @@ public abstract class Trees extends GameSprite {
         }
     }
 
+    public boolean isDeadPlant(){
+        return treeStage == TreeStage.DEAD_SAPLING || treeStage == TreeStage.DEAD_YOUNG_TREE
+            || treeStage == TreeStage.DEAD_MATURE_TREE;
+    }
     public boolean isPlanting(){
         return treeStage == TreeStage.YOUNG_TREE || treeStage == TreeStage.DEAD_YOUNG_TREE
             || treeStage == TreeStage.SAPLING || treeStage == TreeStage.DEAD_SAPLING;
