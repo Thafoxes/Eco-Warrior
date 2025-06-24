@@ -35,11 +35,9 @@ Background_Image/frame_15_delay-0.09s.gif
 Background_Image/frame_1_delay-0.22s.gif
 Background_Image/frame_2_delay-0.22s.gif
 Background_Image/frame_3_delay-0.22s.gif
-Background_Music/KEROSENE-last60secs.mp3
 Background_Music/Menu.mp3
 Background_Music/Pipe.mp3
 Background_Music/Recycle.mp3
-Background_Music/forest-nature.mp3
 Image/girl.png
 Image/plumber_girl_defeated.png
 Image/plumbergirl_cheerful.png
@@ -73,8 +71,6 @@ atlas/conveyor/conveyor_belt.png
 atlas/conveyor/conveyor_belt2.png
 atlas/conveyor/conveyor_belt3.png
 atlas/conveyor/conveyor_belt4.png
-atlas/cooldown_reduction_timer/clock.atlas
-atlas/cooldown_reduction_timer/clock.png
 atlas/crack/crackx64.atlas
 atlas/crack/crackx64.png
 atlas/crack/crackx64v2.atlas
@@ -201,7 +197,6 @@ maps/world_map/water_detilazation.png
 maps/world_map/water_detilazation_v2.png
 sound_effects/Bonemeal1.mp3
 sound_effects/Button_Click.mp3
-sound_effects/CooldownReduction.mp3
 sound_effects/Game_over_sfx.mp3
 sound_effects/Gravel_dig1.mp3
 sound_effects/KEROSENE-last60secs.mp3
