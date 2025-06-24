@@ -4,9 +4,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Tree;
 import com.badlogic.gdx.utils.Array;
 import io.github.eco_warrior.controller.Enemy.EnemyController;
+import io.github.eco_warrior.controller.Enemy.IceCrabController;
+import io.github.eco_warrior.controller.Enemy.TentaclesController;
 import io.github.eco_warrior.controller.Manager.EnemyManager;
 import io.github.eco_warrior.entity.Enemies;
 import io.github.eco_warrior.enums.TreeType;
+import io.github.eco_warrior.sprite.Enemy.IceCrab;
 
 import java.util.ArrayList;
 
@@ -51,7 +54,16 @@ public abstract class EnemyPool<T extends EnemyController> {
             enemy.move();
             enemy.setCurrentAttackTreeType(treeType);
             enemy.setSpritePosition(position);
-            enemy.setState(Enemies.EnemyState.MOVING);
+            if(enemy instanceof IceCrabController){
+                enemy.setState(Enemies.EnemyState.SPAWNING);
+
+            }else if(enemy instanceof TentaclesController){
+                enemy.setState(Enemies.EnemyState.SPAWNING);
+            }
+            else{
+                enemy.setState(Enemies.EnemyState.MOVING);
+
+            }
             enemy.setRightDirection(false);
             enemyManager.addEnemy(enemy);
             poolSent++;

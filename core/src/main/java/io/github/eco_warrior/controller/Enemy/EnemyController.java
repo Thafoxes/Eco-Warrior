@@ -44,7 +44,7 @@ public abstract class EnemyController {
         enemy.update(delta);
 
         if (enemy.getCurrentState() == Enemies.EnemyState.MOVING) {
-            float direction = enemy.isRightDirection() ? 1 : -1;
+            float direction = enemy.isFromRightDirection() ? 1 : -1;
             Vector2 position = enemy.getPosition();
             position.x += direction * moveSpeed * delta;
             enemy.setPosition(position);

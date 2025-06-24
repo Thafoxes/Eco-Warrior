@@ -62,8 +62,8 @@ public class L2Instructions implements Screen {
         instructionFont = new FontGenerator(24, Color.WHITE, Color.BLACK);
 
         // Load images
-        instructionImage = new Texture(Gdx.files.internal("ui/instructions/L2instructions.png"));
-        backgroundImage = new Texture(Gdx.files.internal("Image/girl.png"));
+        instructionImage = new Texture(Gdx.files.internal("ui/instructions/greenlandDisplay.png"));
+        backgroundImage = new Texture(Gdx.files.internal("Image/OctopusMascot.png"));
 
         // Create acknowledge button
         buttonGen = new buttonGenerator();
@@ -110,7 +110,7 @@ public class L2Instructions implements Screen {
 
         // Draw background image (scaled to fit screen)
         float scaleBGM = 3;
-        batch.draw(backgroundImage, 0, 0, backgroundImage.getWidth() * scaleBGM, backgroundImage.getHeight() * scaleBGM);
+        batch.draw(backgroundImage, 0, 0, 260, 280);
 
 
         // Draw the instruction image centered
@@ -125,11 +125,14 @@ public class L2Instructions implements Screen {
 
         // Draw instruction text
         String[] instructions = {
-            "1. Use shovel to dig the hole accodring to the flag and sapling",
-            "2. Use the shovel to hit the monsters!",
-            "3. Water the plants to grow them",
-            "4. Use fertilizer to revive the plants",
-            "5. Plant all the trees to complete the level",
+            "1. Use the shovel to dig out a hole to plant saplings",
+            "2. Water the plants to grow them",
+            "3. Click the elemental floats for surprises!",
+            "4. Use the appropriate weapons to fend off enemies!",
+            "5. Use fertilizer to heal or revive the plants",
+            "6. Collect to trash to get coins",
+            "7. Purchase items for upgrades and restocks!",
+            "8. Plant all the trees to complete the level",
         };
 
         float textY = WINDOW_HEIGHT / (instructions.length * 4); // Position text below the title

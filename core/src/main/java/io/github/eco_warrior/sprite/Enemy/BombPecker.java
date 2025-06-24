@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Timer;
 import io.github.eco_warrior.entity.Enemies;
 
 public class BombPecker extends Enemies {
@@ -18,7 +17,7 @@ public class BombPecker extends Enemies {
 
 
     public BombPecker(Vector2 position, float scale) {
-        super("atlas/bomb_pecker/bomber_pecker.atlas",
+        super("atlas/bomb_pecker/bomber_pecker_new.atlas",
             "move",
             1, // this is for moving frameCount only, later in the load Animation it will run through all the frames
             position,
@@ -29,7 +28,7 @@ public class BombPecker extends Enemies {
         previousState = EnemyState.MOVING;
 
         stateTime = 0f;
-        isRightDirection = true;
+        isFromRightDirection = true;
 
         loadAnimations();
     }
@@ -41,12 +40,12 @@ public class BombPecker extends Enemies {
     @Override
     protected void loadAnimations() {
         // Load animations directly here
-        atlas = new TextureAtlas(Gdx.files.internal("atlas/bomb_pecker/bomber_pecker.atlas"));
+        atlas = new TextureAtlas(Gdx.files.internal("atlas/bomb_pecker/bomber_pecker_new.atlas"));
 
         // Create animations for different states
         animationMap.put(EnemyState.MOVING, new Animation<>(0.1f, atlas.findRegions("move"), Animation.PlayMode.LOOP));
         animationMap.put(EnemyState.ATTACKING, new Animation<>(0.12f, atlas.findRegions("attack"), Animation.PlayMode.NORMAL));
-        animationMap.put(EnemyState.DEAD, new Animation<>(0.10f, atlas.findRegions("dead"), Animation.PlayMode.NORMAL));
+        animationMap.put(EnemyState.DEAD, new Animation<>(0.10f, atlas.findRegions("shotdeath"), Animation.PlayMode.NORMAL));
         animationMap.put(EnemyState.IDLE, new Animation<>(0.15f, atlas.findRegions("idle"), Animation.PlayMode.LOOP));
 
         currentState = EnemyState.MOVING;
@@ -65,15 +64,6 @@ public class BombPecker extends Enemies {
         return isDoneAttacking && (currentState == EnemyState.DEAD || currentState == EnemyState.ATTACKING);
     }
 
-    public void resetDoneAttacking() {
-       isDoneAttacking = false;
-    }
-
-    public void hit(){
-        currentState = EnemyState.DEAD;
-    }
-
-
     @Override
     public void update(float delta) {
         if (!isDead()) {
@@ -82,27 +72,17 @@ public class BombPecker extends Enemies {
 
         Animation<TextureRegion> currentAnimation = animationMap.get(currentState);
 
-        if(currentState == EnemyState.ATTACKING){
-
-            if(currentAnimation.isAnimationFinished(stateTime)){
-                //no animation
-                isDoneAttacking = true;
-                isDead = true;
-                stateTime = 0;
-            }
+        switch (currentState){
+            case MOVING:
+                updateAnimationFrame(currentAnimation);
+                break;
+            case ATTACKING:
+                break;
+            case DEAD:
+                //slap to death, not self explosion
+                break;
         }
 
-
-        if(currentState == EnemyState.DEAD){
-            //slap to death, not self explosion
-            if (currentAnimation.isAnimationFinished(stateTime)) {
-                //TODO - Check if this is the right way to handle death animation
-                System.out.println("BombPecker animation dead is done!");
-                isDead = true;
-                stateTime = 0;
-            }
-        }
-        updateAnimationFrame(currentAnimation);
         handleAttackingAnimation(currentAnimation);
 
     }
@@ -110,20 +90,25 @@ public class BombPecker extends Enemies {
     @Override
     protected void handleAttackingAnimation(Animation<TextureRegion> currentAnimation){
         // Play sound only when entering ATTACKING state
-        if(currentState == EnemyState.ATTACKING && previousState != currentState && !startPlay) {
+        if(currentState == EnemyState.ATTACKING && previousState != EnemyState.ATTACKING && !startPlay) {
             if (attackSound != null) {
                 attackSound.play(0.5f);
             }
             startPlay = true;
         }
 
+        TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime,
+            currentState == EnemyState.MOVING || currentState == EnemyState.IDLE);
+        getSprite().setRegion(currentFrame);
+        handleSpriteFlip();
 
-        if(currentState == EnemyState.ATTACKING && currentAnimation.isAnimationFinished(stateTime)){
-            setState(EnemyState.DEAD);
-            isDoneAnimation = true;
-            stateTime = 0f;
-            canAttack = false;
-        }
+
+    }
+
+    @Override
+    public void setState(EnemyState state){
+        super.setState(state);
+        stateTime = 0;
     }
 
 
@@ -146,4 +131,8 @@ public class BombPecker extends Enemies {
     }
 
 
+    public boolean isCurrentAnimationDone() {
+        Animation<TextureRegion> currentAnimation = animationMap.get(currentState);
+        return currentAnimation.isAnimationFinished(stateTime);
+    }
 }
