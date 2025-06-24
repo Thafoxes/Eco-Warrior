@@ -592,7 +592,13 @@ public class LevelTwoScreen implements Screen {
                 treeController.setMaturityProcessed(true);
 
                 // Unlock the next sapling in sequence
-                toolManager.unlockNextSapling();
+                BaseSaplingController nextSapling = toolManager.unlockNextSapling();
+
+                // Make sure the newly unlocked sapling is available for dragging
+                if (nextSapling != null) {
+                    toolManager.setSaplingAvailable(nextSapling, true);
+                    toolManager.setIsPlanting(false);
+                }
 
             }
         }

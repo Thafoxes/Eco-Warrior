@@ -122,7 +122,7 @@ public class TreeControllerManager {
         if(currentTreeController == null) {
             return false; // No current tree controller set
         }
-        boolean growing = currentTreeController.isPlanting() &&  !currentTreeController.isMaturedTree();
+        boolean growing = !currentTreeController.isMaturedTree();
         return growing;
     }
 

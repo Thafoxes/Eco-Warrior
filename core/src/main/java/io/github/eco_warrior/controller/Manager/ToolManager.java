@@ -34,14 +34,15 @@ public class ToolManager {
     }
 
     // Add to ToolManager class
-    public void unlockNextSapling() {
+    public BaseSaplingController unlockNextSapling() {
         // Find the next unavailable sapling in the list and make it available
         for (BaseSaplingController sapling : saplingControllers) {
             if (!availableSaplings.contains(sapling)) {
                 availableSaplings.add(sapling);
-                return;
+                return sapling;
             }
         }
+        return null;
     }
 
 
