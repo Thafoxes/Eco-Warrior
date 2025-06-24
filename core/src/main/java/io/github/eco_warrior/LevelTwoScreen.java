@@ -2,6 +2,7 @@ package io.github.eco_warrior;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -128,6 +129,10 @@ public class LevelTwoScreen implements Screen {
     private final float MAX_GAME_TIME = 60f; // 1 minutes in seconds
     private boolean gameOver = false;
 
+    //Music
+    private Music countdownMusic;
+    private boolean musicStarted = false;
+
     public LevelTwoScreen(Main main) {
         this.game = main;
         this.toolManager = new ToolManager();
@@ -155,7 +160,7 @@ public class LevelTwoScreen implements Screen {
         camera.position.set(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0);
 
 
-
+        initializeMusic();
         initializeTools();
         initializeTrees();
         initializeTrashArea();
@@ -166,6 +171,12 @@ public class LevelTwoScreen implements Screen {
 
         initializeGun();
 
+    }
+
+    private void initializeMusic() {
+        countdownMusic = Gdx.audio.newMusic(Gdx.files.internal("sound_effects/KEROSENE-last60secs.mp3"));
+        countdownMusic.setVolume(0.5f);
+        countdownMusic.setLooping(false);
     }
 
     private void initializeGun() {
@@ -367,6 +378,11 @@ public class LevelTwoScreen implements Screen {
         if(allTreesMatured ){
             gameTimer += delta;
             //all trees are matured, show start timer
+            // Play the countdown music when the timer starts
+            if(!musicStarted) {
+                countdownMusic.play();
+                musicStarted = true;
+            }
         }
 
 
@@ -380,12 +396,14 @@ public class LevelTwoScreen implements Screen {
 
         if(gameTimer >= MAX_GAME_TIME && allTreeMaturedAlive) {
             gameOver = true;
+            countdownMusic.stop();
             showWinScreen();
             return;
         }
 
         if(gameTimer >= MAX_GAME_TIME && !allTreeMaturedAlive) {
             gameOver = true;
+            countdownMusic.stop();
             showLoseScreen();
             return;
         }
