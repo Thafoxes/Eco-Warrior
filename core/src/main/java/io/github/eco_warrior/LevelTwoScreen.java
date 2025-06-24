@@ -597,6 +597,7 @@ public class LevelTwoScreen implements Screen {
                 // Make sure the newly unlocked sapling is available for dragging
                 if (nextSapling != null) {
                     toolManager.setSaplingAvailable(nextSapling, true);
+                    // Reset the isPlanting flag to allow dragging the new sapling
                     toolManager.setIsPlanting(false);
                 }
 

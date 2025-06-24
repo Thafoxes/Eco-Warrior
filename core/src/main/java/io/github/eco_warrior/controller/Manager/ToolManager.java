@@ -112,6 +112,7 @@ public class ToolManager {
 
     // Only allow dragging if the sapling is the current one
     public boolean canDragSaplingAt(Vector2 position) {
+        
         if (!saplingControllers.isEmpty() && !isPlanting) {
             BaseSaplingController currentSapling = saplingControllers.get(saplingIndex);
             return currentSapling.getCollisionRect().contains(position);
