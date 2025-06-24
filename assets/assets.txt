@@ -199,6 +199,7 @@ sound_effects/Bonemeal1.mp3
 sound_effects/Button_Click.mp3
 sound_effects/Game_over_sfx.mp3
 sound_effects/Gravel_dig1.mp3
+sound_effects/KEROSENE-last60secs.mp3
 sound_effects/Stone_button_unpress.mp3
 sound_effects/bomb_pecker_explosion_sfx.mp3
 sound_effects/breeze.mp3
