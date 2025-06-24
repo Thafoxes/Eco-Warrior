@@ -160,8 +160,6 @@ public class ToolManager {
     public void handleFertilizerUsing(GameSprite fertilizer) {
         if(fertilizer instanceof FertilizerController){
             fertilizerControllers.remove(fertilizer);
-            //to fix the issue flash spawning issue
-//            isFertilizerUsed = true;
 
             if(!fertilizerControllers.isEmpty()) {
                 // Update current index if needed

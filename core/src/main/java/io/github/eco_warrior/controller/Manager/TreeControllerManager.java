@@ -104,6 +104,7 @@ public class TreeControllerManager {
                         isFertilizerUsed = treeController.handleFertilizerUsing(fertilizerController);
 
                         currentTreeController = treeController;
+                        System.out.println("TreeControllerManager - Fertilizer used on tree: " + currentTreeController.getTreeType());
                         if(isFertilizerUsed) {
                             return true;
                         }
@@ -118,8 +119,8 @@ public class TreeControllerManager {
         if(currentTreeController == null) {
             return false; // No current tree controller set
         }
-        boolean matured =  currentTreeController.isPlanting();
-        return matured;
+        boolean growing = currentTreeController.isPlanting() &&  !currentTreeController.isMaturedTree();
+        return growing;
     }
 
 

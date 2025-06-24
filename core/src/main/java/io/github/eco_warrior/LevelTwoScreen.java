@@ -594,7 +594,7 @@ public class LevelTwoScreen implements Screen {
 
     private void updateToolManager(float delta) {
         toolManager.update(delta);
-        toolManager.setIsPlanting(treeControllerManager.isPlanting());
+//        toolManager.setIsPlanting(treeControllerManager.isPlanting());
     }
 
     private void updateButtonManager(float delta) {
