@@ -19,7 +19,7 @@ public class IceCrab extends Enemies {
 
     public IceCrab(Vector2 position) {
         super("atlas/IceCrab/ice_crab.atlas",
-            "spawn", 1, position, 0.1f);
+            "spawn", 1, position, 0.2f);
 
         isFromRightDirection = true;
         loadAnimations();
@@ -78,9 +78,15 @@ public class IceCrab extends Enemies {
 
     @Override
     protected void updateAnimationFrame(Animation<TextureRegion> currentAnimation) {
-        if (currentAnimation == null || currentAnimation.getKeyFrames().length == 0) {
-            System.err.println("Warning: Animation is empty for state: " + currentState);
-            return;
+        if (currentAnimation == null) {
+            System.err.println("Warning: Animation is null for state: " + currentState);
+            // Default to IDLE animation if current animation is null
+            currentAnimation = animationMap.get(EnemyState.IDLE);
+
+            // If we still don't have an animation, return to avoid crash
+            if (currentAnimation == null) {
+                return;
+            }
         }
 
         TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime,

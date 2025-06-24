@@ -10,18 +10,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import io.github.eco_warrior.controller.Enemy.BombPeckerController;
-import io.github.eco_warrior.controller.Enemy.EnemyController;
-import io.github.eco_warrior.controller.Enemy.MetalChuckController;
-import io.github.eco_warrior.controller.Enemy.WormController;
+import io.github.eco_warrior.controller.Enemy.*;
 import io.github.eco_warrior.controller.FontGenerator;
 import io.github.eco_warrior.controller.Manager.*;
 import io.github.eco_warrior.controller.FertilizerController;
 import io.github.eco_warrior.controller.GroundTrashController;
-import io.github.eco_warrior.controller.Pools.BombPeckerPool;
-import io.github.eco_warrior.controller.Pools.EnemyPool;
-import io.github.eco_warrior.controller.Pools.MetalChuckPool;
-import io.github.eco_warrior.controller.Pools.WormPool;
+import io.github.eco_warrior.controller.Pools.*;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.controller.Trees.*;
 import io.github.eco_warrior.entity.GameSprite;
@@ -108,6 +102,7 @@ public class LevelTwoScreen implements Screen {
     private EnemyManager enemyManager;
     private WormPool wormPool;
     private MetalChuckPool metalChuckPool;
+    private IceCrabPool iceCrabPool;
     private BombPeckerPool bombPeckerPool;
     private List<EnemyController> hiddenEnemies;
     private float spawnTimer = 0f;
@@ -116,6 +111,7 @@ public class LevelTwoScreen implements Screen {
     private float wormSpawnTimer = 0f;
     private float metalChuckSpawnTimer = 0f;
     private float bombPeckerSpawnTimer = 0f;
+    private float iceCrabSpawnTimer = 0f;
 
     private final Random rand = new Random();
 
@@ -213,6 +209,13 @@ public class LevelTwoScreen implements Screen {
         wormPool = new WormPool(enemyManager);
         metalChuckPool = new MetalChuckPool(enemyManager);
         bombPeckerPool = new BombPeckerPool(enemyManager);
+        iceCrabPool = new IceCrabPool(enemyManager);
+
+        iceCrabPool.setAttackTreeType(
+            new ArrayList<>(
+                Collections.singletonList(TreeType.BLAZING)
+            )
+        );
 
         wormPool.setAttackTreeType(
             new ArrayList<>(
@@ -285,6 +288,7 @@ public class LevelTwoScreen implements Screen {
 
 
 
+        //TODO - edit back
         //following tier list
 //        toolManager.addSaplingController(blazingSapling); //debug debug
 
@@ -451,7 +455,14 @@ public class LevelTwoScreen implements Screen {
 
                     }
                     bombPecker.isAnimDoneAttacking(treeController);
-
+                }
+                else if(enemy instanceof IceCrabController){
+                    IceCrabController iceCrab = (IceCrabController) enemy;
+                    if(treeController.getCollisionRect().overlaps(enemy.getCollisionRect())){
+                        if(iceCrab.isCurrentAnimationDone()){
+                            iceCrab.attack(treeController);
+                        }
+                    }
                 }
                 else if(treeController.getCollisionRect().overlaps(enemy.getCollisionRect())){
                     if(!enemy.isAttacking()){
@@ -468,11 +479,14 @@ public class LevelTwoScreen implements Screen {
         wormSpawnTimer += delta;
         metalChuckSpawnTimer += delta;
         bombPeckerSpawnTimer += delta;
+        iceCrabSpawnTimer += delta;
 
+        //TODO - add and edit
         if (enemyManager.getEnemies().size() < 10) {
             spawnWorm();
             spawnMetalChuck();
             spawnBombPecker();
+            spawnIceCrab();
 
         }
 
@@ -500,6 +514,7 @@ public class LevelTwoScreen implements Screen {
 
     }
 
+
     private <T extends EnemyPool> void addBackEnemyToPool(EnemyController enemy) {
         if (enemy instanceof WormController) {
             wormPool.returnEnemy((WormController) enemy);
@@ -507,13 +522,23 @@ public class LevelTwoScreen implements Screen {
             metalChuckPool.returnEnemy((MetalChuckController) enemy);
         } else if (enemy instanceof BombPeckerController) {
             bombPeckerPool.returnEnemy((BombPeckerController) enemy);
+        } else if (enemy instanceof IceCrabController) {
+            iceCrabPool.returnEnemy((IceCrabController) enemy);
         } else {
             throw new IllegalArgumentException("Unknown enemy type: " + enemy.getClass().getSimpleName());
         }
     }
 
+    private void spawnIceCrab() {
+        if(iceCrabSpawnTimer >= averageSpawnInterval + 6 && iceCrabPool.getActiveCount() < 2) {
+            spawnEnemy(iceCrabPool);
+            iceCrabSpawnTimer = 0;
+        }
+    }
+
+
     private void spawnMetalChuck() {
-        if (metalChuckSpawnTimer >= averageSpawnInterval + 13 && metalChuckPool.getActiveCount() < 5) {
+        if (metalChuckSpawnTimer >= averageSpawnInterval + 8 && metalChuckPool.getActiveCount() < 5) {
             spawnEnemy(metalChuckPool);
             metalChuckSpawnTimer = 0;
         }
@@ -565,6 +590,8 @@ public class LevelTwoScreen implements Screen {
             if (pool instanceof BombPeckerPool){
                 spawnPos = new Vector2( xpos, WINDOW_HEIGHT + 50F);
 
+            }else if(pool instanceof IceCrabPool){
+                spawnPos = new Vector2(xpos - 150f , ypos);
             }else{
                 spawnPos = new Vector2(WINDOW_WIDTH + 50f, ypos);
 
@@ -638,7 +665,7 @@ public class LevelTwoScreen implements Screen {
         gunManager.draw(batch, stateTime);
 
         batch.end();
-//        debugSprite();
+        debugSprite();
 
     }
 
@@ -828,6 +855,16 @@ public class LevelTwoScreen implements Screen {
                             }
                         }
 
+                    }
+                    if(enemy instanceof IceCrabController){
+
+                        if(rayGun.getMode() == RayGun.RayGunMode.BLAZING){
+                            IceCrabController iceCrab = (IceCrabController) enemy;
+                            if(!iceCrab.isDead()){
+                                iceCrab.die();
+                                rayGun.playModeSound();
+                            }
+                        }
                     }
                 }
             }

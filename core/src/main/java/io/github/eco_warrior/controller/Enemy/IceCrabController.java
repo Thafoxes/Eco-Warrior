@@ -2,6 +2,7 @@ package io.github.eco_warrior.controller.Enemy;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
 import io.github.eco_warrior.controller.Trees.TreeController;
@@ -32,7 +33,6 @@ public class IceCrabController extends EnemyController{
         switch (iceCrab.getCurrentState()){
             case SPAWNING:
                 if(iceCrab.isCurrentAnimationDone()){
-                    System.out.println("Ice Crab spawning done");
                     iceCrab.setState(Enemies.EnemyState.IDLE);
                 }
                 break;
@@ -51,7 +51,6 @@ public class IceCrabController extends EnemyController{
                             @Override
                             public void run() {
                                 isAttacking = false;
-//                                System.out.println("Ice Crab ready to attack again");
                             }
                         }, attackCooldown);
                     }
@@ -59,12 +58,15 @@ public class IceCrabController extends EnemyController{
                 break;
             case DEAD:
                 if(iceCrab.isCurrentAnimationDone()){
-                    System.out.println("Ice Crab is dead");
                     isDead = true; // Set dead state
                 }
                 break;
         }
 
+    }
+
+    public boolean isCurrentAnimationDone(){
+        return iceCrab.isCurrentAnimationDone();
     }
 
     @Override
@@ -80,11 +82,14 @@ public class IceCrabController extends EnemyController{
         }
     }
 
+    /**
+     * This method is used to attack without a specific tree controller.
+     * It can be used for testing or when no tree is targeted.
+     */
     @Override
     public void attack() {
         if(!isAttacking){
             isAttacking = true;
-            System.out.println("Attacking without tree controller");
             iceCrab.attack();
         }
     }
