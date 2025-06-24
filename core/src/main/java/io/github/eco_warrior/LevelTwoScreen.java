@@ -211,6 +211,7 @@ public class LevelTwoScreen implements Screen {
         bombPeckerPool = new BombPeckerPool(enemyManager);
         iceCrabPool = new IceCrabPool(enemyManager);
 
+        //TODO - change enemy Tree Attack Type
         iceCrabPool.setAttackTreeType(
             new ArrayList<>(
                 Collections.singletonList(TreeType.BLAZING)
@@ -288,7 +289,7 @@ public class LevelTwoScreen implements Screen {
 
 
 
-        //TODO - edit back
+        //TODO - edit back sapling list
         //following tier list
 //        toolManager.addSaplingController(blazingSapling); //debug debug
 
@@ -481,7 +482,7 @@ public class LevelTwoScreen implements Screen {
         bombPeckerSpawnTimer += delta;
         iceCrabSpawnTimer += delta;
 
-        //TODO - add and edit
+        //TODO - add and edit enemyManager
         if (enemyManager.getEnemies().size() < 10) {
             spawnWorm();
             spawnMetalChuck();
@@ -545,7 +546,8 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void spawnBombPecker() {
-        if( bombPeckerSpawnTimer >= averageSpawnInterval + 5 && bombPeckerPool.getActiveCount() < 3) {
+        //TODO - change back
+        if( bombPeckerSpawnTimer >= averageSpawnInterval + 4 && bombPeckerPool.getActiveCount() < 3) {
             spawnEnemy(bombPeckerPool); // Bomb Pecker has a longer spawn interval
 
             bombPeckerSpawnTimer = 0;
@@ -634,8 +636,7 @@ public class LevelTwoScreen implements Screen {
 
     private void updateToolManager(float delta) {
         toolManager.update(delta);
-        //TODO- idk why this remove fix the issue
-//        toolManager.setIsPlanting(treeControllerManager.isPlanting());
+
     }
 
     private void updateButtonManager(float delta) {
@@ -847,6 +848,7 @@ public class LevelTwoScreen implements Screen {
                         }
                     }
                     if(enemy instanceof BombPeckerController){
+                        //TODO change back the type Breezing
                         if(rayGun.getMode() == RayGun.RayGunMode.BREEZING || rayGun.getMode() == RayGun.RayGunMode.ICE){
                             BombPeckerController bombPecker = (BombPeckerController) enemy;
                             if(!bombPecker.isDead()){

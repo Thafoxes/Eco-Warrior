@@ -30,6 +30,7 @@ public class IceCrabController extends EnemyController{
             return;
         }
 
+
         switch (iceCrab.getCurrentState()){
             case SPAWNING:
                 if(iceCrab.isCurrentAnimationDone()){
