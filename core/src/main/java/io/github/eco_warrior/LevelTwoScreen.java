@@ -336,7 +336,7 @@ public class LevelTwoScreen implements Screen {
         treePositions.put(TreeType.ORDINARY, new Vector2(763, 122));
         treePositions.put(TreeType.BLAZING, new Vector2(1048, 256));
         treePositions.put(TreeType.BREEZING, new Vector2(920, 183));
-        treePositions.put(TreeType.ICE, new Vector2(1023, 25));
+        treePositions.put(TreeType.ICE, new Vector2(1013, 50));
         treePositions.put(TreeType.VOLTAIC, new Vector2(781, 299));
 
         TreeController<OrdinaryTree> ordinaryTreeController = new OrdinaryTreeController(
@@ -393,17 +393,10 @@ public class LevelTwoScreen implements Screen {
 
     private void updateShowBoss(float delta) {
 
-
-        if(isTimerStarts && !showBigBoss) {
-            showSmallBoss = false; //change to big boss
-            showBigBoss = true;
-        }
-        // Schedule the boss to spawn after a delay
-
         if(showBigBoss){
             boss.update(delta);
         }
-        if(showSmallBoss && !showBigBoss){
+        if(showSmallBoss){
             smallBoss.update(delta);
         }
     }
@@ -424,11 +417,11 @@ public class LevelTwoScreen implements Screen {
 
         }
 
-        if(allTreesMatured ){
+        if(allTreesMatured){
             showSmallBoss = false; //hide boss when all trees are matured
+            showBigBoss = true;
             isTimerStarts = true;
             gameTimer += delta;
-            //TODO - SUMMON THE BIG OCTOPUS
             //all trees are matured, show start timer
             // Play the countdown music when the timer starts
             if(!musicStarted) {
@@ -683,7 +676,7 @@ public class LevelTwoScreen implements Screen {
         for(TreeController<?> treeController : treeControllerManager.getTreeControllers()) {
             if(treeController.getTreeType() == TreeType.ICE &&
             treeController.isMaturedTree() && !showSmallBoss){
-                showBigBoss = true;
+                showSmallBoss = true;
             }
             if (treeController.isMaturedTree() && !treeController.isMaturityProcessed()) {
                 // Mark this tree as processed for unlocking
