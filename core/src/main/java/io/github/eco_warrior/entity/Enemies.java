@@ -22,7 +22,8 @@ public abstract class Enemies extends GameSprite{
         MOVING,
         IDLE,
         ATTACKING,
-        DEAD
+        DEAD,
+        SPAWNING
     }
 
     protected Vector2 originalPos;
@@ -30,7 +31,7 @@ public abstract class Enemies extends GameSprite{
     protected EnemyState previousState;
     protected float stateTime;
     // Direction of movement, true for right, false for left
-    protected boolean isRightDirection = false;
+    protected boolean isFromRightDirection = false;
     protected final static float movementSpeed = 50f;
     protected float attackCooldown = 3.0f;
     protected boolean canAttack = true;
@@ -58,7 +59,7 @@ public abstract class Enemies extends GameSprite{
         this.currentState = EnemyState.IDLE;
         this.previousState = EnemyState.IDLE;
         this.stateTime = 0f;
-        this.isRightDirection = false;
+        this.isFromRightDirection = false;
         this.canAttack = true;
     }
 
@@ -75,11 +76,11 @@ public abstract class Enemies extends GameSprite{
      * Some enemies do not move
      */
     public void setDirection() {
-        this.isRightDirection = !isRightDirection;
+        this.isFromRightDirection = !isFromRightDirection;
     }
 
     public void setDirection(boolean isRightDirection) {
-        this.isRightDirection = isRightDirection;
+        this.isFromRightDirection = isRightDirection;
     }
 
     public void attack() {
@@ -151,8 +152,8 @@ public abstract class Enemies extends GameSprite{
     }
 
 
-    public boolean isRightDirection() {
-        return isRightDirection;
+    public boolean isFromRightDirection() {
+        return isFromRightDirection;
     }
 
 
@@ -204,7 +205,7 @@ public abstract class Enemies extends GameSprite{
     }
 
     protected void handleSpriteFlip() {
-        getSprite().flip(isRightDirection, false);
+        getSprite().flip(isFromRightDirection, false);
     }
 
 }

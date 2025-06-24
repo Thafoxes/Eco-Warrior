@@ -46,6 +46,13 @@ Image/plumbergirl_cheerful.png
 Image/recycle_manager_base.png
 Image/recycle_manager_happy_v2.png
 Image/recycle_manager_looks_sad.png
+atlas/IceCrab/ice_crab.atlas
+atlas/IceCrab/ice_crab.png
+atlas/IceCrab/ice_crab2.png
+atlas/IceCrab/ice_crab3.png
+atlas/Tentacles/tentacles.atlas
+atlas/Tentacles/tentacles.png
+atlas/Tentacles/tentacles2.png
 atlas/bins/bins.atlas
 atlas/bins/bins.png
 atlas/bins/recyclables_bin.atlas
@@ -221,6 +228,8 @@ sound_effects/happy_wheels_victory.mp3
 sound_effects/hard_slap.mp3
 sound_effects/hitting_bin.mp3
 sound_effects/ice.mp3
+sound_effects/ice_crab/Ice_crab_spawn.mp3
+sound_effects/ice_crab/ice_crab_attack.mp3
 sound_effects/ice_gun.mp3
 sound_effects/lightning_gun.mp3
 sound_effects/orb.mp3
@@ -231,6 +240,9 @@ sound_effects/shovel.mp3
 sound_effects/socket_wrench.mp3
 sound_effects/sonido-correcto.mp3
 sound_effects/tape_tearing.mp3
+sound_effects/tentacles/tentacle_attack.mp3
+sound_effects/tentacles/tentacle_die.mp3
+sound_effects/tentacles/tentacle_emerge.mp3
 sound_effects/thunder.mp3
 sound_effects/underwater_explosion_sfx.mp3
 sound_effects/useless_gun.mp3

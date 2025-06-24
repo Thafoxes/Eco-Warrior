@@ -1,0 +1,154 @@
+package io.github.eco_warrior.sprite.Enemy;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import io.github.eco_warrior.controller.Trees.TreeController;
+import io.github.eco_warrior.entity.Enemies;
+
+public class IceCrab extends Enemies {
+
+    //sound effects
+    private final Sound attackSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/ice_crab/ice_crab_attack.mp3"));
+    private final Sound spawnSound  = Gdx.audio.newSound(Gdx.files.internal("sound_effects/ice_crab/ice_crab_spawn.mp3"));
+
+
+    private boolean dead = false;
+    private boolean isdoneAttack = false;
+
+    public IceCrab(Vector2 position) {
+        super("atlas/IceCrab/ice_crab.atlas",
+            "spawn", 1, position, 0.1f);
+
+        isFromRightDirection = true;
+        loadAnimations();
+        loadAudio();
+    }
+    @Override
+    protected void loadAnimations() {
+        atlas = new TextureAtlas(Gdx.files.internal("atlas/IceCrab/ice_crab.atlas"));
+
+        // Create animations for different states
+        animationMap.put(EnemyState.SPAWNING, new Animation<>(0.15f, atlas.findRegions("spawn"), Animation.PlayMode.NORMAL));
+        animationMap.put(EnemyState.ATTACKING, new Animation<>(0.1f, atlas.findRegions("attack"), Animation.PlayMode.NORMAL));
+        animationMap.put(EnemyState.DEAD, new Animation<>(0.10f, atlas.findRegions("death"), Animation.PlayMode.NORMAL));
+        animationMap.put(EnemyState.IDLE, new Animation<>(0.15f, atlas.findRegions("idle"), Animation.PlayMode.LOOP));
+
+        currentState = EnemyState.SPAWNING;
+    }
+
+    @Override
+    public void update(float delta) {
+        // Update animation time
+        stateTime += delta;
+        if(currentState == EnemyState.DEAD ) {
+            return; // If the enemy is dead, skip further updates
+        }
+
+        Animation<TextureRegion> currentAnimation = animationMap.get(currentState);
+        switch (currentState) {
+            case SPAWNING:
+                if (animationMap.get(EnemyState.SPAWNING).isAnimationFinished(stateTime)) {
+                    setState(EnemyState.IDLE);
+                    attackCooldown = 5.0f; // Set initial attack cooldown (adjust as needed)
+                }
+                break;
+            case IDLE:
+                // Decrease attack cooldown
+                attackCooldown -= delta;
+
+                // Transition to ATTACKING when cooldown ends
+                if (attackCooldown <= 0) {
+                    setState(EnemyState.ATTACKING);
+                    System.out.println("Ice crab arracked!");
+                    attackSound.play();
+                    // Reset state time for new animation
+                    stateTime = 0;
+                }
+                break;
+            case ATTACKING:
+                // When attack animation is done, go back to IDLE
+                if (animationMap.get(EnemyState.ATTACKING).isAnimationFinished(stateTime)) {
+                    setState(EnemyState.IDLE);
+                    isdoneAttack = true; // Mark attack as done
+                    attackCooldown = 2.0f; // Reset cooldown after attack (adjust as needed)
+                    stateTime = 0;
+                }
+                break;
+            case DEAD:
+                // Handle death animation completion if needed
+                if (animationMap.get(EnemyState.DEAD).isAnimationFinished(stateTime)) {
+                    dead = true; // Mark as dead
+                }
+                break;
+        }
+        updateAnimationFrame(currentAnimation);
+
+    }
+
+    @Override
+    protected void updateAnimationFrame(Animation<TextureRegion> currentAnimation) {
+        if (currentAnimation == null || currentAnimation.getKeyFrames().length == 0) {
+            System.err.println("Warning: Animation is empty for state: " + currentState);
+            return;
+        }
+
+        TextureRegion currentFrame = currentAnimation.getKeyFrame(stateTime,
+            currentState == EnemyState.IDLE);
+        getSprite().setRegion(currentFrame);
+        handleSpriteFlip();
+    }
+
+    public void die(){
+        if(currentState != EnemyState.DEAD) {
+            setState(EnemyState.DEAD);
+            attackSound.stop(); // Stop attack sound if it's playing
+        }
+    }
+
+    public void attack(){
+        if(currentState != EnemyState.ATTACKING && currentState != EnemyState.DEAD) {
+            setState(EnemyState.ATTACKING);
+            attackSound.play();
+            stateTime = 0; // Reset state time for new animation
+        }
+    }
+
+    @Override
+    public boolean isDoneAttacking(){
+        return isdoneAttack;
+    }
+
+    public void resetAttack() {
+        if (isdoneAttack) {
+            isdoneAttack = false; // Reset the attack state
+        }
+    }
+
+    @Override
+    public boolean isDead(){
+        return dead;
+    }
+
+    @Override
+    public void updateState(float delta) {
+        super.updateState(delta);
+    }
+
+    @Override
+    protected void loadAudio() {
+        super.attackSound = attackSound;
+        spawnSound.play(); // Play spawn sound when the enemy is created
+
+    }
+
+    @Override
+    public void dispose() {
+        attackSound.dispose();
+        spawnSound.dispose();
+        super.dispose();
+    }
+}
