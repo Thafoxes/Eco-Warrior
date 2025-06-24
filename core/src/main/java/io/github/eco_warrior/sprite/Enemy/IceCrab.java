@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import io.github.eco_warrior.controller.Trees.TreeController;
 import io.github.eco_warrior.entity.Enemies;
 
 public class IceCrab extends Enemies {
@@ -18,6 +17,7 @@ public class IceCrab extends Enemies {
 
     private boolean dead = false;
     private boolean isdoneAttack = false;
+    private boolean isAnimationDone = false;
 
     public IceCrab(Vector2 position) {
         super("atlas/IceCrab/ice_crab.atlas",
@@ -50,43 +50,39 @@ public class IceCrab extends Enemies {
 
         Animation<TextureRegion> currentAnimation = animationMap.get(currentState);
         switch (currentState) {
+            //dont handle the animation transition here, let controller handle it.
+
             case SPAWNING:
                 if (animationMap.get(EnemyState.SPAWNING).isAnimationFinished(stateTime)) {
-                    setState(EnemyState.IDLE);
-                    attackCooldown = 5.0f; // Set initial attack cooldown (adjust as needed)
+
                 }
                 break;
             case IDLE:
-                // Decrease attack cooldown
-                attackCooldown -= delta;
-
-                // Transition to ATTACKING when cooldown ends
-                if (attackCooldown <= 0) {
-                    setState(EnemyState.ATTACKING);
-                    System.out.println("Ice crab arracked!");
-                    attackSound.play();
-                    // Reset state time for new animation
-                    stateTime = 0;
-                }
+                //do nothings
                 break;
             case ATTACKING:
                 // When attack animation is done, go back to IDLE
                 if (animationMap.get(EnemyState.ATTACKING).isAnimationFinished(stateTime)) {
-                    setState(EnemyState.IDLE);
-                    isdoneAttack = true; // Mark attack as done
-                    attackCooldown = 2.0f; // Reset cooldown after attack (adjust as needed)
-                    stateTime = 0;
+//                    setState(EnemyState.IDLE);
+                    //isdoneAttack = true; // Mark attack as done
+//                    stateTime = 0;
                 }
                 break;
             case DEAD:
                 // Handle death animation completion if needed
                 if (animationMap.get(EnemyState.DEAD).isAnimationFinished(stateTime)) {
                     dead = true; // Mark as dead
+                    stateTime = 0; // Reset state time after death animation
                 }
                 break;
         }
         updateAnimationFrame(currentAnimation);
 
+    }
+
+    public boolean isCurrentAnimationDone() {
+        Animation<TextureRegion> currentAnimation = animationMap.get(currentState);
+        return currentAnimation.isAnimationFinished(stateTime);
     }
 
     @Override
@@ -102,6 +98,7 @@ public class IceCrab extends Enemies {
         handleSpriteFlip();
     }
 
+    @Override
     public void die(){
         if(currentState != EnemyState.DEAD) {
             setState(EnemyState.DEAD);
@@ -109,12 +106,19 @@ public class IceCrab extends Enemies {
         }
     }
 
+    @Override
     public void attack(){
         if(currentState != EnemyState.ATTACKING && currentState != EnemyState.DEAD) {
             setState(EnemyState.ATTACKING);
             attackSound.play();
             stateTime = 0; // Reset state time for new animation
         }
+    }
+
+    @Override
+    public void setState(EnemyState state){
+        super.setState(state);
+        stateTime = 0;
     }
 
     @Override
