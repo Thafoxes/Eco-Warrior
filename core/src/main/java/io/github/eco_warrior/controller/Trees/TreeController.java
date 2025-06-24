@@ -148,8 +148,11 @@ public abstract class TreeController <T extends Trees> {
             deadAnim.draw(batch);
         }
         tree.draw(batch);
-        treeHealth.draw(batch);
 
+    }
+
+    public BaseTreeHealth getTreeHealth() {
+        return this.treeHealth;
     }
 
     public boolean isInteractionEnabled() {
@@ -212,6 +215,7 @@ public abstract class TreeController <T extends Trees> {
     }
 
     public void resetHealth() {
+        tree.revivePlant();
         health = 4;
         isDead = false;
     }
