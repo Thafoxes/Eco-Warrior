@@ -1,5 +1,6 @@
 package io.github.eco_warrior.sprite.UI;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -30,7 +31,7 @@ public class Hearts {
      * Since there is no collision and is for presentation purposes only, no need to extend from the gameSprite class.
      */
     public Hearts(Vector2 position, int maxHearts, float scale, float spacing, OrthographicCamera camera) {
-        this.atlas = new TextureAtlas("atlas/heart/hearts.atlas");
+        this.atlas = new TextureAtlas(Gdx.files.internal("atlas/heart/hearts.atlas"));
         this.heartRegion = atlas.findRegion("heart_pixel");
         this.maxHearts = maxHearts;
         this.currentHearts = maxHearts;

@@ -1,5 +1,6 @@
 package io.github.eco_warrior.sprite.UI;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -32,7 +33,7 @@ public class Currency {
         this.scale = scale;
         this.camera = camera;
 
-        this.atlas = new TextureAtlas("atlas/coin/robux.atlas");
+        this.atlas = new TextureAtlas(Gdx.files.internal("atlas/coin/robux.atlas"));
         // Use the first region or a named region, e.g., "coin_pixel"
         this.coinRegion = atlas.findRegion("robux");
         this.fontGenerator = new FontGenerator(24, Color.WHITE, Color.BLACK);

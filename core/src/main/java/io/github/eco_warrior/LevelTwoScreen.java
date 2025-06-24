@@ -147,7 +147,7 @@ public class LevelTwoScreen implements Screen {
         viewport = new FitViewport(WINDOW_WIDTH, WINDOW_HEIGHT, camera);
         batch = new SpriteBatch();
         uiBatch = new SpriteBatch();
-        backgroundTexture = new Texture("textures/greenland.png");
+        backgroundTexture = new Texture(Gdx.files.internal("textures/greenland.png"));
         backgroundSprite = new Sprite(backgroundTexture);
         backgroundSprite.setBounds(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
@@ -404,7 +404,6 @@ public class LevelTwoScreen implements Screen {
 
     private void winningCondition(float delta) {
         if(gameOver) return;
-
 
 
         boolean allTreesMatured = true;
@@ -906,7 +905,6 @@ public class LevelTwoScreen implements Screen {
 
     private void ShotRayGun(GameSprite draggingTool) {
         if (rayGun.getMode() != RayGun.RayGunMode.USELESS) {
-            //TODO change back the type Breezing
 
             for(EnemyController enemy : enemyManager.getEnemies()){
                 if(enemy.getCollisionRect().overlaps(draggingTool.getCollisionRect())){

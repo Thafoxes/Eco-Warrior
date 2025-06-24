@@ -1,5 +1,6 @@
 package io.github.eco_warrior.sprite.Characters;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
@@ -133,7 +134,7 @@ public class AdventurerGirl extends GameCharacter {
         shape.dispose();
     }
     private void loadAnimations() {
-        character = new TextureAtlas("character/npc/adventurer_girl.atlas");
+        character = new TextureAtlas(Gdx.files.internal("character/npc/adventurer_girl.atlas"));
 
         // Create animations for each direction and state
         idleFrontAnimation = new Animation<>(0.15f, character.findRegions("Idle_Up"));
