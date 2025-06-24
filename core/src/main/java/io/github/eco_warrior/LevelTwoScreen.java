@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -40,10 +39,6 @@ import io.github.eco_warrior.sprite.buttons.FertilizerButton;
 import io.github.eco_warrior.sprite.buttons.UpgradePotionButton;
 import io.github.eco_warrior.sprite.gardening_equipments.*;
 import io.github.eco_warrior.sprite.gardening_equipments.sapling_variant.*;
-import io.github.eco_warrior.sprite.gun_elements.BlazingTreeFireElementDrawer;
-import io.github.eco_warrior.sprite.gun_elements.BreezingTreeWindElementDrawer;
-import io.github.eco_warrior.sprite.gun_elements.IceTreeIceElementDrawer;
-import io.github.eco_warrior.sprite.gun_elements.VoltaicTreeLightningElementDrawer;
 import io.github.eco_warrior.sprite.tree_variant.*;
 import io.github.eco_warrior.sprite.UI.Currency;
 
@@ -275,18 +270,22 @@ public class LevelTwoScreen implements Screen {
 
 
         //following tier list
+        toolManager.addSaplingController(blazingSapling);
+
         toolManager.addSaplingController(ordinarySapling);
         toolManager.addSaplingController(voltaicSapling);
         toolManager.addSaplingController(breezingSapling);
         toolManager.addSaplingController(iceSapling);
-        toolManager.addSaplingController(blazingSapling);
+//        toolManager.addSaplingController(blazingSapling);
 
         // Initially only make the first sapling available
-        toolManager.setSaplingAvailable(ordinarySapling, true);
+        toolManager.setSaplingAvailable(blazingSapling, true);
+
+        toolManager.setSaplingAvailable(ordinarySapling, false);
         toolManager.setSaplingAvailable(voltaicSapling, false);
         toolManager.setSaplingAvailable(breezingSapling, false);
         toolManager.setSaplingAvailable(iceSapling, false);
-        toolManager.setSaplingAvailable(blazingSapling, false);
+//        toolManager.setSaplingAvailable(blazingSapling, false);
 
     }
 
@@ -424,9 +423,17 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void updateEnemyManager(float delta) {
-        spawnWorm(delta);
-        spawnMetalChuck(delta);
-        spawnBombPecker(delta);
+        wormSpawnTimer += delta;
+        metalChuckSpawnTimer += delta;
+        bombPeckerSpawnTimer += delta;
+
+        if (enemyManager.getEnemies().size() < 10) {
+            spawnWorm();
+            spawnMetalChuck();
+            spawnBombPecker();
+
+        }
+
         enemyManager.update(delta);
 
 
@@ -463,33 +470,31 @@ public class LevelTwoScreen implements Screen {
         }
     }
 
-    private void spawnMetalChuck(float delta) {
-        metalChuckSpawnTimer += delta;
+    private void spawnMetalChuck() {
         if (metalChuckSpawnTimer >= averageSpawnInterval + 13 && metalChuckPool.getActiveCount() < 5) {
-            spawnEnemy(delta, metalChuckPool);
+            spawnEnemy(metalChuckPool);
             metalChuckSpawnTimer = 0;
         }
     }
 
-    private void spawnBombPecker(float delta) {
-        bombPeckerSpawnTimer += delta;
+    private void spawnBombPecker() {
         if( bombPeckerSpawnTimer >= averageSpawnInterval + 5 && bombPeckerPool.getActiveCount() < 3) {
-            spawnEnemy(delta, bombPeckerPool); // Bomb Pecker has a longer spawn interval
+            spawnEnemy(bombPeckerPool); // Bomb Pecker has a longer spawn interval
 
             bombPeckerSpawnTimer = 0;
         }
     }
 
-    private void spawnWorm(float delta) {
-        wormSpawnTimer += delta;
+    private void spawnWorm() {
+
         if (wormSpawnTimer >= averageSpawnInterval && wormPool.getActiveCount() < 5) {
-            spawnEnemy(delta, wormPool);
+            spawnEnemy(wormPool);
             wormSpawnTimer = 0;
         }
 
     }
 
-    private <T extends EnemyController> void spawnEnemy(float spawnTimer, EnemyPool<T> pool) {
+    private <T extends EnemyController> void spawnEnemy(EnemyPool<T> pool) {
 
         TreeController<?> selectedTree = null;
         ArrayList<TreeType> targetTreeTypes = pool.getAttackTreeType();
@@ -712,15 +717,10 @@ public class LevelTwoScreen implements Screen {
         }
 
         //watercan from toolManager, so perform it on toolManager
-        if (draggingTool instanceof WateringCan) {
-            for (TreeController<?> treeController : treeControllerManager.getTreeControllers()) {
-                // Empty watering can on appropriate tree stages
-                if (draggingTool.getCollisionRect().overlaps(treeController.getCollisionRect())
-                    && (treeController.getStage() == Trees.TreeStage.SAPLING
-                    || treeController.getStage() == Trees.TreeStage.YOUNG_TREE)) {
-                    toolManager.emptyWaterCan();
-                    break; // Only need to empty once per overlap
-                }
+        if(draggingTool instanceof WateringCan){
+            //after interact with trees using watering can, empty the water can
+            if(treeControllerManager.wasWateringSuccessful()){
+                toolManager.emptyWaterCan();
             }
         }
         if(draggingTool instanceof Shovel){
@@ -743,10 +743,9 @@ public class LevelTwoScreen implements Screen {
 
         }
 
-        if(draggingTool instanceof RayGun){
+        // Check if the tool is a ray gun and if it can shoot
+        if(draggingTool instanceof RayGun && treeControllerManager.wasWateringSuccessful()){
             ShotRayGun(draggingTool);
-
-
         }
         // Check if the tool is a watering can and if it can water a fountain
         toolManager.isWaterCansCollideRefillWater(waterFountain);
@@ -765,6 +764,13 @@ public class LevelTwoScreen implements Screen {
                     if(enemy instanceof MetalChuckController){
                         if(!enemy.isDead()){
                             enemy.die();
+                            rayGun.playModeSound();
+                        }
+                    }
+                    if(enemy instanceof BombPeckerController){
+                        BombPeckerController bombPecker = (BombPeckerController) enemy;
+                        if(!bombPecker.isDead()){
+                            bombPecker.die();
                             rayGun.playModeSound();
                         }
                     }

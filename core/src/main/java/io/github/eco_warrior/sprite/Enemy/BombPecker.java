@@ -96,6 +96,8 @@ public class BombPecker extends Enemies {
         if(currentState == EnemyState.DEAD){
             //slap to death, not self explosion
             if (currentAnimation.isAnimationFinished(stateTime)) {
+                //TODO - Check if this is the right way to handle death animation
+                System.out.println("BombPecker animation dead is done!");
                 isDead = true;
                 stateTime = 0;
             }
