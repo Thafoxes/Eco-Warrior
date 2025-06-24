@@ -279,7 +279,7 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void initializeBoss(){
-        Vector2 bossSpawnPos = new Vector2(50, 150f);
+        Vector2 bossSpawnPos = new Vector2(50, 180f);
         smallBoss = new WaterOctopusController(bossSpawnPos);
 
         bossSpawnPos = new Vector2(10, 150f);
@@ -392,9 +392,8 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void updateShowBoss(float delta) {
-        if(!showBigBoss && !showSmallBoss){
-            showSmallBoss = true;
-        }
+
+
         if(isTimerStarts && !showBigBoss) {
             showSmallBoss = false; //change to big boss
             showBigBoss = true;
@@ -404,7 +403,7 @@ public class LevelTwoScreen implements Screen {
         if(showBigBoss){
             boss.update(delta);
         }
-        if(showSmallBoss){
+        if(showSmallBoss && !showBigBoss){
             smallBoss.update(delta);
         }
     }
@@ -418,11 +417,6 @@ public class LevelTwoScreen implements Screen {
         boolean allTreesMatured = true;
         boolean allTreeMaturedAlive = true;
         for(TreeController<?> treeController : treeControllerManager.getTreeControllers()) {
-            if(treeController instanceof IceTreeController){
-                if(treeController.isMaturedTree()){
-                    showSmallBoss = true;
-                }
-            }
             if(!treeController.isMaturedTree()){
                 allTreesMatured = false;
                 break;
@@ -431,6 +425,7 @@ public class LevelTwoScreen implements Screen {
         }
 
         if(allTreesMatured ){
+            showSmallBoss = false; //hide boss when all trees are matured
             isTimerStarts = true;
             gameTimer += delta;
             //TODO - SUMMON THE BIG OCTOPUS
@@ -686,6 +681,10 @@ public class LevelTwoScreen implements Screen {
         treeControllerManager.update(delta);
 
         for(TreeController<?> treeController : treeControllerManager.getTreeControllers()) {
+            if(treeController.getTreeType() == TreeType.ICE &&
+            treeController.isMaturedTree() && !showSmallBoss){
+                showBigBoss = true;
+            }
             if (treeController.isMaturedTree() && !treeController.isMaturityProcessed()) {
                 // Mark this tree as processed for unlocking
                 treeController.setMaturityProcessed(true);
