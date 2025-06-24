@@ -15,9 +15,7 @@ public class IceCrab extends Enemies {
     private final Sound spawnSound  = Gdx.audio.newSound(Gdx.files.internal("sound_effects/ice_crab/ice_crab_spawn.mp3"));
 
 
-    private boolean dead = false;
     private boolean isdoneAttack = false;
-    private boolean isAnimationDone = false;
 
     public IceCrab(Vector2 position) {
         super("atlas/IceCrab/ice_crab.atlas",
@@ -44,9 +42,6 @@ public class IceCrab extends Enemies {
     public void update(float delta) {
         // Update animation time
         stateTime += delta;
-        if(currentState == EnemyState.DEAD ) {
-            return; // If the enemy is dead, skip further updates
-        }
 
         Animation<TextureRegion> currentAnimation = animationMap.get(currentState);
         switch (currentState) {
@@ -63,16 +58,12 @@ public class IceCrab extends Enemies {
             case ATTACKING:
                 // When attack animation is done, go back to IDLE
                 if (animationMap.get(EnemyState.ATTACKING).isAnimationFinished(stateTime)) {
-//                    setState(EnemyState.IDLE);
-                    //isdoneAttack = true; // Mark attack as done
-//                    stateTime = 0;
                 }
                 break;
             case DEAD:
                 // Handle death animation completion if needed
                 if (animationMap.get(EnemyState.DEAD).isAnimationFinished(stateTime)) {
-                    dead = true; // Mark as dead
-                    stateTime = 0; // Reset state time after death animation
+
                 }
                 break;
         }
@@ -132,10 +123,7 @@ public class IceCrab extends Enemies {
         }
     }
 
-    @Override
-    public boolean isDead(){
-        return dead;
-    }
+
 
     @Override
     public void updateState(float delta) {
@@ -147,6 +135,12 @@ public class IceCrab extends Enemies {
         super.attackSound = attackSound;
         spawnSound.play(); // Play spawn sound when the enemy is created
 
+    }
+
+    @Override
+    public void resetState() {
+        super.resetState();
+        isdoneAttack = false; // Reset the attack state
     }
 
     @Override

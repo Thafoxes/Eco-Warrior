@@ -14,6 +14,7 @@ public class IceCrabController extends EnemyController{
     private IceCrab iceCrab;
     private TreeController<?> treeController; //take this to controller
     private boolean isAttacking = false;
+    private boolean isDead = false; // Track if the Ice Crab is dead
     private float attackCooldown = 3.0f; // Cooldown for attack, can be adjusted
 
     public IceCrabController(Vector2 position) {
@@ -24,6 +25,9 @@ public class IceCrabController extends EnemyController{
     @Override
     public void update(float delta) {
         iceCrab.update(delta);
+        if(isDead){
+            return;
+        }
 
         switch (iceCrab.getCurrentState()){
             case SPAWNING:
@@ -54,6 +58,10 @@ public class IceCrabController extends EnemyController{
                 }
                 break;
             case DEAD:
+                if(iceCrab.isCurrentAnimationDone()){
+                    System.out.println("Ice Crab is dead");
+                    isDead = true; // Set dead state
+                }
                 break;
         }
 
@@ -81,8 +89,16 @@ public class IceCrabController extends EnemyController{
         }
     }
 
+    @Override
+    public void die(){
+        if(iceCrab.getCurrentState() != Enemies.EnemyState.DEAD) {
+            iceCrab.die();
+            isAttacking = false; // Reset attack state on death
+        }
+    }
+
     public boolean isDead() {
-        return iceCrab.isDead();
+        return isDead;
     }
 
     @Override
@@ -90,10 +106,7 @@ public class IceCrabController extends EnemyController{
         super.drawDebug(shapeRenderer);
     }
 
-    @Override
-    public void die(){
 
-    }
 
 
     @Override
