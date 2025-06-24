@@ -11,13 +11,12 @@ import io.github.eco_warrior.sprite.gardening_equipments.Shovel;
 import io.github.eco_warrior.controller.FertilizerController;
 import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ToolManager {
     private Map<GardeningEnums, Tool> tools = new HashMap<>();
     private ArrayList<BaseSaplingController> saplingControllers = new ArrayList<>();
+    private Set<BaseSaplingController> availableSaplings = new HashSet<>();
     public static ArrayList<FertilizerController> fertilizerControllers = new ArrayList<>();
     private int saplingIndex = 0;
     private int fertilizerIndex = 0;
@@ -31,7 +30,31 @@ public class ToolManager {
 
     public void addSaplingController(BaseSaplingController saplingController) {
         saplingControllers.add(saplingController);
+        availableSaplings.add(saplingController);
     }
+
+    // Add to ToolManager class
+    public void unlockNextSapling() {
+        // Find the next unavailable sapling in the list and make it available
+        for (BaseSaplingController sapling : saplingControllers) {
+            if (!availableSaplings.contains(sapling)) {
+                availableSaplings.add(sapling);
+                System.out.println("Unlocked new sapling: " + sapling.getClass().getSimpleName());
+                return;
+            }
+        }
+    }
+
+
+    // Add method to set a sapling as unavailable
+    public void setSaplingAvailable(BaseSaplingController sapling, boolean available) {
+        if (available) {
+            availableSaplings.add(sapling);
+        } else {
+            availableSaplings.remove(sapling);
+        }
+    }
+
 
     public void addFertilizerController(FertilizerController fertilizerController) {
         fertilizerControllers.add(fertilizerController);
@@ -64,6 +87,13 @@ public class ToolManager {
             BaseSaplingController currentSapling = saplingControllers.get(saplingIndex);
             if (currentSapling != null) {
                 currentSapling.draw(batch);
+            }
+        }
+
+        // Draw only available saplings
+        for (BaseSaplingController sapling : saplingControllers) {
+            if (availableSaplings.contains(sapling)) {
+                sapling.draw(batch);
             }
         }
             // draw fertilizer when it is not empty
@@ -146,8 +176,14 @@ public class ToolManager {
     public GameSprite getToolAt(Vector2 position) {
         // Check if the position is within the bounds of any tool
         GameSprite sapling = getSaplingAt(position);
-        if (sapling != null) {
-            return sapling;
+        if (sapling != null && sapling instanceof BaseSaplingController) {
+            if (availableSaplings.contains(sapling)) {
+                // If the sapling is available, return it
+                return sapling;
+            } else {
+                // If the sapling is not available, return null
+                return null;
+            }
         }
 
         GameSprite fertilizer = getFertilizerAt(position);

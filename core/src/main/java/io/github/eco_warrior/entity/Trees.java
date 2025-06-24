@@ -171,6 +171,9 @@ public abstract class Trees extends GameSprite {
         return treeStage != TreeStage.FLAG && treeStage != TreeStage.HOLE;
     }
 
+    public boolean isMaturedTree(){
+        return treeStage == TreeStage.MATURED_TREE || treeStage == TreeStage.DEAD_MATURE_TREE;
+    }
     public boolean isFullyMaturedAlive(){
         return treeStage == TreeStage.MATURED_TREE;
     }
