@@ -22,7 +22,6 @@ public class ToolManager {
     private int fertilizerIndex = 0;
     private boolean isPlanting = false;
 
-//    private boolean isFertilizerUsed = false;
 
     public void addTool(GardeningEnums type, Tool tool) {
         tools.put(type, tool);
@@ -112,7 +111,7 @@ public class ToolManager {
 
     // Only allow dragging if the sapling is the current one
     public boolean canDragSaplingAt(Vector2 position) {
-        
+
         if (!saplingControllers.isEmpty() && !isPlanting) {
             BaseSaplingController currentSapling = saplingControllers.get(saplingIndex);
             return currentSapling.getCollisionRect().contains(position);

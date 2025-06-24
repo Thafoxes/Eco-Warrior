@@ -749,6 +749,7 @@ public class LevelTwoScreen implements Screen {
             } else if (buttonManager.buttonType == ButtonManager.ButtonType.UPGRADE_POTION_BUTTON){
 
                 gunManager.decreaseHideTime(1000); // 1 second
+                cooldownReductionTimer.clockRun();
             }
             isReleased = true;
 
