@@ -49,7 +49,7 @@ public class IceCrab extends Enemies {
 
             case SPAWNING:
                 if (animationMap.get(EnemyState.SPAWNING).isAnimationFinished(stateTime)) {
-
+                    spawnSound.play(); // Play spawn sound when the enemy is created
                 }
                 break;
             case IDLE:
@@ -132,7 +132,6 @@ public class IceCrab extends Enemies {
     @Override
     protected void loadAudio() {
         super.attackSound = attackSound;
-        spawnSound.play(); // Play spawn sound when the enemy is created
 
     }
 

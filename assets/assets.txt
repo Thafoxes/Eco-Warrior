@@ -206,6 +206,7 @@ fonts/DigitalDisco.ttf
 fonts/Square One.ttf
 fonts/TT Octosquares Trial Medium.ttf
 fonts/cubic.ttf
+logs/application.log
 maps/Gladesv2.tmx
 maps/recycle_center_map.tmx
 maps/soil_map.tmx
@@ -240,8 +241,8 @@ sound_effects/happy_wheels_victory.mp3
 sound_effects/hard_slap.mp3
 sound_effects/hitting_bin.mp3
 sound_effects/ice.mp3
-sound_effects/ice_crab/Ice_crab_spawn.mp3
 sound_effects/ice_crab/ice_crab_attack.mp3
+sound_effects/ice_crab/ice_crab_spawn.mp3
 sound_effects/ice_gun.mp3
 sound_effects/lightning_gun.mp3
 sound_effects/orb.mp3

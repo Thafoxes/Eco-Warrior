@@ -44,7 +44,6 @@ public class Tentacles extends Enemies {
     @Override
     protected void loadAudio() {
         super.attackSound = attackSound;
-        spawnSound.play();
 
     }
 
@@ -58,6 +57,9 @@ public class Tentacles extends Enemies {
             //dont handle the animation transition here, let controller handle it.
 
             case SPAWNING:
+                if(currentAnimation.isAnimationFinished(stateTime)){
+                    spawnSound.play();
+                }
                 break;
             case IDLE:
                 //do nothing

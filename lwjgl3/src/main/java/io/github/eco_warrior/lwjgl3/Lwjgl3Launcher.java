@@ -3,12 +3,28 @@ package io.github.eco_warrior.lwjgl3;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import io.github.eco_warrior.Main;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
+    private static final Logger logger = LogManager.getLogger(Main.class);
+
     public static void main(String[] args) {
-        if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
-        createApplication();
+
+
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            logger.error("Uncaught exception in thread: " + thread.getName(), throwable);
+        });
+
+        // Rest of your application code
+        try {
+            if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
+            createApplication();
+            // Your application code here
+        } catch (Exception e) {
+            logger.error("Application error", e);
+        }
     }
 
     private static void createApplication() {
