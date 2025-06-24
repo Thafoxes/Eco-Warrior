@@ -884,12 +884,6 @@ public class LevelTwoScreen implements Screen {
                             draggingTool.playSound();
                         }
                     }
-                    if(enemy instanceof MetalChuckController){
-                        if(!enemy.isDead()){
-                            enemy.die();
-                            draggingTool.playSound();
-                        }
-                    }
                 }
             }
 
@@ -915,14 +909,17 @@ public class LevelTwoScreen implements Screen {
                         }
                     }
                     if(enemy instanceof MetalChuckController){
-
-                        if(!enemy.isDead()){
-                            enemy.die();
-                            rayGun.playModeSound();
+                        if(rayGun.getMode() == RayGun.RayGunMode.VOLTAIC){
+                            MetalChuckController metalChuck = (MetalChuckController) enemy;
+                            if(!metalChuck.isDead()){
+                                metalChuck.die();
+                                rayGun.playModeSound();
+                            }
                         }
+
                     }
                     if(enemy instanceof BombPeckerController){
-                        if(rayGun.getMode() == RayGun.RayGunMode.BREEZING || rayGun.getMode() == RayGun.RayGunMode.ICE){
+                        if(rayGun.getMode() == RayGun.RayGunMode.BREEZING){
                             BombPeckerController bombPecker = (BombPeckerController) enemy;
                             if(!bombPecker.isDead()){
                                 bombPecker.die();
