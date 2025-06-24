@@ -82,7 +82,7 @@ public class BombPeckerController extends EnemyController{
      * If the enemy is done attacking, it will deal damage to the tree.
      * It will remove itself from the treeController and return true.
      * @param treeController
-     * @return boolean
+     *
      */
     @Override
     public void isAnimDoneAttacking(TreeController<?> treeController){

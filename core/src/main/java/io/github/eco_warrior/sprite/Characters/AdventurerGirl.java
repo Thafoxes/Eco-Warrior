@@ -15,6 +15,11 @@ import com.badlogic.gdx.physics.box2d.*;
 import io.github.eco_warrior.controller.MapController;
 import io.github.eco_warrior.enums.PlayerDirection;
 
+/**
+ * The AdventurerGirl class represents a playable or non-playable character
+ * within the game environment. It provides features such as animation handling,
+ * movement, physics-based collision detection, and interaction with map elements.
+ */
 public class AdventurerGirl extends GameCharacter {
 
 
@@ -82,9 +87,9 @@ public class AdventurerGirl extends GameCharacter {
 
     /**
      * For NPC uses idle
-     * @param position
-     * @param tileWidth
-     * @param tileHeight
+     * @param position NPC position
+     * @param tileWidth map width
+     * @param tileHeight map height
      */
     public AdventurerGirl(Vector2 position, int tileWidth, int tileHeight,
                           MapObjects objects, MapController mapController, boolean isNPC) {

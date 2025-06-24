@@ -26,6 +26,8 @@ public abstract class EnemyController {
      * You can add more effects as needed.
      * Add text on top of the worm when it dies, or any other effects.
      * you can add sprite icon on top of the worm when it dies, or any other effects.
+     * @param enemy The enemy entity to control.
+     * @param enemyType The type of the enemy, used for specific behaviors or properties.
      */
     public EnemyController(Enemies enemy, EnemyType enemyType) {
         this.enemy = enemy;
@@ -78,7 +80,7 @@ public abstract class EnemyController {
     /**
      * Check if the enemy is done attacking and apply damage to the tree.
      * @param treeController The TreeController to apply damage to.
-     * @return true if the attack animation is done and damage was applied, false otherwise.
+     *  true if the attack animation is done and damage was applied, false otherwise.
      */
     public void isAnimDoneAttacking(TreeController<?> treeController) {
 
@@ -149,7 +151,6 @@ public abstract class EnemyController {
 
 
     public void dispose() {
-//        deathEffect.dispose();
         enemy.dispose();
     }
 
