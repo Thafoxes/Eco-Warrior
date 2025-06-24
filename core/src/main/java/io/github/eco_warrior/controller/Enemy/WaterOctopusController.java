@@ -6,17 +6,17 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.entity.Enemies;
 import io.github.eco_warrior.enums.EnemyType;
 import io.github.eco_warrior.sprite.Enemy.BigOctopusBoss;
-import io.github.eco_warrior.sprite.Enemy.Tentacles;
+import io.github.eco_warrior.sprite.Enemy.WaterOctopus;
 
-public class BigOctopusBossController extends EnemyController{
+public class WaterOctopusController extends EnemyController{
 
 
-    private BigOctopusBoss boss;
+    private WaterOctopus boss;
 
-    public BigOctopusBossController(Vector2 position) {
-        super(new BigOctopusBoss(position), EnemyType.BOSS);
+    public WaterOctopusController(Vector2 position) {
+        super(new WaterOctopus(position), EnemyType.BOSS);
         setState(Enemies.EnemyState.SPAWNING);
-        this.boss = (BigOctopusBoss) super.enemy;
+        this.boss = (WaterOctopus) super.enemy;
 
     }
 

@@ -73,17 +73,6 @@ atlas/bomb_pecker/bomber_pecker_new6.png
 atlas/bomb_pecker/bomber_pecker_new7.png
 atlas/bomb_pecker/bomber_pecker_new8.png
 atlas/bomb_pecker/bomber_pecker_new9.png
-atlas/bomber_pecker_new/bomber_pecker_new.atlas
-atlas/bomber_pecker_new/bomber_pecker_new.png
-atlas/bomber_pecker_new/bomber_pecker_new10.png
-atlas/bomber_pecker_new/bomber_pecker_new2.png
-atlas/bomber_pecker_new/bomber_pecker_new3.png
-atlas/bomber_pecker_new/bomber_pecker_new4.png
-atlas/bomber_pecker_new/bomber_pecker_new5.png
-atlas/bomber_pecker_new/bomber_pecker_new6.png
-atlas/bomber_pecker_new/bomber_pecker_new7.png
-atlas/bomber_pecker_new/bomber_pecker_new8.png
-atlas/bomber_pecker_new/bomber_pecker_new9.png
 atlas/bucket/bucket_anim.atlas
 atlas/bucket/bucket_anim.png
 atlas/coin/coins.atlas
@@ -142,6 +131,9 @@ atlas/saplings/saplings.png
 atlas/small_octopus/tiny_octopus.atlas
 atlas/small_octopus/tiny_octopus.png
 atlas/small_octopus/tiny_octopus2.png
+atlas/small_visual_octopus/tiny_octopus.atlas
+atlas/small_visual_octopus/tiny_octopus.png
+atlas/small_visual_octopus/tiny_octopus2.png
 atlas/tools/tools.atlas
 atlas/tools/tools.png
 atlas/tree_health/blazing_tree_health.atlas

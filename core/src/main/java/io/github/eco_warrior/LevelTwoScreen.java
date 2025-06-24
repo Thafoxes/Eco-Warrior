@@ -19,11 +19,9 @@ import io.github.eco_warrior.controller.Pools.*;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.controller.Trees.*;
 import io.github.eco_warrior.entity.GameSprite;
-import com.badlogic.gdx.utils.Timer;
 
 import java.util.*;
 
-import io.github.eco_warrior.entity.Trees;
 import io.github.eco_warrior.enums.ButtonEnums;
 import io.github.eco_warrior.enums.GardeningEnums;
 import io.github.eco_warrior.enums.TreeType;
@@ -126,9 +124,10 @@ public class LevelTwoScreen implements Screen {
     private float gameTimer = 0f;
     private final float MAX_GAME_TIME = 60f; // 1 minutes in seconds
     private boolean gameOver,isTimerStarts = false;
-    //show boos
-    private boolean bossSpawned = false;
+    //show boss
+    private boolean showBigBoss, showSmallBoss = false;
     private BigOctopusBossController boss;
+    private WaterOctopusController smallBoss;
 
     //Music
     private Music countdownMusic;
@@ -170,6 +169,7 @@ public class LevelTwoScreen implements Screen {
         initializeCurrencyUI();
         initializeButtons();
         initializeCooldownReductionTimerUI();
+        initializeBoss();
 
         initializeGun();
 
@@ -278,6 +278,14 @@ public class LevelTwoScreen implements Screen {
         initializeSapling(spacing, toolScale);
     }
 
+    private void initializeBoss(){
+        Vector2 bossSpawnPos = new Vector2(50, 150f);
+        smallBoss = new WaterOctopusController(bossSpawnPos);
+
+        bossSpawnPos = new Vector2(10, 150f);
+        boss = new BigOctopusBossController(bossSpawnPos);
+    }
+
     private void initializeButtons() {
         int buttonCount = 2;
         float spacing = WINDOW_HEIGHT / (buttonCount + 4); //make it 10 so it look from left to right
@@ -373,32 +381,34 @@ public class LevelTwoScreen implements Screen {
         updateTreeManager(delta);
         updateEnemyManager(delta);
         updateEnemyTreeLogic(delta);
-        updateShowBoss(delta);
 
         updateTrashController(delta);
         updateButtonManager(delta);
         updateTimerAnimation(delta);
         winningCondition(delta);
+        updateShowBoss(delta);
+
 
     }
 
     private void updateShowBoss(float delta) {
-
-        if(isTimerStarts && !bossSpawned) {
-           spawnBoss();
+        if(!showBigBoss && !showSmallBoss){
+            showSmallBoss = true;
+        }
+        if(isTimerStarts && !showBigBoss) {
+            showSmallBoss = false; //change to big boss
+            showBigBoss = true;
         }
         // Schedule the boss to spawn after a delay
 
-        if(bossSpawned){
+        if(showBigBoss){
             boss.update(delta);
+        }
+        if(showSmallBoss){
+            smallBoss.update(delta);
         }
     }
 
-    private void spawnBoss() {
-        Vector2 bossSpawnPos = new Vector2(0, 150f);
-        boss = new BigOctopusBossController(bossSpawnPos);
-        bossSpawned = true;
-    }
 
     private void winningCondition(float delta) {
         if(gameOver) return;
@@ -408,6 +418,11 @@ public class LevelTwoScreen implements Screen {
         boolean allTreesMatured = true;
         boolean allTreeMaturedAlive = true;
         for(TreeController<?> treeController : treeControllerManager.getTreeControllers()) {
+            if(treeController instanceof IceTreeController){
+                if(treeController.isMaturedTree()){
+                    showSmallBoss = true;
+                }
+            }
             if(!treeController.isMaturedTree()){
                 allTreesMatured = false;
                 break;
@@ -722,13 +737,16 @@ public class LevelTwoScreen implements Screen {
         gunManager.draw(batch, stateTime);
 
         batch.end();
-        debugSprite();
+//        debugSprite();
 
     }
 
     private void drawBoss(SpriteBatch batch) {
-        if(bossSpawned){
+        if(showBigBoss){
             boss.draw(batch);
+        }
+        if(showSmallBoss){
+            smallBoss.draw(batch);
         }
     }
 
@@ -746,7 +764,6 @@ public class LevelTwoScreen implements Screen {
         currency.draw(uiBatch);
         if(isTimerStarts){
             drawTimer(delta);
-
         }
 
         uiBatch.end();
@@ -1005,8 +1022,11 @@ public class LevelTwoScreen implements Screen {
         waterFountain.drawDebug(shapeRenderer);
         groundTrashController.drawDebug(shapeRenderer);
         enemyManager.drawDebug(shapeRenderer);
-        if(bossSpawned){
+        if(showBigBoss){
             boss.drawDebug(shapeRenderer);
+        }
+        if(showSmallBoss){
+            smallBoss.drawDebug(shapeRenderer);
         }
 
         shapeRenderer.end();
