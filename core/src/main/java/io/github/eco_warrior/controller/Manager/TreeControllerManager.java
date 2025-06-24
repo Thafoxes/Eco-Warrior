@@ -17,6 +17,7 @@ import java.util.ArrayList;
 public class TreeControllerManager {
     ArrayList<TreeController> treeControllers = new ArrayList<>();
     private TreeController currentTreeController;
+    private boolean wateringSuccessful = false;
 
     public void addTreeController(TreeController treeController) {
         treeControllers.add(treeController);
@@ -60,7 +61,11 @@ public class TreeControllerManager {
 
 
                 if (draggingTool instanceof WateringCan) {
-                    treeController.handleWatering();
+                    WateringCan wateringCan = (WateringCan) draggingTool;
+                    if(treeController.isPlanting() && wateringCan.waterLevel == WateringCan.WateringCanState.FILLED){
+                        treeController.handleWatering();
+                        wateringSuccessful = true; // Set the flag to true if watering was successful
+                    }
                 }
                 if(draggingTool instanceof Shovel){
                     treeController.digHole();
@@ -82,9 +87,11 @@ public class TreeControllerManager {
                     }
                 }
                 //Fertilizer can only be used if the right condition is met
-                if (!(treeController.getStage() == Trees.TreeStage.HOLE
-                    || treeController.getStage() == Trees.TreeStage.FLAG
-                    || treeController.getHealth() == 4)) {
+                if ( (treeController.isPlanted() && treeController.getHealth() != 4)) {
+                    //!(treeController.getStage() == Trees.TreeStage.HOLE
+                    //                    || treeController.getStage() == Trees.TreeStage.FLAG
+                    //                    || treeController.getHealth() == 4)
+                    //reference
                     if (draggingTool instanceof FertilizerController) {
                         treeController.resetHealth();
 
@@ -124,5 +131,10 @@ public class TreeControllerManager {
         return null;
     }
 
+    public boolean wasWateringSuccessful() {
+        boolean result = wateringSuccessful;
+        wateringSuccessful = false; // Reset after checking
+        return result;
+    }
 }
 
