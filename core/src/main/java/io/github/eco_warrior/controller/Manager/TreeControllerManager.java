@@ -32,11 +32,6 @@ public class TreeControllerManager {
     public void draw(SpriteBatch batch) {
         for (TreeController treeController : treeControllers) {
             treeController.draw(batch);
-
-            if(!(treeController.getStage() == Trees.TreeStage.FLAG
-                || treeController.getStage() == Trees.TreeStage.HOLE)) {
-                treeController.getTreeHealth().draw(batch);
-            }
         }
     }
 
@@ -114,16 +109,12 @@ public class TreeControllerManager {
         return planted;
     }
 
-    /**
-     * Temporary not in use
-     * @return
-     */
     public boolean isPlanting(){
         if(currentTreeController == null) {
             return false; // No current tree controller set
         }
-        boolean growing = !currentTreeController.isMaturedTree();
-        return growing;
+        boolean matured =  currentTreeController.isPlanting();
+        return matured;
     }
 
 

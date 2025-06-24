@@ -27,7 +27,7 @@ public abstract class PurchaseButton extends GameSprite {
     protected TextureAtlas atlas;
     protected final Map<ButtonStage, Animation<TextureRegion>> animationMap = new HashMap<>();
     protected float stateTime = 0;
-    protected float pressedStateTime = .7f;
+    protected float pressedStateTime = .4f;
     protected Timer.Task clickedTask;
     public int price;
 
@@ -107,7 +107,7 @@ public abstract class PurchaseButton extends GameSprite {
                 public void run() {
                     setStage(ButtonStage.NOT_PRESSED);
                 }
-            }, pressedStateTime);
+            }, .7f);
         }
     }
 
