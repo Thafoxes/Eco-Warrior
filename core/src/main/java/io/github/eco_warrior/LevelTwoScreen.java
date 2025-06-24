@@ -25,6 +25,7 @@ import java.util.*;
 import io.github.eco_warrior.enums.ButtonEnums;
 import io.github.eco_warrior.enums.GardeningEnums;
 import io.github.eco_warrior.enums.TreeType;
+import io.github.eco_warrior.screen.EndScreen;
 import io.github.eco_warrior.screen.ResultScreen;
 import io.github.eco_warrior.sprite.*;
 import io.github.eco_warrior.sprite.UI.CooldownReductionTimer;
@@ -49,6 +50,7 @@ public class LevelTwoScreen implements Screen {
     private SpriteBatch uiBatch;
 
     private Texture backgroundTexture;
+    private Texture endPoem;
     private Sprite backgroundSprite;
 
     //debug method
@@ -122,7 +124,7 @@ public class LevelTwoScreen implements Screen {
 
     //winning condition timer
     private float gameTimer = 0f;
-    private final float MAX_GAME_TIME = 60f; // 1 minutes in seconds
+    private final float MAX_GAME_TIME = 1f; // 1 minutes in seconds
     private boolean gameOver,isTimerStarts = false;
     //show boss
     private boolean showBigBoss, showSmallBoss = false;
@@ -150,6 +152,7 @@ public class LevelTwoScreen implements Screen {
         backgroundTexture = new Texture(Gdx.files.internal("textures/greenland.png"));
         backgroundSprite = new Sprite(backgroundTexture);
         backgroundSprite.setBounds(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+        endPoem = new Texture(Gdx.files.internal("Image/laPoem.png"));
 
         lastTouchPos = new Vector2();
         currentTouchPos = new Vector2();
@@ -459,8 +462,8 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void showWinScreen() {
-        game.setLevel(3);
-        game.setScreen(new ResultScreen(game, 0, false, "All trees are matured! You win!"));
+//        game.setLevel(3);
+        game.setScreen(new EndScreen(game, endPoem, 45));
     }
 
     private void updateEnemyTreeLogic(float delta) {
@@ -1024,6 +1027,7 @@ public class LevelTwoScreen implements Screen {
         uiBatch.dispose();
         batch.dispose();
         backgroundTexture.dispose();
+        endPoem.dispose();
         shapeRenderer.dispose();
         toolManager.dispose();
         treeControllerManager.dispose();

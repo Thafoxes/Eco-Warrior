@@ -43,7 +43,9 @@ Background_Music/Recycle.mp3
 Background_Music/forest-nature.mp3
 Background_Music/naturale.mp3
 Image/OctopusMascot.png
+Image/anotherblack.jpg
 Image/girl.png
+Image/laPoem.png
 Image/plumber_girl_defeated.png
 Image/plumbergirl_cheerful.png
 Image/recycle_manager_base.png
@@ -255,6 +257,7 @@ sound_effects/sapling_placement.mp3
 sound_effects/shovel.mp3
 sound_effects/socket_wrench.mp3
 sound_effects/sonido-correcto.mp3
+sound_effects/speechage.mp3
 sound_effects/tape_tearing.mp3
 sound_effects/tentacles/attack.mp3
 sound_effects/tentacles/dead.mp3
