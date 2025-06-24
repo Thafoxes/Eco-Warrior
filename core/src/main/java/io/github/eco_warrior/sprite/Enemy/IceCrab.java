@@ -107,7 +107,7 @@ public class IceCrab extends Enemies {
     public void attack(){
         if(currentState != EnemyState.ATTACKING && currentState != EnemyState.DEAD) {
             setState(EnemyState.ATTACKING);
-            attackSound.play();
+            attackSound.play(.3f);
             stateTime = 0; // Reset state time for new animation
         }
     }

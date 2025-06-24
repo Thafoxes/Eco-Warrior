@@ -35,6 +35,7 @@ public abstract class Trees extends GameSprite {
     protected boolean isStageTransitionScheduled = false;
     public boolean isMatureTree = false;
     protected SaplingType saplingType;
+    public static int tierCount = 0;
 
 
     protected Sound digSound;
@@ -42,7 +43,7 @@ public abstract class Trees extends GameSprite {
     protected Sound waterPourSound;
     protected Sound saplingSound;
 
-    protected float growingTime = 3f;
+    protected float growingTime = .5f; //temporary
 
     protected boolean isGrowing = false;
 
@@ -142,6 +143,7 @@ public abstract class Trees extends GameSprite {
                     isMatureTree = true;
                     isGrowing = false;
 
+                    tierCount++;
                 }
             }, growingTime);
         }

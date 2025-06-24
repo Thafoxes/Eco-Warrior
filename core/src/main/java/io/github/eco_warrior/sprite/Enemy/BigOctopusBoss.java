@@ -26,8 +26,8 @@ public class BigOctopusBoss extends Enemies {
         atlas = new TextureAtlas(Gdx.files.internal("atlas/big_octopus/big_octopus.atlas"));
 
         // Create animations for different states
-        animationMap.put(EnemyState.SPAWNING, new Animation<>(0.2f, atlas.findRegions("emerge"), Animation.PlayMode.NORMAL));
-        animationMap.put(EnemyState.IDLE, new Animation<>(0.1f, atlas.findRegions("idle"), Animation.PlayMode.LOOP));
+        animationMap.put(EnemyState.SPAWNING, new Animation<>(0.3f, atlas.findRegions("emerge"), Animation.PlayMode.NORMAL));
+        animationMap.put(EnemyState.IDLE, new Animation<>(0.3f, atlas.findRegions("idle"), Animation.PlayMode.LOOP));
 
         currentState = EnemyState.SPAWNING;
     }

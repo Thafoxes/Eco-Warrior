@@ -32,8 +32,8 @@ public class RayGun extends Tool {
             position,
             scale
         );
-        blazingSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/fire_gun.mp3"));
-        breezingSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/wind_gun.mp3"));
+        blazingSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/fire.mp3"));
+        breezingSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/breeze.mp3"));
         iceSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/ice_gun.mp3"));
         voltaicSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/lightning_gun.mp3"));
         uselessSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/useless_gun.mp3")); // Optional
@@ -54,13 +54,13 @@ public class RayGun extends Tool {
                 if (blazingSound != null) blazingSound.play();
                 break;
             case BREEZING:
-                if (breezingSound != null) breezingSound.play();
+                if (breezingSound != null) breezingSound.play(.3f);
                 break;
             case ICE:
-                if (iceSound != null) iceSound.play();
+                if (iceSound != null) iceSound.play(.3f);
                 break;
             case VOLTAIC:
-                if (voltaicSound != null) voltaicSound.play();
+                if (voltaicSound != null) voltaicSound.play(.3f);
                 break;
             default:
                 uselessSound.play();

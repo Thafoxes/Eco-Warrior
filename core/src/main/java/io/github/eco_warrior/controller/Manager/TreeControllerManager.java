@@ -3,6 +3,7 @@ package io.github.eco_warrior.controller.Manager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
+import io.github.eco_warrior.controller.Trees.OrdinaryTreeController;
 import io.github.eco_warrior.controller.Trees.TreeController;
 import io.github.eco_warrior.entity.GameSprite;
 import io.github.eco_warrior.entity.Trees;
@@ -11,6 +12,7 @@ import io.github.eco_warrior.sprite.DebugStick;
 import io.github.eco_warrior.controller.FertilizerController;
 import io.github.eco_warrior.sprite.gardening_equipments.Shovel;
 import io.github.eco_warrior.sprite.gardening_equipments.WateringCan;
+import io.github.eco_warrior.sprite.tree_variant.OrdinaryTree;
 
 import java.util.ArrayList;
 
@@ -73,7 +75,10 @@ public class TreeControllerManager {
                     }
                 }
                 if(draggingTool instanceof Shovel){
-                    treeController.digHole();
+//                    treeController.digHole();
+                    if (treeController.tier == Trees.tierCount) {
+                        treeController.digHole();
+                    }
                 }
                 if(draggingTool instanceof DebugStick) {
                     treeController.takeDamage(1);

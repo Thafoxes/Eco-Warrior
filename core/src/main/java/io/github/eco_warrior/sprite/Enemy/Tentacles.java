@@ -33,10 +33,10 @@ public class Tentacles extends Enemies {
         atlas = new TextureAtlas(Gdx.files.internal("atlas/Tentacles/tentacles.atlas"));
 
         // Create animations for different states
-        animationMap.put(EnemyState.SPAWNING, new Animation<>(0.15f, atlas.findRegions("spawn"), Animation.PlayMode.NORMAL));
-        animationMap.put(EnemyState.ATTACKING, new Animation<>(0.1f, atlas.findRegions("attack"), Animation.PlayMode.NORMAL));
-        animationMap.put(EnemyState.DEAD, new Animation<>(0.10f, atlas.findRegions("death"), Animation.PlayMode.NORMAL));
-        animationMap.put(EnemyState.IDLE, new Animation<>(0.15f, atlas.findRegions("idle"), Animation.PlayMode.LOOP));
+        animationMap.put(EnemyState.SPAWNING, new Animation<>(0.3f, atlas.findRegions("spawn"), Animation.PlayMode.NORMAL));
+        animationMap.put(EnemyState.ATTACKING, new Animation<>(0.3f, atlas.findRegions("attack"), Animation.PlayMode.NORMAL));
+        animationMap.put(EnemyState.DEAD, new Animation<>(0.3f, atlas.findRegions("death"), Animation.PlayMode.NORMAL));
+        animationMap.put(EnemyState.IDLE, new Animation<>(0.3f, atlas.findRegions("idle"), Animation.PlayMode.LOOP));
 
         currentState = EnemyState.SPAWNING;
     }

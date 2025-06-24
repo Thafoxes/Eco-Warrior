@@ -30,13 +30,30 @@ public abstract class TreeController <T extends Trees> {
     protected boolean isGrowing = false;
     protected TreeType treeType;
     protected boolean maturityProcessed = false;
+    public int tier;
 
     public TreeController(T tree, WateringCan wateringCan, BaseTreeHealth treeHealth, TreeType treeType) {
         this.tree = tree;
         this.wateringCan = wateringCan;
         this.treeHealth = treeHealth;
         this.treeType = treeType;
+
         setDeadAnimation();
+        setTier();
+    }
+
+    public void setTier() {
+        if (this instanceof OrdinaryTreeController) {
+            tier = 0;
+        } else if (this instanceof VoltaicTreeController) {
+            tier = 1;
+        } else if (this instanceof BreezingTreeController) {
+            tier = 2;
+        } else if (this instanceof IceTreeController) {
+            tier = 3;
+        } else if (this instanceof BlazingTreeController) {
+            tier = 4;
+        }
     }
 
     private void setDeadAnimation() {

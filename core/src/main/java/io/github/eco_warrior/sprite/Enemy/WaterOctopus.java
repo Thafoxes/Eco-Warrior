@@ -26,8 +26,8 @@ public class WaterOctopus extends Enemies{
         atlas = new TextureAtlas(Gdx.files.internal("atlas/small_visual_octopus/tiny_octopus.atlas"));
 
         // Create animations for different states
-        animationMap.put(Enemies.EnemyState.SPAWNING, new Animation<>(0.2f, atlas.findRegions("emerge"), Animation.PlayMode.NORMAL));
-        animationMap.put(Enemies.EnemyState.IDLE, new Animation<>(0.1f, atlas.findRegions("idle"), Animation.PlayMode.LOOP));
+        animationMap.put(Enemies.EnemyState.SPAWNING, new Animation<>(0.3f, atlas.findRegions("emerge"), Animation.PlayMode.NORMAL));
+        animationMap.put(Enemies.EnemyState.IDLE, new Animation<>(0.3f, atlas.findRegions("idle"), Animation.PlayMode.LOOP));
 
         currentState = Enemies.EnemyState.SPAWNING;
     }

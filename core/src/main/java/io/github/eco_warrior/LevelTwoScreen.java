@@ -176,10 +176,10 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void initializeMusic() {
-        countdownMusic = Gdx.audio.newMusic(Gdx.files.internal("Background_Music/KEROSENE-last60secs.mp3"));
+        countdownMusic = Gdx.audio.newMusic(Gdx.files.internal("Background_Music/Fortuna.mp3"));
         countdownMusic.setVolume(0.5f);
         countdownMusic.setLooping(false);
-        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Background_Music/forest-nature.mp3"));
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Background_Music/naturale.mp3"));
         backgroundMusic.setVolume(0.5f);
         backgroundMusic.setLooping(true);
         backgroundMusic.play();
@@ -200,8 +200,8 @@ public class LevelTwoScreen implements Screen {
 
     private void initializeTrashArea() {
         groundTrashController = new GroundTrashController(
-            0,
-            WINDOW_WIDTH - 100f,
+            WINDOW_WIDTH / 2 - 50f,
+            WINDOW_WIDTH - 50f,
             20f,
             WINDOW_HEIGHT/2
         );
@@ -279,10 +279,10 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void initializeBoss(){
-        Vector2 bossSpawnPos = new Vector2(50, 180f);
+        Vector2 bossSpawnPos = new Vector2(0, 180);
         smallBoss = new WaterOctopusController(bossSpawnPos);
 
-        bossSpawnPos = new Vector2(10, 150f);
+        bossSpawnPos = new Vector2(0, 200);
         boss = new BigOctopusBossController(bossSpawnPos);
     }
 
@@ -628,7 +628,7 @@ public class LevelTwoScreen implements Screen {
         ArrayList<TreeController> treeControllers = treeControllerManager.getTreeControllers();
 
         for (TreeController<?> treeController : treeControllers) {
-            if (targetTreeTypes.contains(treeController.getTreeType()) && treeController.isPlanted()) {
+            if (targetTreeTypes.contains(treeController.getTreeType()) && treeController.isMaturedTree()) {
                 readyTrees.add(treeController);
             }
         }
@@ -716,19 +716,19 @@ public class LevelTwoScreen implements Screen {
 
         batch.begin();
         backgroundSprite.draw(batch);
-        toolManager.render(batch);
         treeControllerManager.draw(batch);
         groundTrashController.draw(batch);
         drawBoss(batch);
         buttonManager.draw(batch);
-        drawCooldownReductionTimer();
         enemyManager.draw(batch);
+        drawCooldownReductionTimer();
+        toolManager.render(batch);
 
         //draw the elements for gun
         gunManager.draw(batch, stateTime);
 
         batch.end();
-//        debugSprite();
+        debugSprite();
 
     }
 

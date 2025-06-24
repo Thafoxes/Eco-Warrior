@@ -15,8 +15,8 @@ public class MetalChuck extends Enemies {
     private final Sound attackSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/drill.mp3"));
 
     public MetalChuck(Vector2 position, float scale) {
-        super("atlas/worm/worm.atlas",
-            "moving",
+        super("atlas/metal_chuck/MetalChuck.atlas",
+            "move",
             4, //this is for moving frameCount only, later in the load Animation it will run through all the frames
             position,
             scale);
@@ -45,10 +45,10 @@ public class MetalChuck extends Enemies {
         atlas = new TextureAtlas(Gdx.files.internal("atlas/metal_chuck/MetalChuck.atlas"));
 
         // Create animations for different states
-        animationMap.put(EnemyState.MOVING, new Animation<>(0.1f, atlas.findRegions("move"), Animation.PlayMode.LOOP));
-        animationMap.put(EnemyState.ATTACKING, new Animation<>(0.1f, atlas.findRegions("attack"), Animation.PlayMode.NORMAL));
-        animationMap.put(EnemyState.DEAD, new Animation<>(0.10f, atlas.findRegions("death"), Animation.PlayMode.NORMAL));
-        animationMap.put(EnemyState.IDLE, new Animation<>(0.15f, atlas.findRegions("idle"), Animation.PlayMode.LOOP));
+        animationMap.put(EnemyState.MOVING, new Animation<>(0.3f, atlas.findRegions("move"), Animation.PlayMode.LOOP));
+        animationMap.put(EnemyState.ATTACKING, new Animation<>(0.3f, atlas.findRegions("attack"), Animation.PlayMode.NORMAL));
+        animationMap.put(EnemyState.DEAD, new Animation<>(0.2f, atlas.findRegions("death"), Animation.PlayMode.NORMAL));
+        animationMap.put(EnemyState.IDLE, new Animation<>(0.3f, atlas.findRegions("idle"), Animation.PlayMode.LOOP));
 
         currentState = EnemyState.MOVING;
 

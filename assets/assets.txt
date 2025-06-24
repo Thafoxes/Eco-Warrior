@@ -35,11 +35,13 @@ Background_Image/frame_15_delay-0.09s.gif
 Background_Image/frame_1_delay-0.22s.gif
 Background_Image/frame_2_delay-0.22s.gif
 Background_Image/frame_3_delay-0.22s.gif
+Background_Music/Fortuna.mp3
 Background_Music/KEROSENE-last60secs.mp3
 Background_Music/Menu.mp3
 Background_Music/Pipe.mp3
 Background_Music/Recycle.mp3
 Background_Music/forest-nature.mp3
+Background_Music/naturale.mp3
 Image/OctopusMascot.png
 Image/girl.png
 Image/plumber_girl_defeated.png
@@ -234,6 +236,7 @@ sound_effects/drill.mp3
 sound_effects/fill_water_sfx.mp3
 sound_effects/fill_watering_can1.mp3
 sound_effects/fill_watering_can2.mp3
+sound_effects/fire.mp3
 sound_effects/fire_gun.mp3
 sound_effects/fireball.mp3
 sound_effects/game_finished_sfx.mp3
