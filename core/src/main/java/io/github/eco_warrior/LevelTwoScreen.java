@@ -131,6 +131,7 @@ public class LevelTwoScreen implements Screen {
 
     //Music
     private Music countdownMusic;
+    private Music backgroundMusic;
     private boolean musicStarted = false;
 
     public LevelTwoScreen(Main main) {
@@ -174,9 +175,13 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void initializeMusic() {
-        countdownMusic = Gdx.audio.newMusic(Gdx.files.internal("sound_effects/KEROSENE-last60secs.mp3"));
+        countdownMusic = Gdx.audio.newMusic(Gdx.files.internal("Background_Music/KEROSENE-last60secs.mp3"));
         countdownMusic.setVolume(0.5f);
         countdownMusic.setLooping(false);
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Background_Music/forest-nature.mp3"));
+        backgroundMusic.setVolume(0.5f);
+        backgroundMusic.setLooping(true);
+        backgroundMusic.play();
     }
 
     private void initializeGun() {
@@ -380,6 +385,7 @@ public class LevelTwoScreen implements Screen {
             //all trees are matured, show start timer
             // Play the countdown music when the timer starts
             if(!musicStarted) {
+                backgroundMusic.stop();
                 countdownMusic.play();
                 musicStarted = true;
             }
