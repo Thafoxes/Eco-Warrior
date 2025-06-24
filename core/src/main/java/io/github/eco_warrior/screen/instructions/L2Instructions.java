@@ -62,7 +62,7 @@ public class L2Instructions implements Screen {
         instructionFont = new FontGenerator(24, Color.WHITE, Color.BLACK);
 
         // Load images
-        instructionImage = new Texture(Gdx.files.internal("ui/instructions/L3instructions.png"));
+        instructionImage = new Texture(Gdx.files.internal("ui/instructions/L2instructions.png"));
         backgroundImage = new Texture(Gdx.files.internal("Image/girl.png"));
 
         // Create acknowledge button

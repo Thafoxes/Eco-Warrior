@@ -256,6 +256,7 @@ ui/font-subtitle.fnt
 ui/font-window.fnt
 ui/font.fnt
 ui/instructions/L1instructions.png
+ui/instructions/L2instructions.png
 ui/instructions/L3instructions.png
 ui/uiskin.atlas
 ui/uiskin.json
