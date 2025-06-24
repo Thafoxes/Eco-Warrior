@@ -39,7 +39,6 @@ public class ToolManager {
         for (BaseSaplingController sapling : saplingControllers) {
             if (!availableSaplings.contains(sapling)) {
                 availableSaplings.add(sapling);
-                System.out.println("Unlocked new sapling: " + sapling.getClass().getSimpleName());
                 return;
             }
         }

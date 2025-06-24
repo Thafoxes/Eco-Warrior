@@ -594,6 +594,7 @@ public class LevelTwoScreen implements Screen {
 
     private void updateToolManager(float delta) {
         toolManager.update(delta);
+        //TODO- idk why this remove fix the issue
 //        toolManager.setIsPlanting(treeControllerManager.isPlanting());
     }
 
