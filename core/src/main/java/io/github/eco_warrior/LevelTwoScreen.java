@@ -119,7 +119,7 @@ public class LevelTwoScreen implements Screen {
 
     //winning condition timer
     private float gameTimer = 0f;
-    private final float MAX_GAME_TIME = 60f; // 3 minutes in seconds
+    private final float MAX_GAME_TIME = 20f; // 1 minutes in seconds
     private boolean gameOver = false;
 
     public LevelTwoScreen(Main main) {
@@ -588,7 +588,7 @@ public class LevelTwoScreen implements Screen {
         gunManager.draw(batch, stateTime);
 
         batch.end();
-        debugSprite();
+//        debugSprite();
 
     }
 
