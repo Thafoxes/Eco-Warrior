@@ -274,15 +274,19 @@ public class LevelTwoScreen implements Screen {
 
 
 
-        //following teir list
-        //TODO - Change back later
-//        toolManager.addSaplingController(blazingSapling);
-
+        //following tier list
         toolManager.addSaplingController(ordinarySapling);
         toolManager.addSaplingController(voltaicSapling);
         toolManager.addSaplingController(breezingSapling);
         toolManager.addSaplingController(iceSapling);
         toolManager.addSaplingController(blazingSapling);
+
+        // Initially only make the first sapling available
+        toolManager.setSaplingAvailable(ordinarySapling, true);
+        toolManager.setSaplingAvailable(voltaicSapling, false);
+        toolManager.setSaplingAvailable(breezingSapling, false);
+        toolManager.setSaplingAvailable(iceSapling, false);
+        toolManager.setSaplingAvailable(blazingSapling, false);
 
     }
 
@@ -534,6 +538,17 @@ public class LevelTwoScreen implements Screen {
 
     private void updateTreeManager(float delta) {
         treeControllerManager.update(delta);
+
+        for(TreeController<?> treeController : treeControllerManager.getTreeControllers()) {
+            if (treeController.isMaturedTree() && !treeController.isMaturityProcessed()) {
+                // Mark this tree as processed for unlocking
+                treeController.setMaturityProcessed(true);
+
+                // Unlock the next sapling in sequence
+                toolManager.unlockNextSapling();
+
+            }
+        }
     }
 
     private void updateToolManager(float delta) {

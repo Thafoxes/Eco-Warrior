@@ -29,6 +29,7 @@ public abstract class TreeController <T extends Trees> {
     protected int wateringTime = 0;
     protected boolean isGrowing = false;
     protected TreeType treeType;
+    protected boolean maturityProcessed = false;
 
     public TreeController(T tree, WateringCan wateringCan, BaseTreeHealth treeHealth, TreeType treeType) {
         this.tree = tree;
@@ -200,6 +201,9 @@ public abstract class TreeController <T extends Trees> {
         return tree.isPlanting();
     }
 
+    public boolean isMaturedTree() {
+        return tree.isMaturedTree();
+    }
     public boolean isMaturedAliveTree() {
         return tree.isFullyMaturedAlive() && health > 0;
     }
@@ -231,5 +235,11 @@ public abstract class TreeController <T extends Trees> {
         return false;
     }
 
+    public boolean isMaturityProcessed() {
+        return maturityProcessed;
+    }
 
+    public void setMaturityProcessed(boolean processed) {
+        this.maturityProcessed = processed;
+    }
 }
