@@ -119,7 +119,7 @@ public class LevelTwoScreen implements Screen {
 
     //winning condition timer
     private float gameTimer = 0f;
-    private final float MAX_GAME_TIME = 180f; // 3 minutes in seconds
+    private final float MAX_GAME_TIME = 60f; // 3 minutes in seconds
     private boolean gameOver = false;
 
     public LevelTwoScreen(Main main) {
@@ -258,22 +258,22 @@ public class LevelTwoScreen implements Screen {
 
 
         //following tier list
-        toolManager.addSaplingController(blazingSapling);
+//        toolManager.addSaplingController(blazingSapling); //debug debug
 
         toolManager.addSaplingController(ordinarySapling);
         toolManager.addSaplingController(voltaicSapling);
         toolManager.addSaplingController(breezingSapling);
         toolManager.addSaplingController(iceSapling);
-//        toolManager.addSaplingController(blazingSapling);
+        toolManager.addSaplingController(blazingSapling);
 
         // Initially only make the first sapling available
-        toolManager.setSaplingAvailable(blazingSapling, true);
+//        toolManager.setSaplingAvailable(blazingSapling, true); //debug debug
 
-        toolManager.setSaplingAvailable(ordinarySapling, false);
+        toolManager.setSaplingAvailable(ordinarySapling, true);
         toolManager.setSaplingAvailable(voltaicSapling, false);
         toolManager.setSaplingAvailable(breezingSapling, false);
         toolManager.setSaplingAvailable(iceSapling, false);
-//        toolManager.setSaplingAvailable(blazingSapling, false);
+        toolManager.setSaplingAvailable(blazingSapling, false);
 
     }
 
@@ -339,23 +339,39 @@ public class LevelTwoScreen implements Screen {
     private void winningCondition(float delta) {
         if(gameOver) return;
 
-        gameTimer += delta;
+
 
         boolean allTreesMatured = true;
+        boolean allTreeMaturedAlive = true;
+        for(TreeController<?> treeController : treeControllerManager.getTreeControllers()) {
+            if(!treeController.isMaturedTree()){
+                allTreesMatured = false;
+                break;
+            }
+
+        }
+
+        if(allTreesMatured ){
+            gameTimer += delta;
+            //all trees are matured, show start timer
+        }
+
+
         for(TreeController<?> treeController : treeControllerManager.getTreeControllers()) {
             if (!treeController.isMaturedAliveTree()) {
-                allTreesMatured = false;
+                allTreeMaturedAlive = false;
                 break;
             }
         }
 
-        if(allTreesMatured){
+
+        if(gameTimer >= MAX_GAME_TIME && allTreeMaturedAlive) {
             gameOver = true;
             showWinScreen();
             return;
         }
 
-        if(gameTimer >= MAX_GAME_TIME) {
+        if(gameTimer >= MAX_GAME_TIME && !allTreeMaturedAlive) {
             gameOver = true;
             showLoseScreen();
             return;
@@ -714,7 +730,7 @@ public class LevelTwoScreen implements Screen {
         }
 
         // Check if the tool is a ray gun and if it can shoot
-        if(draggingTool instanceof RayGun && treeControllerManager.wasWateringSuccessful()){
+        if(draggingTool instanceof RayGun){
             ShotRayGun(draggingTool);
         }
         // Check if the tool is a watering can and if it can water a fountain
@@ -732,17 +748,21 @@ public class LevelTwoScreen implements Screen {
                         }
                     }
                     if(enemy instanceof MetalChuckController){
+
                         if(!enemy.isDead()){
                             enemy.die();
                             rayGun.playModeSound();
                         }
                     }
                     if(enemy instanceof BombPeckerController){
-                        BombPeckerController bombPecker = (BombPeckerController) enemy;
-                        if(!bombPecker.isDead()){
-                            bombPecker.die();
-                            rayGun.playModeSound();
+                        if(rayGun.getMode() == RayGun.RayGunMode.BREEZING || rayGun.getMode() == RayGun.RayGunMode.ICE){
+                            BombPeckerController bombPecker = (BombPeckerController) enemy;
+                            if(!bombPecker.isDead()){
+                                bombPecker.die();
+                                rayGun.playModeSound();
+                            }
                         }
+
                     }
                 }
             }
