@@ -19,6 +19,7 @@ import io.github.eco_warrior.controller.Pools.*;
 import io.github.eco_warrior.controller.Sapling.BaseSaplingController;
 import io.github.eco_warrior.controller.Trees.*;
 import io.github.eco_warrior.entity.GameSprite;
+import com.badlogic.gdx.utils.Timer;
 
 import java.util.*;
 
@@ -104,6 +105,7 @@ public class LevelTwoScreen implements Screen {
     private MetalChuckPool metalChuckPool;
     private IceCrabPool iceCrabPool;
     private BombPeckerPool bombPeckerPool;
+    private TentaclesPool tentaclesPool;
     private List<EnemyController> hiddenEnemies;
     private float spawnTimer = 0f;
     private float averageSpawnInterval = 10f;
@@ -111,7 +113,7 @@ public class LevelTwoScreen implements Screen {
     private float wormSpawnTimer = 0f;
     private float metalChuckSpawnTimer = 0f;
     private float bombPeckerSpawnTimer = 0f;
-    private float iceCrabSpawnTimer = 0f;
+    private float iceCrabSpawnTimer, tentaclesSpawnTimer = 0f;
 
     private final Random rand = new Random();
 
@@ -123,7 +125,10 @@ public class LevelTwoScreen implements Screen {
     //winning condition timer
     private float gameTimer = 0f;
     private final float MAX_GAME_TIME = 60f; // 1 minutes in seconds
-    private boolean gameOver = false;
+    private boolean gameOver,isTimerStarts = false;
+    //show boos
+    private boolean bossSpawned = false;
+    private BigOctopusBossController boss;
 
     //Music
     private Music countdownMusic;
@@ -210,8 +215,15 @@ public class LevelTwoScreen implements Screen {
         metalChuckPool = new MetalChuckPool(enemyManager);
         bombPeckerPool = new BombPeckerPool(enemyManager);
         iceCrabPool = new IceCrabPool(enemyManager);
+        tentaclesPool = new TentaclesPool(enemyManager);
 
         //TODO - change enemy Tree Attack Type
+        tentaclesPool.setAttackTreeType(
+            new ArrayList<>(
+                Arrays.asList(TreeType.ICE, TreeType.BLAZING)
+            )
+        );
+
         iceCrabPool.setAttackTreeType(
             new ArrayList<>(
                 Collections.singletonList(TreeType.BLAZING)
@@ -291,7 +303,7 @@ public class LevelTwoScreen implements Screen {
 
         //TODO - edit back sapling list
         //following tier list
-//        toolManager.addSaplingController(blazingSapling); //debug debug
+//        toolManager.addSaplingController(iceSapling); //debug debug
 
         toolManager.addSaplingController(ordinarySapling);
         toolManager.addSaplingController(voltaicSapling);
@@ -300,7 +312,7 @@ public class LevelTwoScreen implements Screen {
         toolManager.addSaplingController(blazingSapling);
 
         // Initially only make the first sapling available
-//        toolManager.setSaplingAvailable(blazingSapling, true); //debug debug
+        toolManager.setSaplingAvailable(iceSapling, true); //debug debug
 
         toolManager.setSaplingAvailable(ordinarySapling, true);
         toolManager.setSaplingAvailable(voltaicSapling, false);
@@ -361,13 +373,31 @@ public class LevelTwoScreen implements Screen {
         updateTreeManager(delta);
         updateEnemyManager(delta);
         updateEnemyTreeLogic(delta);
-
+        updateShowBoss(delta);
 
         updateTrashController(delta);
         updateButtonManager(delta);
         updateTimerAnimation(delta);
         winningCondition(delta);
 
+    }
+
+    private void updateShowBoss(float delta) {
+
+        if(isTimerStarts && !bossSpawned) {
+           spawnBoss();
+        }
+        // Schedule the boss to spawn after a delay
+
+        if(bossSpawned){
+            boss.update(delta);
+        }
+    }
+
+    private void spawnBoss() {
+        Vector2 bossSpawnPos = new Vector2(0, 150f);
+        boss = new BigOctopusBossController(bossSpawnPos);
+        bossSpawned = true;
     }
 
     private void winningCondition(float delta) {
@@ -386,7 +416,9 @@ public class LevelTwoScreen implements Screen {
         }
 
         if(allTreesMatured ){
+            isTimerStarts = true;
             gameTimer += delta;
+            //TODO - SUMMON THE BIG OCTOPUS
             //all trees are matured, show start timer
             // Play the countdown music when the timer starts
             if(!musicStarted) {
@@ -464,6 +496,14 @@ public class LevelTwoScreen implements Screen {
                             iceCrab.attack(treeController);
                         }
                     }
+                }else if(enemy instanceof  TentaclesController){
+                    TentaclesController tentacles = (TentaclesController) enemy;
+                    if(treeController.getCollisionRect().overlaps(enemy.getCollisionRect())){
+                        if(tentacles.isCurrentAnimationDone()){
+                            tentacles.attack(treeController);
+                        }
+                    }
+
                 }
                 else if(treeController.getCollisionRect().overlaps(enemy.getCollisionRect())){
                     if(!enemy.isAttacking()){
@@ -481,6 +521,7 @@ public class LevelTwoScreen implements Screen {
         metalChuckSpawnTimer += delta;
         bombPeckerSpawnTimer += delta;
         iceCrabSpawnTimer += delta;
+        tentaclesSpawnTimer += delta;
 
         //TODO - add and edit enemyManager
         if (enemyManager.getEnemies().size() < 10) {
@@ -488,6 +529,7 @@ public class LevelTwoScreen implements Screen {
             spawnMetalChuck();
             spawnBombPecker();
             spawnIceCrab();
+            spawnTentacles();
 
         }
 
@@ -516,6 +558,7 @@ public class LevelTwoScreen implements Screen {
     }
 
 
+
     private <T extends EnemyPool> void addBackEnemyToPool(EnemyController enemy) {
         if (enemy instanceof WormController) {
             wormPool.returnEnemy((WormController) enemy);
@@ -525,10 +568,21 @@ public class LevelTwoScreen implements Screen {
             bombPeckerPool.returnEnemy((BombPeckerController) enemy);
         } else if (enemy instanceof IceCrabController) {
             iceCrabPool.returnEnemy((IceCrabController) enemy);
-        } else {
+        } else if (enemy instanceof TentaclesController) {
+            tentaclesPool.returnEnemy((TentaclesController) enemy);
+        }
+        else {
             throw new IllegalArgumentException("Unknown enemy type: " + enemy.getClass().getSimpleName());
         }
     }
+
+    private void spawnTentacles() {
+        if(tentaclesSpawnTimer >= averageSpawnInterval + 10 && tentaclesPool.getActiveCount() < 2) {
+            spawnEnemy(tentaclesPool);
+            tentaclesSpawnTimer = 0;
+        }
+    }
+
 
     private void spawnIceCrab() {
         if(iceCrabSpawnTimer >= averageSpawnInterval + 6 && iceCrabPool.getActiveCount() < 2) {
@@ -546,7 +600,6 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void spawnBombPecker() {
-        //TODO - change back
         if( bombPeckerSpawnTimer >= averageSpawnInterval + 4 && bombPeckerPool.getActiveCount() < 3) {
             spawnEnemy(bombPeckerPool); // Bomb Pecker has a longer spawn interval
 
@@ -591,10 +644,12 @@ public class LevelTwoScreen implements Screen {
             Vector2 spawnPos;
             if (pool instanceof BombPeckerPool){
                 spawnPos = new Vector2( xpos, WINDOW_HEIGHT + 50F);
-
             }else if(pool instanceof IceCrabPool){
                 spawnPos = new Vector2(xpos - 150f , ypos);
-            }else{
+            }else if(pool instanceof TentaclesPool){
+                spawnPos = new Vector2(xpos -  50f, ypos);
+            }
+            else{
                 spawnPos = new Vector2(WINDOW_WIDTH + 50f, ypos);
 
             }
@@ -658,6 +713,7 @@ public class LevelTwoScreen implements Screen {
         toolManager.render(batch);
         treeControllerManager.draw(batch);
         groundTrashController.draw(batch);
+        drawBoss(batch);
         buttonManager.draw(batch);
         drawCooldownReductionTimer();
         enemyManager.draw(batch);
@@ -668,6 +724,12 @@ public class LevelTwoScreen implements Screen {
         batch.end();
         debugSprite();
 
+    }
+
+    private void drawBoss(SpriteBatch batch) {
+        if(bossSpawned){
+            boss.draw(batch);
+        }
     }
 
     private void drawCooldownReductionTimer() {
@@ -682,7 +744,10 @@ public class LevelTwoScreen implements Screen {
         uiBatch.begin();
         currency.update(delta);
         currency.draw(uiBatch);
-        drawTimer(delta);
+        if(isTimerStarts){
+            drawTimer(delta);
+
+        }
 
         uiBatch.end();
     }
@@ -832,6 +897,8 @@ public class LevelTwoScreen implements Screen {
 
     private void ShotRayGun(GameSprite draggingTool) {
         if (rayGun.getMode() != RayGun.RayGunMode.USELESS) {
+            //TODO change back the type Breezing
+
             for(EnemyController enemy : enemyManager.getEnemies()){
                 if(enemy.getCollisionRect().overlaps(draggingTool.getCollisionRect())){
                     if(enemy instanceof WormController){
@@ -848,7 +915,6 @@ public class LevelTwoScreen implements Screen {
                         }
                     }
                     if(enemy instanceof BombPeckerController){
-                        //TODO change back the type Breezing
                         if(rayGun.getMode() == RayGun.RayGunMode.BREEZING || rayGun.getMode() == RayGun.RayGunMode.ICE){
                             BombPeckerController bombPecker = (BombPeckerController) enemy;
                             if(!bombPecker.isDead()){
@@ -864,6 +930,16 @@ public class LevelTwoScreen implements Screen {
                             IceCrabController iceCrab = (IceCrabController) enemy;
                             if(!iceCrab.isDead()){
                                 iceCrab.die();
+                                rayGun.playModeSound();
+                            }
+                        }
+                    }
+                    if(enemy instanceof TentaclesController){
+
+                        if(rayGun.getMode() == RayGun.RayGunMode.ICE){
+                            TentaclesController tentacles = (TentaclesController) enemy;
+                            if(!tentacles.isDead()){
+                                tentacles.die();
                                 rayGun.playModeSound();
                             }
                         }
@@ -929,6 +1005,9 @@ public class LevelTwoScreen implements Screen {
         waterFountain.drawDebug(shapeRenderer);
         groundTrashController.drawDebug(shapeRenderer);
         enemyManager.drawDebug(shapeRenderer);
+        if(bossSpawned){
+            boss.drawDebug(shapeRenderer);
+        }
 
         shapeRenderer.end();
     }
@@ -947,6 +1026,9 @@ public class LevelTwoScreen implements Screen {
         enemyManager.dispose();
         wateringCan.dispose();
         gunManager.dispose();
+
+        if(boss != null) boss.dispose();
+        if(rayGun != null) rayGun.dispose();
         if(timerFont != null) timerFont.dispose();
 
         waterFountain.dispose();

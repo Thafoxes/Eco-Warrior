@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Tree;
 import com.badlogic.gdx.utils.Array;
 import io.github.eco_warrior.controller.Enemy.EnemyController;
 import io.github.eco_warrior.controller.Enemy.IceCrabController;
+import io.github.eco_warrior.controller.Enemy.TentaclesController;
 import io.github.eco_warrior.controller.Manager.EnemyManager;
 import io.github.eco_warrior.entity.Enemies;
 import io.github.eco_warrior.enums.TreeType;
@@ -56,7 +57,10 @@ public abstract class EnemyPool<T extends EnemyController> {
             if(enemy instanceof IceCrabController){
                 enemy.setState(Enemies.EnemyState.SPAWNING);
 
-            }else{
+            }else if(enemy instanceof TentaclesController){
+                enemy.setState(Enemies.EnemyState.SPAWNING);
+            }
+            else{
                 enemy.setState(Enemies.EnemyState.MOVING);
 
             }

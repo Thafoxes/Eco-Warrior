@@ -31,6 +31,9 @@ bounds:644,2,640,640
 spawn
 index:5
 bounds:1286,2,640,640
+idle
+index:5
+bounds:1286,2,640,640
 
 tentacles2.png
 size:2048,1024

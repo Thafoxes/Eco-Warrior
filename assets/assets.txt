@@ -260,9 +260,9 @@ sound_effects/shovel.mp3
 sound_effects/socket_wrench.mp3
 sound_effects/sonido-correcto.mp3
 sound_effects/tape_tearing.mp3
-sound_effects/tentacles/tentacle_attack.mp3
-sound_effects/tentacles/tentacle_die.mp3
-sound_effects/tentacles/tentacle_emerge.mp3
+sound_effects/tentacles/attack.mp3
+sound_effects/tentacles/dead.mp3
+sound_effects/tentacles/spawn.mp3
 sound_effects/thunder.mp3
 sound_effects/underwater_explosion_sfx.mp3
 sound_effects/useless_gun.mp3

@@ -8,26 +8,29 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.entity.Enemies;
 
-public class IceCrab extends Enemies {
+public class Tentacles extends Enemies {
 
-    //sound effects
-    private final Sound attackSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/ice_crab/ice_crab_attack.mp3"));
-    private final Sound spawnSound  = Gdx.audio.newSound(Gdx.files.internal("sound_effects/ice_crab/ice_crab_spawn.mp3"));
+    private final Sound attackSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/tentacles/attack.mp3"));
+    private final Sound spawnSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/tentacles/spawn.mp3"));
+    private final Sound deathSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/tentacles/dead.mp3"));
 
+    public Tentacles(Vector2 position) {
+        super(
+            "atlas/Tentacles/tentacles.atlas",
+            "attack",
+            1,
+            position,
+            0.2f
+        );
 
-    private boolean isdoneAttack = false;
-
-    public IceCrab(Vector2 position) {
-        super("atlas/IceCrab/ice_crab.atlas",
-            "spawn", 1, position, 0.2f);
-
-        isFromRightDirection = true;
+        isFromRightDirection = false;
         loadAnimations();
         loadAudio();
     }
+
     @Override
     protected void loadAnimations() {
-        atlas = new TextureAtlas(Gdx.files.internal("atlas/IceCrab/ice_crab.atlas"));
+        atlas = new TextureAtlas(Gdx.files.internal("atlas/Tentacles/tentacles.atlas"));
 
         // Create animations for different states
         animationMap.put(EnemyState.SPAWNING, new Animation<>(0.15f, atlas.findRegions("spawn"), Animation.PlayMode.NORMAL));
@@ -36,6 +39,13 @@ public class IceCrab extends Enemies {
         animationMap.put(EnemyState.IDLE, new Animation<>(0.15f, atlas.findRegions("idle"), Animation.PlayMode.LOOP));
 
         currentState = EnemyState.SPAWNING;
+    }
+
+    @Override
+    protected void loadAudio() {
+        super.attackSound = attackSound;
+        spawnSound.play();
+
     }
 
     @Override
@@ -48,23 +58,13 @@ public class IceCrab extends Enemies {
             //dont handle the animation transition here, let controller handle it.
 
             case SPAWNING:
-                if (animationMap.get(EnemyState.SPAWNING).isAnimationFinished(stateTime)) {
-
-                }
                 break;
             case IDLE:
-                //do nothings
+                //do nothing
                 break;
             case ATTACKING:
-                // When attack animation is done, go back to IDLE
-                if (animationMap.get(EnemyState.ATTACKING).isAnimationFinished(stateTime)) {
-                }
                 break;
             case DEAD:
-                // Handle death animation completion if needed
-                if (animationMap.get(EnemyState.DEAD).isAnimationFinished(stateTime)) {
-
-                }
                 break;
         }
         updateAnimationFrame(currentAnimation);
@@ -100,7 +100,15 @@ public class IceCrab extends Enemies {
         if(currentState != EnemyState.DEAD) {
             setState(EnemyState.DEAD);
             attackSound.stop(); // Stop attack sound if it's playing
+            deathSound.play();
+
         }
+    }
+
+    @Override
+    public void setState(EnemyState state){
+        super.setState(state);
+        stateTime = 0;
     }
 
     @Override
@@ -113,39 +121,19 @@ public class IceCrab extends Enemies {
     }
 
     @Override
-    public void setState(EnemyState state){
-        super.setState(state);
-        stateTime = 0;
-    }
-
-    @Override
-    public boolean isDoneAttacking(){
-        return isdoneAttack;
-    }
-
-
-    @Override
-    public void updateState(float delta) {
-        super.updateState(delta);
-    }
-
-    @Override
-    protected void loadAudio() {
-        super.attackSound = attackSound;
-        spawnSound.play(); // Play spawn sound when the enemy is created
-
-    }
-
-    @Override
     public void resetState() {
         super.resetState();
-        isdoneAttack = false; // Reset the attack state
+        stateTime = 0;
+
     }
 
     @Override
     public void dispose() {
+        super.dispose();
         attackSound.dispose();
         spawnSound.dispose();
-        super.dispose();
+        deathSound.dispose();
+        atlas.dispose();
     }
+
 }
