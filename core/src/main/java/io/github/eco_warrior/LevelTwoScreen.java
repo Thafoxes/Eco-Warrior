@@ -462,7 +462,7 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void showWinScreen() {
-//        game.setLevel(3);
+        game.setLevel(3);
         game.setScreen(new EndScreen(game, endPoem, 45));
     }
 

@@ -315,10 +315,10 @@ public class WorldMap implements Screen {
         if (level == 1) {
             transition.startTransition(new L1Instructions((Main)game));
         }
-        if( level == 3) {
+        if( level <= 3) {
             transition.startTransition(new L2Instructions((Main)game));
         }
-        if( level == 2) {
+        if( level <= 2) {
             transition.startTransition(new L3Instructions((Main)game));
         }
     }
