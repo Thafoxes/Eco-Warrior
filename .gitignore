@@ -35,3 +35,4 @@ core/build/libs/core-1.0.0.jar
 *.tar
 core/build/tmp/jar/MANIFEST.MF
 lwjgl3/build/tmp/compileJava/previous-compilation-data.bin
+/core/build/tmp/jar
