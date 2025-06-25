@@ -67,7 +67,7 @@ public class ResultScreen implements Screen {
     }
 
     public ResultScreen(Main game, int score, boolean isGameOver, String additionalMessage) {
-        this.game = game;
+        this.game = game; //11
         this.score = score;
         this.isGameOver = isGameOver;
         buttonGenerator = game.getButtonFactory();

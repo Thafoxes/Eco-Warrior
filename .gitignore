@@ -29,11 +29,9 @@ core/src/main/java/io/github/eco_warrior/Main.java
 lwjgl3/build/tmp/compileJava/previous-compilation-data.bin
 core/build/libs/core-1.0.0.jar
 core/build/libs/core-1.0.0.jar
-/core/src/test
-/core
 /lwjgl3
 *.css
 *.idx
 *.tar
-/lwjgl3/build
-/lwjgl3
+core/build/tmp/jar/MANIFEST.MF
+lwjgl3/build/tmp/compileJava/previous-compilation-data.bin
