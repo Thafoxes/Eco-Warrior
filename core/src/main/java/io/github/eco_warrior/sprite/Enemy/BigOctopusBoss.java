@@ -1,6 +1,7 @@
 package io.github.eco_warrior.sprite.Enemy;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -45,7 +46,6 @@ public class BigOctopusBoss extends Enemies {
         Animation<TextureRegion> currentAnimation = animationMap.get(currentState);
         switch(currentState){
             case SPAWNING:
-
                 break;
             case IDLE:
 

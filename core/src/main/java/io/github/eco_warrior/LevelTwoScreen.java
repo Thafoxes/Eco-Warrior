@@ -124,7 +124,7 @@ public class LevelTwoScreen implements Screen {
 
     //winning condition timer
     private float gameTimer = 0f;
-    private final float MAX_GAME_TIME = 1f; // 1 minutes in seconds
+    private final float MAX_GAME_TIME = 90f; // 1 minutes in seconds
     private boolean gameOver,isTimerStarts = false;
     //show boss
     private boolean showBigBoss, showSmallBoss = false;
@@ -203,7 +203,7 @@ public class LevelTwoScreen implements Screen {
 
     private void initializeTrashArea() {
         groundTrashController = new GroundTrashController(
-            WINDOW_WIDTH / 2 - 50f,
+            WINDOW_WIDTH / 2 + 30f,
             WINDOW_WIDTH - 50f,
             20f,
             WINDOW_HEIGHT/2
@@ -731,7 +731,7 @@ public class LevelTwoScreen implements Screen {
         gunManager.draw(batch, stateTime);
 
         batch.end();
-        debugSprite();
+//        debugSprite();
 
     }
 

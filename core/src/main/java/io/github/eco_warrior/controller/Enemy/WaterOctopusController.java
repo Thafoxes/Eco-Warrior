@@ -1,5 +1,7 @@
 package io.github.eco_warrior.controller.Enemy;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -17,7 +19,6 @@ public class WaterOctopusController extends EnemyController{
         super(new WaterOctopus(position), EnemyType.BOSS);
         setState(Enemies.EnemyState.SPAWNING);
         this.boss = (WaterOctopus) super.enemy;
-
     }
 
     @Override

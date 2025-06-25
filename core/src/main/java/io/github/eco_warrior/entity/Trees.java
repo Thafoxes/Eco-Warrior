@@ -43,7 +43,7 @@ public abstract class Trees extends GameSprite {
     protected Sound waterPourSound;
     protected Sound saplingSound;
 
-    protected float growingTime = .5f; //temporary
+    protected float growingTime = 7f;
 
     protected boolean isGrowing = false;
 

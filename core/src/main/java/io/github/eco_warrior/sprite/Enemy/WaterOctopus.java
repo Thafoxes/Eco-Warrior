@@ -1,6 +1,7 @@
 package io.github.eco_warrior.sprite.Enemy;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -8,6 +9,8 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.eco_warrior.entity.Enemies;
 
 public class WaterOctopus extends Enemies{
+
+    private Sound emergeSound = Gdx.audio.newSound(Gdx.files.internal("sound_effects/Cave13.mp3"));
 
     public WaterOctopus(Vector2 position) {
         super(
@@ -45,7 +48,7 @@ public class WaterOctopus extends Enemies{
         Animation<TextureRegion> currentAnimation = animationMap.get(currentState);
         switch(currentState){
             case SPAWNING:
-
+                emergeSound.play();
                 break;
             case IDLE:
 

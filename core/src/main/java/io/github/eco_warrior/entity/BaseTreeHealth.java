@@ -21,7 +21,7 @@ public class BaseTreeHealth extends GameSprite {
      * Position the health bar below the parent tree.
      */
     private void updatePosition() {
-        float xPos = parentTree.getPosition().x + (parentTree.getSprite().getWidth() * parentTree.getScale() / 4f);
+        float xPos = parentTree.getPosition().x + (parentTree.getSprite().getWidth() * parentTree.getScale() / 4f) + 7f;
         float yPos = parentTree.getPosition().y - 30f;
 
         setPosition(new Vector2(xPos, yPos));
