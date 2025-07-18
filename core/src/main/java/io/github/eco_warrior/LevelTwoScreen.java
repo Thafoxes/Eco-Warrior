@@ -108,7 +108,7 @@ public class LevelTwoScreen implements Screen {
     private TentaclesPool tentaclesPool;
     private List<EnemyController> hiddenEnemies;
     private float spawnTimer = 0f;
-    private float averageSpawnInterval = 10f;
+    private float averageSpawnInterval = 5f;
 
     private float wormSpawnTimer = 0f;
     private float metalChuckSpawnTimer = 0f;
@@ -529,7 +529,7 @@ public class LevelTwoScreen implements Screen {
         tentaclesSpawnTimer += delta;
 
         //TODO - add and edit enemyManager
-        if (enemyManager.getEnemies().size() < 10) {
+        if (enemyManager.getEnemies().size() < 25) {
             spawnWorm();
             spawnMetalChuck();
             spawnBombPecker();
@@ -545,16 +545,7 @@ public class LevelTwoScreen implements Screen {
         while (activeIterator.hasNext()) {
             EnemyController enemy = activeIterator.next();
 
-            if(enemy instanceof BombPeckerController){
-                BombPeckerController bombPecker = (BombPeckerController) enemy;
-
-                // Check if Bomb Pecker is dead or done attacking
-                if (bombPecker.isDead()) {
-                    activeIterator.remove();
-                    addBackEnemyToPool(enemy);
-                }
-            }
-            else if (enemy.isDead()) {
+            if (enemy.isDead()) {
                 activeIterator.remove();
                 addBackEnemyToPool(enemy);
             }
@@ -582,7 +573,7 @@ public class LevelTwoScreen implements Screen {
     }
 
     private void spawnTentacles() {
-        if(tentaclesSpawnTimer >= averageSpawnInterval + 10 && tentaclesPool.getActiveCount() < 2) {
+        if(tentaclesSpawnTimer >= averageSpawnInterval + 6 && tentaclesPool.getActiveCount() < 5) {
             spawnEnemy(tentaclesPool);
             tentaclesSpawnTimer = 0;
         }
@@ -590,7 +581,7 @@ public class LevelTwoScreen implements Screen {
 
 
     private void spawnIceCrab() {
-        if(iceCrabSpawnTimer >= averageSpawnInterval + 6 && iceCrabPool.getActiveCount() < 2) {
+        if(iceCrabSpawnTimer >= averageSpawnInterval + 6 && iceCrabPool.getActiveCount() < 5) {
             spawnEnemy(iceCrabPool);
             iceCrabSpawnTimer = 0;
         }
@@ -598,14 +589,14 @@ public class LevelTwoScreen implements Screen {
 
 
     private void spawnMetalChuck() {
-        if (metalChuckSpawnTimer >= averageSpawnInterval + 8 && metalChuckPool.getActiveCount() < 5) {
+        if (metalChuckSpawnTimer >= averageSpawnInterval + 6 && metalChuckPool.getActiveCount() < 5) {
             spawnEnemy(metalChuckPool);
             metalChuckSpawnTimer = 0;
         }
     }
 
     private void spawnBombPecker() {
-        if( bombPeckerSpawnTimer >= averageSpawnInterval + 4 && bombPeckerPool.getActiveCount() < 3) {
+        if( bombPeckerSpawnTimer >= averageSpawnInterval + 5 && bombPeckerPool.getActiveCount() < 5) {
             spawnEnemy(bombPeckerPool); // Bomb Pecker has a longer spawn interval
 
             bombPeckerSpawnTimer = 0;

@@ -138,7 +138,10 @@ public class IceCrab extends Enemies {
     @Override
     public void resetState() {
         super.resetState();
-        isdoneAttack = false; // Reset the attack state
+        currentState = EnemyState.IDLE;
+        previousState = EnemyState.IDLE;
+
+        stateTime = 0f;
     }
 
     @Override

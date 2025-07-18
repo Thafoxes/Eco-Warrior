@@ -17,6 +17,7 @@ public class VoltaicTree extends Trees {
             scale,
             SaplingType.VOLTAIC
             );
+        this.growingTime = 5f; // Set a longer growing time for VoltaicTree
     }
     @Override
     protected void loadAnimation() throws RuntimeException {

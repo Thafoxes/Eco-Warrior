@@ -17,6 +17,7 @@ public class BreezingTree extends Trees {
             scale,
             SaplingType.BREEZING
         );
+        this.growingTime = 5f; // Set a longer growing time for BreezingTree
     }
 
     @Override

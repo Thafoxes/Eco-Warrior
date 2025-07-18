@@ -17,6 +17,7 @@ public class BombPeckerController extends EnemyController{
 
     public BombPeckerController(Vector2 position) {
         super(new BombPecker(position), EnemyType.BOMB_PECKER);
+        setMoveSpeed(100f);
         this.bombPecker = (BombPecker) super.enemy;
     }
 

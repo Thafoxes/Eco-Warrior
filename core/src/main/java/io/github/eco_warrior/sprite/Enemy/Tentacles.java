@@ -125,7 +125,10 @@ public class Tentacles extends Enemies {
     @Override
     public void resetState() {
         super.resetState();
-        stateTime = 0;
+        currentState = EnemyState.IDLE;
+        previousState = EnemyState.IDLE;
+
+        stateTime = 0f;
 
     }
 

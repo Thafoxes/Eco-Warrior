@@ -14,7 +14,7 @@ import io.github.eco_warrior.enums.TreeType;
 
 public abstract class EnemyController {
     protected Enemies enemy;
-    protected static final float moveSpeed = 70f;
+    protected float moveSpeed = 70f;
     protected BaseExplosion deathEffect;
     protected boolean isExploding = false;
     protected EnemyType enemyType;
@@ -39,6 +39,10 @@ public abstract class EnemyController {
     private void initializeEffects() {
 
 //        deathEffect = new RedExplosion(worm.getPosition(), 1f);
+    }
+
+    public void setMoveSpeed(float moveSpeed) {
+        this.moveSpeed = moveSpeed;
     }
 
     public void update(float delta) {

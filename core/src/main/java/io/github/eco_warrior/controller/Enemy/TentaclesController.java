@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Timer;
 import io.github.eco_warrior.controller.Trees.TreeController;
 import io.github.eco_warrior.entity.Enemies;
 import io.github.eco_warrior.enums.EnemyType;
+import io.github.eco_warrior.sprite.Enemy.BombPecker;
 import io.github.eco_warrior.sprite.Enemy.IceCrab;
 import io.github.eco_warrior.sprite.Enemy.Tentacles;
 
@@ -113,6 +114,15 @@ public class TentaclesController extends EnemyController{
     @Override
     public boolean isDead() {
         return isDead;
+    }
+
+    @Override
+    public void resetState(){
+        super.resetState();
+        Tentacles enemy = (Tentacles) this.enemy;
+        enemy.resetState();
+        isDead = false;
+        isAttacking = false;
     }
 
     @Override

@@ -43,7 +43,7 @@ public abstract class Trees extends GameSprite {
     protected Sound waterPourSound;
     protected Sound saplingSound;
 
-    protected float growingTime = 7f;
+    protected float growingTime = 3f;
 
     protected boolean isGrowing = false;
 
@@ -89,6 +89,10 @@ public abstract class Trees extends GameSprite {
             getSprite().setRegion(currentFrame);
         }
         super.update(delta);
+    }
+
+    public void setGrowingTime(float growingTime) {
+        this.growingTime = growingTime;
     }
 
     /**

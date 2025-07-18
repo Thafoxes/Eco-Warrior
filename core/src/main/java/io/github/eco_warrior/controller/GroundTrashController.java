@@ -21,7 +21,7 @@ public class GroundTrashController {
 
     // Spawn trash parameters
     private float spawnTimer = 0f;
-    private float spawnInterval = 5f;
+    private float spawnInterval = 7f;
 
     // Maximum number of trash items on screen
     private static final int MAX_TRASH = 10;

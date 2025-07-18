@@ -19,7 +19,7 @@ public class BlazingTree extends Trees {
             scale,
             SaplingType.BLAZING
         );
-
+        this.growingTime = 7f;
     }
 
     @Override

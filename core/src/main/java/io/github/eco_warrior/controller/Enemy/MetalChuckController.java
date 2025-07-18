@@ -11,8 +11,9 @@ public class MetalChuckController extends EnemyController{
 
     public MetalChuckController(Vector2 position) {
         super(new MetalChuck(position), EnemyType.METAL_CHUCK);
+        setMoveSpeed(140f);
     }
-    
+
     @Override
     public void update(float delta) {
         super.update(delta);

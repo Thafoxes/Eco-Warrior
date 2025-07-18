@@ -17,7 +17,7 @@ public class IceTree extends Trees {
             scale,
             SaplingType.ICE
             );
-
+        this.growingTime = 7f;
     }
 
     @Override
